@@ -3,10 +3,14 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { DatabaseModule } from '@app/common';
-import { AuthRepository } from './repository/auth.repo';
+import {
+  DatabaseModule,
+  RmqModule,
+  // RmqModule
+} from '@app/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Auth, AuthSchema } from './schema/auth.schema';
+import { User, UserSchema } from './users/schemas/user.schema';
+// import { DESTINATION_SERVICE } from './constants/services';
 
 @Module({
   imports: [
@@ -14,14 +18,20 @@ import { Auth, AuthSchema } from './schema/auth.schema';
       isGlobal: true,
       validationSchema: Joi.object({
         MONGODB_URI: Joi.string().required(),
+        RABBIT_MQ_URI: Joi.string().required(),
+        RABBIT_MQ_AUTH_QUEUE: Joi.string().required(),
       }),
       // Nếu không tìm được một environment variable nào đó sẽ báo lỗi
       envFilePath: './apps/orders/.env',
     }),
     DatabaseModule,
-    MongooseModule.forFeature([{ name: Auth.name, schema: AuthSchema }]),
+    RmqModule,
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    // RmqModule.register({
+    //   name: DESTINATION_SERVICE,
+    // }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository],
+  providers: [AuthService],
 })
 export class AuthModule {}

@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+export interface TokenPayload {
+  userId: string;
+}
 
 @Injectable()
 export class AuthService {
-  getHello(): string {
-    return 'Hello World!';
-  }
+  constructor(private readonly configService: ConfigService) {}
 }
