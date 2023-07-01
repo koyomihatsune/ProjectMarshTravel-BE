@@ -4,10 +4,19 @@ import { AbstractDocument } from '@app/common';
 @Schema({ versionKey: false })
 export class User extends AbstractDocument {
   @Prop()
-  username: string;
+  username?: string;
 
   @Prop()
-  googleAccountId: string;
+  name: string;
+
+  @Prop()
+  provider: string;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  phoneNumber?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

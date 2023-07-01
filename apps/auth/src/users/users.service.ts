@@ -1,49 +1,60 @@
 import {
   Injectable,
+  UnprocessableEntityException,
   // UnauthorizedException,
   // UnprocessableEntityException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repo';
 import { CreateUserRequest } from './dto/create-user.request';
-// import { User } from './schemas/user.schema';
+import { User } from './schemas/user.schema';
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async createUser(request: CreateUserRequest) {
+  async loginWithEmail(request: {
+    email: string;
+    provider: string;
+    googleDecodedToken?: DecodedIdToken;
+  }) {
+    // Kiểm tra email có tồn tại hay không, nếu không thì tạo user mới luôn, rồi tạo JWT.
+    const user = await this.getUserByEmail(request.email);
+
+    // User chưa tồn tại, tạo user mới
+    if (!user) {
+      let decodedToken: DecodedIdToken | null;
+      if (request.provider === 'firebase_google') {
+        decodedToken = request.googleDecodedToken;
+        const createUserRequestDTO: CreateUserRequest = {
+          email: decodedToken.email,
+          provider: decodedToken.firebase.sign_in_provider,
+          name: decodedToken.name,
+        };
+        await this.createUser(createUserRequestDTO);
+      }
+    }
+
+    // Generate JWT Token cho user đã tồn tại trên hệ thống
     return request;
-    // await this.validateCreateUserRequest(request);
-    // const user = await this.usersRepository.create({
-    //   ...request,
-    //   password: await bcrypt.hash(request.password, 10),
-    // });
-    // return user;
   }
 
-  // private async validateCreateUserRequest(request: CreateUserRequest) {
-  //   let user: User;
-  //   try {
-  //     user = await this.usersRepository.findOne({
-  //       email: request.email,
-  //     });
-  //   } catch (err) {}
+  async createUser(request: CreateUserRequest) {
+    const user = await this.usersRepository.create({
+      ...request,
+    });
+    return user;
+  }
 
-  //   if (user) {
-  //     throw new UnprocessableEntityException('Email already exists.');
-  //   }
-  // }
-
-  // async validateUser(email: string, password: string) {
-  //   const user = await this.usersRepository.findOne({ email });
-  //   const passwordIsValid = await bcrypt.compare(password, user.password);
-  //   if (!passwordIsValid) {
-  //     throw new UnauthorizedException('Credentials are not valid.');
-  //   }
-  //   return user;
-  // }
-
-  // async getUser(getUserArgs: Partial<User>) {
-  //   return this.usersRepository.findOne(getUserArgs);
-  // }
+  async getUserByEmail(email: string) {
+    let user: User;
+    try {
+      user = await this.usersRepository.findOne({
+        email: email,
+      });
+      return user;
+    } catch (err) {
+      return new UnprocessableEntityException('user');
+    }
+  }
 }

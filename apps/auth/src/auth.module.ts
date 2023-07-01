@@ -10,6 +10,7 @@ import {
 } from '@app/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './users/schemas/user.schema';
+import { UsersModule } from './users/users.module';
 // import { DESTINATION_SERVICE } from './constants/services';
 
 @Module({
@@ -27,6 +28,7 @@ import { User, UserSchema } from './users/schemas/user.schema';
     DatabaseModule,
     RmqModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    UsersModule,
     // RmqModule.register({
     //   name: DESTINATION_SERVICE,
     // }),

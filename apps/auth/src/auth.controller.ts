@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { firebaseAdmin } from '@app/common';
 
 @Controller('auth')
 export class AuthController {
@@ -17,17 +16,14 @@ export class AuthController {
     return 'Hello';
   }
 
-  @Post('authenticate')
-  async authenticate(@Body() body: { token: string }) {
+  @Post('login')
+  async login(@Body() body: { token: string }) {
     const { token } = body;
-
     try {
-      const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
-      const userId = decodedToken.uid;
-      // eslint-disable-next-line no-console
-      console.log('UserID extracted from Firebase Token is: ' + userId);
-
-      return { success: true };
+      const result = this.authService.firebaseAuthenticateWithToken({
+        token: token,
+      });
+      return result;
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired token');
     }
