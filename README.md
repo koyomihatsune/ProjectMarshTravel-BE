@@ -9,7 +9,11 @@ This is the monolithic repository of MarshTravel's Back-end API services, based 
 
 ```bash
 # macOS - Install MongoDB Community to run on local 
-$ brew install mongodb-community@6.0
+$ brew tap mongodb/brew
+
+$ brew install mongodb-community
+
+$ brew services start mongodb-community
 
 # Install dependencies (requires Node.js 16.15.0, yarn and Docker)
 $ cd /path/to/ProjectMarshTravel-BE
