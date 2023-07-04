@@ -12,3 +12,9 @@ dotenv.config();
 export const ERROR_CODE_AUTH_ONLY = {
   InvalidToken: 410000,
 };
+
+export const ERROR_CODE_AUTH_COMMIT1 = {
+  InvalidToken: 410000,
+  InvalidToken1: 410000,
+};
+
