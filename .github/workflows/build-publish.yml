@@ -28,22 +28,21 @@ jobs:
         run: |
           echo "Current branch to compare modified services is $(git rev-parse --abbrev-ref HEAD)"
           git fetch 
-          services_changed=()
-          is_common_changed=false
-          services_changed=($(git diff HEAD^ --name-only | grep '^apps/' | cut -d/ -f2 | sort -u))
+          temp_services_changed=()
+          temp_is_common_changed=false
+          temp_services_changed=($(git diff HEAD^ --name-only | grep '^apps/' | cut -d/ -f2 | sort -u))
           if git diff HEAD^ --name-only | grep -qv '^apps/'; then
-            is_common_changed=true
+            temp_is_common_changed=true
           fi
-          echo "Modified services: ${services_changed[@]}"
-          echo "Is common services changed: $is_common_changed"
-          echo "::set-env name=SERVICES_CHANGED::$services_changed"
-          echo "::set-env name=IS_COMMON_CHANGED::$is_common_changed"
-          echo "$SERVICES_CHANGED"
-          echo "$IS_COMMON_CHANGED"
-
+          echo "Modified services: ${temp_services_changed[@]}"
+          echo "Is common services changed: $temp_is_common_changed"
+          echo "SERVICES_CHANGED=$temp_services_changed" >> $GITHUB_ENV
+          echo "IS_COMMON_CHANGED=$temp_is_common_changed" >> $GITHUB_ENV
 
       - name: Build services
         run: |
+          echo "$IS_COMMON_CHANGED"
+          echo "$SERVICES_CHANGED"
           if [ "$IS_COMMON_CHANGED" = true ]; then
             for service in apps/*; do
               if [ -d "$service" ]; then
