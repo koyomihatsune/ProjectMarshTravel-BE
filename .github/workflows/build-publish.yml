@@ -1,0 +1,81 @@
+name: MarshTravel Microservice Backend Smart Build and Publish Action
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+env:
+  REGISTRY: ghcr.io
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout lastest code with adaptable branches
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Determine changed services
+        id: changes
+        run: |
+          echo "Current branch to compare modified services is $(git rev-parse --abbrev-ref HEAD)"
+          git fetch 
+          services_changed=()
+          is_common_changed=false
+          services_changed=($(git diff HEAD^ --name-only | grep '^apps/' | cut -d/ -f2 | sort -u))
+          if git diff HEAD^ --name-only | grep -qv '^apps/'; then
+            is_common_changed=true
+          fi
+          echo "Modified services: ${services_changed[@]}"
+          echo "Is common services changed: $is_common_changed"
+
+      - name: Build services
+        run: |
+          if [ "$is_common_changed" = true ]; then
+            for service in apps/*; do
+              if [ -d "$service" ]; then
+                echo "Build $(basename "$service" | cut -d'/' -f2)"
+                docker build -t "marshtravel-$(basename "$service" | cut -d'/' -f2)" -f $service/Dockerfile .
+              fi
+            done
+          else
+            for service in "${services_changed[@]}"; do
+              echo "Build $service"
+              docker build -t "marshtravel-$service" -f "apps/$service" .
+            done
+          fi
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2.2.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push images to GitHub Packages
+        run: |
+          if [ "$is_common_changed" = true ]; then
+            for service in apps/*; do
+              if [ -d "$service" ]; then
+                echo "Pushing marshtravel-$(basename "$service" | cut -d'/' -f2) image"
+                docker push "ghcr.io/${{ github.repository }}/marshtravel-$(basename "$service" | cut -d'/' -f2)"
+              fi
+            done
+          else
+            for service in "${services_changed[@]}"; do
+              echo "Pushing marshtravel-$service image"
+              docker push "ghcr.io/${{ github.repository }}/marshtravel-$service"
+            done
+          fi
+
+
+    
+
