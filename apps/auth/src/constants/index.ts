@@ -15,6 +15,8 @@ export const ERROR_CODE_AUTH_ONLY = {
 
 export const ERROR_CODE_AUTH_COMMIT1 = {
   InvalidToken: 410000,
-  InvalidToken1: 410000,
 };
 
+export const ERROR_CODE_AUTH_COMMIT2 = {
+  InvalidToken: 410000,
+};
