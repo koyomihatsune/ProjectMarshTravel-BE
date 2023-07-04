@@ -27,7 +27,7 @@ jobs:
         id: changes
         run: |
           echo "Current branch to compare modified services is $(git rev-parse --abbrev-ref HEAD)"
-          git fetch 
+          git fetch --all
           services_changed=()
           is_common_changed=false
           services_changed=($(git diff HEAD^ --name-only | grep '^apps/' | cut -d/ -f2 | sort -u))
