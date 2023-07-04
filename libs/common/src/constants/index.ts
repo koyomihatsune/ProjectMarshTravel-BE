@@ -37,6 +37,3 @@ export const STORAGE_PATH = {
   UserAvatar: process.env.GCS_ENV + '/avatars',
   UserAudio: process.env.GCS_ENV + '/user_audio_records',
 };
-
-export const WEAKNESS_SCORE_LIMIT = 60;
-export const AUDIO_PASSING_SCORE = 70;

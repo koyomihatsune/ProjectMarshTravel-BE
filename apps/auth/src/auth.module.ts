@@ -22,8 +22,8 @@ import { UsersModule } from './users/users.module';
         RABBIT_MQ_URI: Joi.string().required(),
         RABBIT_MQ_AUTH_QUEUE: Joi.string().required(),
       }),
+      ignoreEnvFile: true,
       // Nếu không tìm được một environment variable nào đó sẽ báo lỗi
-      envFilePath: './apps/orders/.env',
     }),
     DatabaseModule,
     RmqModule,
