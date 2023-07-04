@@ -47,13 +47,13 @@ jobs:
             for service in apps/*; do
               if [ -d "$service" ]; then
                 echo "Build $(basename "$service" | cut -d'/' -f2)"
-                docker build -t "marshtravel-$(basename "$service" | cut -d'/' -f2)" -f $service/Dockerfile .
+                docker build -t "ghcr.io/marshtravel/marshtravel-$(basename "$service" | cut -d'/' -f2):${{ github.ref }}-lastest" -f $service/Dockerfile .
               fi
             done
           else
             for service in "${SERVICES_CHANGED[@]}"; do
               echo "Build $service"
-              docker build -t "marshtravel-$service" -f "apps/$service" .
+              docker build -t "ghcr.io/marshtravel/marshtravel-$service:${{ github.ref }}-lastest" -f "apps/$service" .
             done
           fi
 
@@ -70,12 +70,12 @@ jobs:
             for service in apps/*; do
               if [ -d "$service" ]; then
                 echo "Pushing marshtravel-$(basename "$service" | cut -d'/' -f2) image"
-                docker push "ghcr.io/${{ github.repository }}/marshtravel-$(basename "$service" | cut -d'/' -f2)"
+                docker push "ghcr.io/marshtravel/marshtravel-$(basename "$service" | cut -d'/' -f2):${{ github.ref }}-lastest"
               fi
             done
           else
             for service in "${SERVICES_CHANGED[@]}"; do
               echo "Pushing marshtravel-$service image"
-              docker push "ghcr.io/${{ github.repository }}/marshtravel-$service"
+              docker push "ghcr.io/marshtravel/marshtravel-$service:${{ github.ref }}-lastest"
             done
           fi
