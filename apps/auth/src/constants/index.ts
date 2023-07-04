@@ -10,18 +10,5 @@ dotenv.config();
 // Next error happens on auth domain because of client will have value 410001
 
 export const ERROR_CODE_AUTH_ONLY = {
-  UnexpectedError: 500000,
-  NotFoundError: 500404,
-  TooManyRequest: 400429,
-  InvalidClassValidator: 400001,
   InvalidToken: 410000,
-  InvalidCredential: 420000,
-  VerifiedOnly: 420003,
-  UnverifiedOnly: 420004,
-  EmailSendLimit: 420005,
-  EmailAlreadyTaken: 420000,
-  UnmatchedExpectedData: 420002,
-  InvalidFormat: 420003,
-  CustomerIdExist: 440000,
-  ConnectStorageError: 530000,
 };
