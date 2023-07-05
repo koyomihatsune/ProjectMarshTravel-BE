@@ -1,4 +1,4 @@
-name: MarshTravel Microservice Backend Smart Build and Publish Action
+name: Build image and publish to GitHub Package
 
 on:
   push:

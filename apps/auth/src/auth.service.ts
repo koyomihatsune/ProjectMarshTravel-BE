@@ -15,20 +15,17 @@ export class AuthService {
   ) {}
 
   async firebaseAuthenticateWithToken(request: TokenPayload) {
-    const decodedToken = await firebaseAdmin
-      .auth()
-      .verifyIdToken(request.token);
+    try {
+      const decodedIdToken = await firebaseAdmin
+        .auth()
+        .verifyIdToken(request.token);
+      return decodedIdToken;
+    } catch (err) {
+      return null;
+    }
     // const userId = decodedToken.uid;
     // eslint-disable-next-line no-console
-
     // trả về success kèm jwt
-    const userLoginResult = await this.usersService.loginWithEmail({
-      email: decodedToken.email,
-      provider: 'firebase_google',
-      googleDecodedToken: decodedToken,
-    });
-
-    return userLoginResult;
     // })
   }
 }

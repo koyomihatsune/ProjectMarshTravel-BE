@@ -6,7 +6,10 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { API_MESSAGE, STR_COMMON } from 'src/shared/constants/string.constants';
+import {
+  API_MESSAGE,
+  STR_COMMON,
+} from '@app/common/constants/string.constants';
 import { TransformResponse } from '../models/response_DTO';
 
 @Catch()

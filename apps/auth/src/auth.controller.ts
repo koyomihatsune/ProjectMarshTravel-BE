@@ -1,31 +1,44 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { LoginUseCase } from './usecase/login/login.usecase';
+import * as LoginUseCaseErrors from './usecase/login/login.errors';
+import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
+import { USER_RESPONSE_MESSAGES } from '@app/common/core/infra/http/decorators/response.constants';
+import { Public } from './decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly loginUseCase: LoginUseCase) {}
 
   @Get('test')
   getHello(): string {
     return 'Hello';
   }
 
+  @Public()
   @Post('login')
+  @ResponseMessage(USER_RESPONSE_MESSAGES.CommonSuccess)
   async login(@Body() body: { token: string }) {
     const { token } = body;
-    try {
-      const result = this.authService.firebaseAuthenticateWithToken({
-        token: token,
-      });
-      return result;
-    } catch (error) {
-      throw new UnauthorizedException('Invalid or expired token');
+    const result = await this.loginUseCase.execute({
+      token: token,
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case LoginUseCaseErrors.InvalidCredential:
+        throw new UnauthorizedException(error.getErrorValue());
+      default:
+        throw new BadRequestException(error.getErrorValue());
     }
   }
 }
