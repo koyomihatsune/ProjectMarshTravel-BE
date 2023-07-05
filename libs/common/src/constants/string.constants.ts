@@ -1,3 +1,19 @@
+export const API_MESSAGE = {
+  TokenRefreshSuccess: 'Token refreshed success',
+  UnknownErrorHappen: 'Unknown error happens',
+  InvalidToken: 'Invalid token',
+  InvalidRequestField: 'You have submit an(some) invalid field(s)',
+};
+
+export const ERROR_MESSAGE = {
+  UnexpectedError: `An unexpected error occurred.`,
+  SomethingsWentWrong: 'Somethings went wrong.',
+  TokenGenerationError: 'Token generation error',
+  EntityNotFound: 'Entity {0} not found',
+  TooManyRequests: 'Too many requests',
+  DateTimeNotValid: 'Datetime is not valid',
+};
+
 export const STR_COMMON = {
   Success: 'Success',
   Fail: 'Fail',

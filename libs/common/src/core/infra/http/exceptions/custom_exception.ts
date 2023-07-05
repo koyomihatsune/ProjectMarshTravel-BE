@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ERROR_MESSAGE } from 'src/shared/constants/string.constants';
+import { ERROR_MESSAGE } from '@app/common/constants/string.constants';
 
 export class CustomException extends HttpException {
   constructor(msg?: string, status?: HttpStatus) {

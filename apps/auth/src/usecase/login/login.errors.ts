@@ -11,15 +11,6 @@ export class InvalidCredential extends Result<UseCaseError> {
   }
 }
 
-export class UnverifiedUser extends Result<UseCaseError> {
-  constructor() {
-    super(false, {
-      message: `Unverified User`,
-      code: ERROR_CODE.VerifiedOnly,
-    });
-  }
-}
-
 export default {
   InvalidCredential,
 };

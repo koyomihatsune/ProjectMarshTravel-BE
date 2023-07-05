@@ -34,9 +34,12 @@ export class UsersService {
         await this.createUser(createUserRequestDTO);
       }
     }
-
     // Generate JWT Token cho user đã tồn tại trên hệ thống
-    return request;
+    return {
+      accessToken: '',
+      refreshToken: '',
+      isNewAccount: user ? false : true,
+    };
   }
 
   async createUser(request: CreateUserRequest) {
