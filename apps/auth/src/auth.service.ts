@@ -2,8 +2,11 @@ import { firebaseAdmin } from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './users/users.service';
+import { User } from './users/schemas/user.schema';
+import { JwtService } from '@nestjs/jwt';
+import { JWT_CONSTANTS } from './constants';
 
-export interface TokenPayload {
+export interface firebaseAuthPayload {
   token: string;
 }
 
@@ -12,9 +15,11 @@ export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async firebaseAuthenticateWithToken(request: TokenPayload) {
+  // Authenticate bằng Firebase
+  async firebaseAuthenticateWithToken(request: firebaseAuthPayload) {
     try {
       const decodedIdToken = await firebaseAdmin
         .auth()
@@ -23,9 +28,40 @@ export class AuthService {
     } catch (err) {
       return null;
     }
-    // const userId = decodedToken.uid;
-    // eslint-disable-next-line no-console
-    // trả về success kèm jwt
-    // })
+  }
+
+  // Tạo token mới cho user
+  async generateAccessToken(user: User) {
+    const jwtPayload = {
+      sub: user._id,
+      username: user.email,
+      //username key here should be email
+    };
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(jwtPayload, {
+        secret: this.configService.get<string>(JWT_CONSTANTS.AccessSecretKey),
+        expiresIn: '7d',
+      }),
+      this.jwtService.signAsync(jwtPayload, {
+        secret: this.configService.get<string>(JWT_CONSTANTS.RefreshSecretKey),
+        expiresIn: '15d',
+      }),
+    ]);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  // Verify token đó liệu đã đúng hay chưa
+  async validateToken(token: string, tokenType: string) {
+    const foundUser =
+      tokenType === 'accessToken'
+        ? await this.usersService.getUserByAccessToken(token)
+        : await this.usersService.getUserByRefreshToken(token);
+
+    return foundUser !== undefined;
   }
 }

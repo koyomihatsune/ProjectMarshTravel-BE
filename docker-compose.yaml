@@ -14,6 +14,23 @@ services:
       - '3001:3001'
     depends_on:
       - rabbitmq
+
+  destination:
+    build:
+      context: .
+      dockerfile: ./apps/destination/Dockerfile
+      target: development
+    command: npm run start:dev destination
+    env_file:
+      - ./apps/destination/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3002:3002'
+    depends_on:
+      - rabbitmq
+      - auth
     
   rabbitmq:
     image: rabbitmq

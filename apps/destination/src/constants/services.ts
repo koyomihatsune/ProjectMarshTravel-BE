@@ -1,0 +1,1 @@
+export const AUTH_SERVICE = 'RABBIT_MQ_AUTH_SERVICE';
