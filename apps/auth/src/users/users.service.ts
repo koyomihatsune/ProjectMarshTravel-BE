@@ -40,11 +40,12 @@ export class UsersService {
       }
     }
 
-    // const token = await this.authService.generateAccessToken(user);
-    const token = {
-      accessToken: 'a',
-      refreshToken: 'b',
-    };
+    const token = await this.authService.generateAccessToken(user);
+    // Trong trường hợp token không dùng được
+    // const token = {
+    //   accessToken: 'a',
+    //   refreshToken: 'b',
+    // };
 
     await this.updateUserToken(user._id, {
       accessToken: token.accessToken,
@@ -59,19 +60,11 @@ export class UsersService {
   }
 
   async createUser(request: CreateUserRequest) {
-    const user = await this.usersRepository.create({
-      ...request,
-      accessToken: '',
-      refreshToken: '',
-      createdAt: new Date(),
-    });
+    const user = await this.usersRepository.createUser(request);
     return user;
   }
-
   async getUserByEmail(email: string) {
-    const user = await this.usersRepository.findOne({
-      email: email,
-    });
+    const user = await this.usersRepository.getUserByEmail(email);
     return user;
   }
 
@@ -83,15 +76,11 @@ export class UsersService {
   }
 
   getUserByAccessToken = async (token: string) => {
-    return this.usersRepository.findOne({
-      accessToken: token,
-    });
+    return this.usersRepository.getUserByAccessToken(token);
   };
 
   getUserByRefreshToken = async (token: string) => {
-    return this.usersRepository.findOne({
-      refreshToken: token,
-    });
+    return this.usersRepository.getUserByRefreshToken(token);
   };
 
   updateUserToken = async (
@@ -101,11 +90,6 @@ export class UsersService {
       refreshToken?: string;
     },
   ) => {
-    return this.usersRepository.upsert(
-      {
-        _id: _id,
-      },
-      tokenPayload,
-    );
+    return this.usersRepository.updateUserToken(_id, tokenPayload);
   };
 }

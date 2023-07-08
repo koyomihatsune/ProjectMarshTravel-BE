@@ -16,6 +16,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from '@app/common/core/infra/http/exceptions/exception.filter';
 import { PassportModule } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { DESTINATION_SERVICE } from './constants/services';
+import { JwtStrategy } from './strategies/jwt.strategy';
 // import { DESTINATION_SERVICE } from './constants/services';
 
 @Module({
@@ -40,14 +42,15 @@ import { JwtService } from '@nestjs/jwt';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     UsersModule,
-    // RmqModule.register({
-    //   name: DESTINATION_SERVICE,
-    // }),
+    RmqModule.register({
+      name: DESTINATION_SERVICE,
+    }),
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
     JwtService,
+    JwtStrategy,
     LoginUseCase,
     {
       provide: APP_FILTER,
