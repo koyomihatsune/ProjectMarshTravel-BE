@@ -20,3 +20,8 @@ export const ERROR_CODE_AUTH_COMMIT1 = {
 export const ERROR_CODE_AUTH_COMMIT2 = {
   InvalidToken: 410000,
 };
+
+export const JWT_CONSTANTS = {
+  AccessSecretKey: 'JWT_SECRET_KEY',
+  RefreshSecretKey: 'JWT_REFRESH_KEY',
+};

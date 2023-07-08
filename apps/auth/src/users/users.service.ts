@@ -1,17 +1,20 @@
-import {
-  Injectable,
-  UnprocessableEntityException,
-  // UnauthorizedException,
-  // UnprocessableEntityException,
-} from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UsersRepository } from './users.repo';
 import { CreateUserRequest } from './dto/create-user.request';
-import { User } from './schemas/user.schema';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+import { AuthService } from '../auth.service';
+import { Types } from 'mongoose';
 
+export interface TokenPayload {
+  accessToken: string;
+}
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
+    private readonly usersRepository: UsersRepository,
+  ) {}
 
   async loginWithEmail(request: {
     email: string;
@@ -19,7 +22,8 @@ export class UsersService {
     googleDecodedToken?: DecodedIdToken;
   }) {
     // Kiểm tra email có tồn tại hay không, nếu không thì tạo user mới luôn, rồi tạo JWT.
-    const user = await this.getUserByEmail(request.email);
+    let user = await this.getUserByEmail(request.email);
+    let initUser = false;
 
     // User chưa tồn tại, tạo user mới
     if (!user) {
@@ -31,33 +35,77 @@ export class UsersService {
           provider: decodedToken.firebase.sign_in_provider,
           name: decodedToken.name,
         };
-        await this.createUser(createUserRequestDTO);
+        user = await this.createUser(createUserRequestDTO);
+        initUser = true;
       }
     }
-    // Generate JWT Token cho user đã tồn tại trên hệ thống
+
+    // const token = await this.authService.generateAccessToken(user);
+    const token = {
+      accessToken: 'a',
+      refreshToken: 'b',
+    };
+
+    await this.updateUserToken(user._id, {
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken,
+    });
+
     return {
-      accessToken: '',
-      refreshToken: '',
-      isNewAccount: user ? false : true,
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken,
+      isNewAccount: initUser,
     };
   }
 
   async createUser(request: CreateUserRequest) {
     const user = await this.usersRepository.create({
       ...request,
+      accessToken: '',
+      refreshToken: '',
+      createdAt: new Date(),
     });
     return user;
   }
 
   async getUserByEmail(email: string) {
-    let user: User;
-    try {
-      user = await this.usersRepository.findOne({
-        email: email,
-      });
-      return user;
-    } catch (err) {
-      return new UnprocessableEntityException('user');
-    }
+    const user = await this.usersRepository.findOne({
+      email: email,
+    });
+    return user;
   }
+
+  async getUser(_id: Types.ObjectId) {
+    const user = await this.usersRepository.findOne({
+      _id: _id,
+    });
+    return user;
+  }
+
+  getUserByAccessToken = async (token: string) => {
+    return this.usersRepository.findOne({
+      accessToken: token,
+    });
+  };
+
+  getUserByRefreshToken = async (token: string) => {
+    return this.usersRepository.findOne({
+      refreshToken: token,
+    });
+  };
+
+  updateUserToken = async (
+    _id: Types.ObjectId,
+    tokenPayload: {
+      accessToken?: string;
+      refreshToken?: string;
+    },
+  ) => {
+    return this.usersRepository.upsert(
+      {
+        _id: _id,
+      },
+      tokenPayload,
+    );
+  };
 }

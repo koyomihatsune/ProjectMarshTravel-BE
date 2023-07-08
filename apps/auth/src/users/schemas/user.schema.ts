@@ -17,6 +17,15 @@ export class User extends AbstractDocument {
 
   @Prop()
   phoneNumber?: string;
+
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  accessToken: string;
+
+  @Prop()
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

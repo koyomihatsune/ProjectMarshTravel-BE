@@ -5,12 +5,17 @@ import {
   Get,
   Post,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { LoginUseCase } from './usecase/login/login.usecase';
 import * as LoginUseCaseErrors from './usecase/login/login.errors';
 import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
 import { USER_RESPONSE_MESSAGES } from '@app/common/core/infra/http/decorators/response.constants';
 import { Public } from './decorators/auth.decorator';
+import JwtAuthGuard from './guards/jwt-auth.guard';
+import { MessagePattern } from '@nestjs/microservices';
+import { CurrentUser } from './current-user.decorator';
+import { User } from './users/schemas/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -40,5 +45,11 @@ export class AuthController {
       default:
         throw new BadRequestException(error.getErrorValue());
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @MessagePattern('validate_user')
+  async validateUser(@CurrentUser() user: User) {
+    return user;
   }
 }
