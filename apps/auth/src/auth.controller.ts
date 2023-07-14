@@ -34,6 +34,7 @@ export class AuthController {
     const result = await this.loginUseCase.execute({
       token: token,
     });
+    console.log("Finish");
     if (result.isRight()) {
       const dto = result.value.getValue();
       return dto;

@@ -16,6 +16,8 @@ permissions:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    outputs:
+      shouldRunDeploy: ${{ steps.laststep.outputs.SHOULD_RUN_DEPLOY }}
     steps:
       - name: Checkout lastest code with adaptable branches
         uses: actions/checkout@v3
@@ -31,18 +33,25 @@ jobs:
           temp_services_changed=()
           temp_is_common_changed=false
           temp_services_changed=($(git diff HEAD^ --name-only | grep '^apps/' | cut -d/ -f2 | sort -u))
-          if git diff HEAD^ --name-only | grep -qv '^apps/'; then
+          if git diff HEAD^ --name-only | grep -qvE '^apps/|^\.github/workflows/'; then
             temp_is_common_changed=true
           fi
           echo "Modified services: ${temp_services_changed[@]}"
           echo "Is common services changed: $temp_is_common_changed"
+          if (( ${#temp_services_changed[@]} == 0 )); then
+            echo "IS_NO_SERVICES_CHANGED=true" >> $GITHUB_ENV
+          else
+            echo "IS_NO_SERVICES_CHANGED=false" >> $GITHUB_ENV
+          fi
           echo "SERVICES_CHANGED=$temp_services_changed" >> $GITHUB_ENV
           echo "IS_COMMON_CHANGED=$temp_is_common_changed" >> $GITHUB_ENV
 
       - name: Build services
+        id: laststep
         run: |
           echo "$IS_COMMON_CHANGED"
           echo "$SERVICES_CHANGED"
+          echo "$IS_NO_SERVICES_CHANGED"
           if [ "$IS_COMMON_CHANGED" = true ]; then
             for service in apps/*; do
               if [ -d "$service" ]; then
@@ -51,10 +60,14 @@ jobs:
               fi
             done
           else
-            for service in "${SERVICES_CHANGED[@]}"; do
-              echo "Build $service"
-              docker build -t "ghcr.io/marshtravel/marshtravel-$service:-lastest" -f "apps/$service" .
-            done
+            if [ "$IS_NO_SERVICES_CHANGED" = true ]; then
+              echo "No services changed, did not build anything."
+            else 
+              for service in "${SERVICES_CHANGED[@]}"; do
+                echo "Build $service"
+                docker build -t "ghcr.io/marshtravel/marshtravel-$service:lastest" -f "apps/$service/Dockerfile" .
+              done
+            fi
           fi
 
       - name: Log in to the Container registry
@@ -73,29 +86,42 @@ jobs:
                 docker push "ghcr.io/marshtravel/marshtravel-$(basename "$service" | cut -d'/' -f2):lastest"
               fi
             done
+            echo "SHOULD_RUN_DEPLOY=true" >> $GITHUB_OUTPUT
           else
-            for service in "${SERVICES_CHANGED[@]}"; do
-              echo "Pushing marshtravel-$service image"
-              docker push "ghcr.io/marshtravel/marshtravel-$service:lastest"
-            done
+            if [ "$IS_NO_SERVICES_CHANGED" = true ]; then
+              echo "No services changed, did not build anything."
+              echo "SHOULD_RUN_DEPLOY=$IS_NO_SERVICES_CHANGED" >> $GITHUB_OUTPUT
+            else 
+              for service in "${SERVICES_CHANGED[@]}"; do
+                echo "Pushing marshtravel-$service image"
+                docker push "ghcr.io/marshtravel/marshtravel-$service:lastest"
+              done
+              echo "SHOULD_RUN_DEPLOY=true" >> $GITHUB_OUTPUT
+            fi
           fi
+
   deploy:
+    needs: build-and-push-image
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout CD Helm Repo
-        uses: actions/checkout@v3
-        with:
-          repository: MarshTravel/ProjectMarshTravel-CD
-          token: ${{ secrets.MY_PAT }}
-      
-      - name: Install Helm and kubectl
+    steps:     
+
+      - name: Get shouldRunDeploy
+        env:
+          shouldRunDeploy: ${{needs.build-and-push-image.outputs.shouldRunDeploy}}
         run: |
-          sudo apt-get install kubectl
-          sudo apt-get install helm
+          echo "$shouldRunDeploy"
+          
+      - name: Install Helm, kubectl and yq
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
-          ls 
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
           
       - id: 'auth'
         uses: 'google-github-actions/auth@v1'
@@ -105,9 +131,6 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
 
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-
       - name: 'Setup gke-gcloud-auth-plugin'
         run: 'gcloud components install gke-gcloud-auth-plugin'
 
@@ -115,6 +138,50 @@ jobs:
         run: |
           gcloud container clusters get-credentials marshtravel --region=us-central1-a
           kubectl config current-context
+
+      - name: Checkout CD Helm Repo
+        uses: actions/checkout@v3
+        with:
+          repository: MarshTravel/ProjectMarshTravel-CD
+          token: ${{ secrets.MY_PAT }}
+          path: ./marshtravel-cd
+
+      - name: 'Add values from secret to values.yaml'
+        env:
+          RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
+          RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+          MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          JWT_REFRESH_KEY: ${{ secrets.JWT_REFRESH_KEY }}
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: |
+          ls
+          cd marshtravel-cd
+          ls
+          echo "Start writing secrets"
+          cp values.yaml.example values.yaml
+          cat values.yaml
+          yq eval-all -i 'select(fileIndex == 0) | select(.rabbitmq.auth.username) | .rabbitmq.auth.username = env(RABBITMQ_USERNAME)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.rabbitmq.auth.password) | .rabbitmq.auth.password = env(RABBITMQ_PASSWORD)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.mongodb.auth.username) | .mongodb.auth.username = env(MONGODB_USERNAME)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.mongodb.auth.password) | .mongodb.auth.password = env(MONGODB_PASSWORD)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.jwtSecret.secretKey) | .jwtSecret.secretKey = env(JWT_SECRET_KEY)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.jwtSecret.refreshKey) | .jwtSecret.refreshKey = env(JWT_REFRESH_KEY)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.firebase.serviceAccount) | .firebase.serviceAccount = env(FIREBASE_SA)' values.yaml values.yaml.example
+          echo "End writing secrets"
+          cat values.yaml
+      
+      - name: 'Deploy to GKE with Helm'
+        run: |
+          ls
+          cd marshtravel-cd
+          helm dependency build
+          helm upgrade --install marshtravel . --namespace default --create-namespace --atomic --timeout 10m0s --wait --debug
+          
+  
+
+
       
 
       
