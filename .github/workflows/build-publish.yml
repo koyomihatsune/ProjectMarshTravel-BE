@@ -1,4 +1,4 @@
-name: Build image and publish to GitHub Package
+name: build-publish
 
 on:
   push:
