@@ -3,7 +3,6 @@ name: build-publish
 on:
   push:
     branches:
-      - main
       - staging
 
 env:
