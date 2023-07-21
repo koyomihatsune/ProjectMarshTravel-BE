@@ -11,7 +11,9 @@ describe('DestinationController', () => {
       providers: [DestinationService],
     }).compile();
 
-    destinationController = app.get<DestinationController>(DestinationController);
+    destinationController = app.get<DestinationController>(
+      DestinationController,
+    );
   });
 
   describe('root', () => {

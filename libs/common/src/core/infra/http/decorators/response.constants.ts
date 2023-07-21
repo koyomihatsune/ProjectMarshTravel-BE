@@ -7,4 +7,5 @@ export const USER_RESPONSE_MESSAGES = {
 
 export const RESULT_RESPONSE_MESSAGE = {
   CommonSuccess: STR_COMMON.Success,
+  CommonFail: STR_COMMON.Fail,
 };

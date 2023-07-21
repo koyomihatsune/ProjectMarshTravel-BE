@@ -63,6 +63,7 @@ export class UsersService {
     const user = await this.usersRepository.createUser(request);
     return user;
   }
+
   async getUserByEmail(email: string) {
     const user = await this.usersRepository.getUserByEmail(email);
     return user;

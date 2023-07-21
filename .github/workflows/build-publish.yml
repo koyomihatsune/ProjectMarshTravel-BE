@@ -154,6 +154,7 @@ jobs:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           JWT_REFRESH_KEY: ${{ secrets.JWT_REFRESH_KEY }}
           FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           ls
           cd marshtravel-cd
@@ -168,6 +169,7 @@ jobs:
           yq eval-all -i 'select(fileIndex == 0) | select(.jwtSecret.secretKey) | .jwtSecret.secretKey = env(JWT_SECRET_KEY)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.jwtSecret.refreshKey) | .jwtSecret.refreshKey = env(JWT_REFRESH_KEY)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.firebase.serviceAccount) | .firebase.serviceAccount = env(FIREBASE_SA)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.googleMapsAPIKey) | .googleMapsAPIKey = env(GOOGLE_MAPS_API_KEY)' values.yaml values.yaml.example
           echo "End writing secrets"
           cat values.yaml
       

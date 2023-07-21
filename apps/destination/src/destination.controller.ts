@@ -1,13 +1,18 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { DestinationService } from './destination.service';
-import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
+import { GoogleMapsService } from './gmaps/gmaps.service';
+import { RESULT_RESPONSE_MESSAGE } from '@app/common/core/infra/http/decorators/response.constants';
+import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
+import { GOOGLE_MAPS_API } from './constants/services';
 
 @Controller('destination')
 export class DestinationController {
-  constructor(private readonly destinationService: DestinationService) {}
+  constructor(
+    private readonly destinationService: DestinationService,
+    private readonly googleMapsService: GoogleMapsService,
+  ) {}
 
   @Get('hello')
-  @UseGuards(JwtAuthGuard)
   getHello(): string {
     return this.destinationService.getHello();
   }
@@ -15,5 +20,14 @@ export class DestinationController {
   @Get('hello-no-auth')
   getHelloNoAuth(): string {
     return this.destinationService.getHello();
+  }
+
+  @Get('test')
+  @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
+  async findNearbyPlace() {
+    return await this.googleMapsService.getMultiplePlacesFromText({
+      input: 'highlands coffee',
+      language: GOOGLE_MAPS_API.QUERY_PARAMS.LANGUAGE.VIETNAMESE,
+    });
   }
 }
