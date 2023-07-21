@@ -1,8 +1,8 @@
 import { firebaseAdmin } from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UsersService } from './users/users.service';
-import { User } from './users/schemas/user.schema';
+import { UsersService } from './user/users.service';
+import { User } from './user/schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 import { JWT_CONSTANTS } from './constants';
 

@@ -15,7 +15,7 @@ import { Public } from './decorators/auth.decorator';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { MessagePattern } from '@nestjs/microservices';
 import { CurrentUser } from './current-user.decorator';
-import { User } from './users/schemas/user.schema';
+import { User } from './user/schemas/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -34,7 +34,6 @@ export class AuthController {
     const result = await this.loginUseCase.execute({
       token: token,
     });
-    console.log("Finish");
     if (result.isRight()) {
       const dto = result.value.getValue();
       return dto;

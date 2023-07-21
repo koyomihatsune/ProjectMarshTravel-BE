@@ -4,7 +4,7 @@ import { LoginResponseDTO, LoginDTO } from './login.dto';
 import { Injectable } from '@nestjs/common';
 import { UseCase } from '@app/common/core/usecase';
 import { AuthService } from '../../auth.service';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../user/users.service';
 import AppErrors from '@app/common/core/app.error';
 
 type Response = Either<

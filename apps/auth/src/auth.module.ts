@@ -9,8 +9,8 @@ import {
   // RmqModule
 } from '@app/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './users/schemas/user.schema';
-import { UsersModule } from './users/users.module';
+import { User, UserSchema } from './user/schemas/user.schema';
+import { UsersModule } from './user/users.module';
 import { LoginUseCase } from './usecase/login/login.usecase';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from '@app/common/core/infra/http/exceptions/exception.filter';

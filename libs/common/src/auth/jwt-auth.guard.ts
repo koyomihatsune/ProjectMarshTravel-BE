@@ -8,14 +8,27 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, Observable, tap } from 'rxjs';
 import { AUTH_SERVICE } from './services';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from 'apps/auth/src/decorators/auth.decorator';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(@Inject(AUTH_SERVICE) private authClient: ClientProxy) {}
+  constructor(
+    @Inject(AUTH_SERVICE) private authClient: ClientProxy,
+    private reflector: Reflector,
+  ) {}
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
+    const isPublic = this.reflector.get<boolean>(
+      IS_PUBLIC_KEY,
+      context.getHandler(),
+    );
+    if (isPublic) {
+      // Allow access to public routes
+      return true;
+    }
     const authentication = this.getAuthentication(context);
     return this.authClient
       .send('validate_user', {
@@ -36,6 +49,13 @@ export class JwtAuthGuard implements CanActivate {
     if (context.getType() === 'rpc') {
       authentication = context.switchToRpc().getData().Authentication;
     } else if (context.getType() === 'http') {
+      const isPublic = this.reflector.getAllAndOverride<boolean>(
+        IS_PUBLIC_KEY,
+        [context.getHandler(), context.getClass()],
+      );
+      if (isPublic) {
+        return true;
+      }
       const request = context.switchToHttp().getRequest();
       const authorizationHeader = request.headers.authorization;
       if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
