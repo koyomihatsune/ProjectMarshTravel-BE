@@ -3,7 +3,6 @@ import { DestinationService } from './destination.service';
 import { GoogleMapsService } from './gmaps/gmaps.service';
 import { RESULT_RESPONSE_MESSAGE } from '@app/common/core/infra/http/decorators/response.constants';
 import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
-import { Public } from 'apps/auth/src/decorators/auth.decorator';
 import { GOOGLE_MAPS_API } from './constants/services';
 
 @Controller('destination')
@@ -24,7 +23,6 @@ export class DestinationController {
   }
 
   @Get('test')
-  @Public()
   @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
   async findNearbyPlace() {
     return await this.googleMapsService.getMultiplePlacesFromText({
