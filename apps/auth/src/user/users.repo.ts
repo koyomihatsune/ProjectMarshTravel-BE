@@ -1,54 +1,68 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Model, Connection, Types } from 'mongoose';
+import { Model, Connection } from 'mongoose';
 import { AbstractRepository } from '@app/common';
-import { User } from './schemas/user.schema';
+import { UserDAO } from './schemas/user.schema';
 import { CreateUserRequest } from './dto/create-user.request';
+import { User } from './domain/user.entity';
+import { UserMapper } from './mapper/user.mapper';
+import { UserId } from './domain/user_id';
+import { UserEmail } from './domain/user_email';
 
 @Injectable()
-export class UsersRepository extends AbstractRepository<User> {
+export class UsersRepository extends AbstractRepository<UserDAO> {
   protected readonly logger = new Logger(UsersRepository.name);
 
   constructor(
-    @InjectModel(User.name) userModel: Model<User>,
+    @InjectModel(UserDAO.name) userModel: Model<UserDAO>,
     @InjectConnection() connection: Connection,
   ) {
     super(userModel, connection);
   }
 
-  async createUser(request: CreateUserRequest) {
-    const user = await this.create({
-      ...request,
-      accessToken: '',
-      refreshToken: '',
-      createdAt: new Date(),
-    });
-    return user;
-  }
-
-  async getUserByEmail(email: string) {
+  async createUser(request: CreateUserRequest): Promise<User | undefined> {
     try {
-      const user = await this.findOne({ email: email });
-      return user;
+      const user = await this.create({
+        ...request,
+        accessToken: '',
+        refreshToken: '',
+        createdAt: new Date(),
+      });
+      return UserMapper.toEntity(user);
     } catch (err) {
-      return null;
+      return undefined;
     }
   }
 
-  getUserByAccessToken = async (token: string) => {
-    return this.findOne({
-      accessToken: token,
-    });
+  async getUserByEmail(email: UserEmail): Promise<User | undefined> {
+    try {
+      const user = await this.findOne({ email: email.value });
+      return UserMapper.toEntity(user);
+    } catch (err) {
+      return undefined;
+    }
+  }
+
+  getUserByAccessToken = async (token: string): Promise<User | undefined> => {
+    try {
+      const user = await this.findOne({ accessToken: token });
+      return UserMapper.toEntity(user);
+    } catch (err) {
+      return undefined;
+    }
   };
 
-  getUserByRefreshToken = async (token: string) => {
-    return this.findOne({
-      refreshToken: token,
-    });
+  getUserByRefreshToken = async (token: string): Promise<User | undefined> => {
+    try {
+      const user = await this.findOne({ refreshToken: token });
+      return UserMapper.toEntity(user);
+    } catch (err) {
+      return undefined;
+    }
   };
 
   updateUserToken = async (
-    _id: Types.ObjectId,
+    id: UserId,
     tokenPayload: {
       accessToken?: string;
       refreshToken?: string;
@@ -56,7 +70,7 @@ export class UsersRepository extends AbstractRepository<User> {
   ) => {
     return this.upsert(
       {
-        _id: _id,
+        _id: id.getValue().toMongoObjectID(),
       },
       tokenPayload,
     );

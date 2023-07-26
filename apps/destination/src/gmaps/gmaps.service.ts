@@ -86,12 +86,9 @@ export class GoogleMapsService {
       region: this.isVietnamOnly ? 'VN' : '',
       opennow: dto.opennow ? 'true' : '',
       type: dto.type ? dto.type : '',
+      locationbias: dto.lat && dto.lon ? `${dto.lat},${dto.lon}` : '',
     });
-
-    // Lấy vĩ độ, kinh độ hiện tại
-    if (dto.lat && dto.lon) {
-      queryParams.append('location', `${dto.lat},${dto.lon}`);
-    }
+    // console.log("Lat lon tồn tại");
 
     const result = await this.fetchFromGoogleMapsAPI(
       GOOGLE_MAPS_API.ROUTES.PLACE.TEXT_SEARCH,
@@ -154,7 +151,7 @@ export class GoogleMapsService {
         place_id: dto.placeId,
         language: dto.language ? 'vi' : '',
         fields:
-          'address_components,formatted_address,photo,name,type,place_id,geometry,website,formatted_phone_number,opening_hours,price_level',
+          'address_components,formatted_address,photo,name,type,place_id,geometry,website,formatted_phone_number,price_level,current_opening_hours,secondary_opening_hours',
         sessiontoken: dto.sessionToken ? dto.sessionToken : '',
       }),
     );

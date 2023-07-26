@@ -3,7 +3,10 @@ import { UsersRepository } from './users.repo';
 import { CreateUserRequest } from './dto/create-user.request';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { AuthService } from '../auth.service';
-import { Types } from 'mongoose';
+import { User } from './domain/user.entity';
+import { UserEmail } from './domain/user_email';
+import { UserMapper } from './mapper/user.mapper';
+import { UserId } from './domain/user_id';
 
 export interface TokenPayload {
   accessToken: string;
@@ -21,8 +24,12 @@ export class UsersService {
     provider: string;
     googleDecodedToken?: DecodedIdToken;
   }) {
+    const userEmailOrError = UserEmail.create({ value: request.email });
+    if (userEmailOrError.isFailure) {
+      throw new Error('Email không hợp lệ');
+    }
     // Kiểm tra email có tồn tại hay không, nếu không thì tạo user mới luôn, rồi tạo JWT.
-    let user = await this.getUserByEmail(request.email);
+    let user: User = await this.getUserByEmail(userEmailOrError.getValue());
     let initUser = false;
 
     // User chưa tồn tại, tạo user mới
@@ -47,7 +54,7 @@ export class UsersService {
     //   refreshToken: 'b',
     // };
 
-    await this.updateUserToken(user._id, {
+    await this.updateUserToken(user.userId, {
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,
     });
@@ -59,38 +66,40 @@ export class UsersService {
     };
   }
 
-  async createUser(request: CreateUserRequest) {
+  async createUser(request: CreateUserRequest): Promise<User> {
     const user = await this.usersRepository.createUser(request);
     return user;
   }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: UserEmail): Promise<User> {
     const user = await this.usersRepository.getUserByEmail(email);
     return user;
   }
 
-  async getUser(_id: Types.ObjectId) {
-    const user = await this.usersRepository.findOne({
-      _id: _id,
+  async getUser(id: UserId): Promise<User> {
+    const result = await this.usersRepository.findOne({
+      _id: id.getValue().toMongoObjectID(),
     });
+    return UserMapper.toEntity(result);
+  }
+
+  async getUserByAccessToken(token: string): Promise<User> {
+    const user = await this.usersRepository.getUserByAccessToken(token);
     return user;
   }
 
-  getUserByAccessToken = async (token: string) => {
-    return this.usersRepository.getUserByAccessToken(token);
-  };
+  async getUserByRefreshToken(token: string): Promise<User> {
+    const user = await this.usersRepository.getUserByRefreshToken(token);
+    return user;
+  }
 
-  getUserByRefreshToken = async (token: string) => {
-    return this.usersRepository.getUserByRefreshToken(token);
-  };
-
-  updateUserToken = async (
-    _id: Types.ObjectId,
+  async updateUserToken(
+    id: UserId,
     tokenPayload: {
       accessToken?: string;
       refreshToken?: string;
     },
-  ) => {
-    return this.usersRepository.updateUserToken(_id, tokenPayload);
-  };
+  ) {
+    return this.usersRepository.updateUserToken(id, tokenPayload);
+  }
 }
