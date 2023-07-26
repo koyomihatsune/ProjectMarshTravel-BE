@@ -7,6 +7,7 @@ import { UserDAO } from './schemas/user.schema';
 import { AuthModule } from '../auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
+import { LoginWithProviderUseCase } from './usecase/login_with_provider/login_with_provider.usecase';
 
 @Module({
   imports: [
@@ -14,7 +15,13 @@ import { AuthService } from '../auth.service';
     forwardRef(() => AuthModule),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, AuthService, JwtService],
-  exports: [UsersService],
+  providers: [
+    UsersService,
+    UsersRepository,
+    AuthService,
+    JwtService,
+    LoginWithProviderUseCase,
+  ],
+  exports: [UsersService, LoginWithProviderUseCase],
 })
 export class UsersModule {}

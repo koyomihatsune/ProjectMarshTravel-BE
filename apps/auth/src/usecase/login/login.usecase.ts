@@ -6,6 +6,7 @@ import { UseCase } from '@app/common/core/usecase';
 import { AuthService } from '../../auth.service';
 import { UsersService } from '../../user/users.service';
 import AppErrors from '@app/common/core/app.error';
+import { LoginWithProviderUseCase } from '../../user/usecase/login_with_provider/login_with_provider.usecase';
 
 type Response = Either<
   LoginUseCaseErrors.InvalidCredential,
@@ -17,6 +18,7 @@ export class LoginUseCase implements UseCase<LoginDTO, Promise<Response>> {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
+    private loginWithProviderUseCase: LoginWithProviderUseCase,
   ) {}
 
   execute = async (payload: LoginDTO): Promise<Response> => {
@@ -28,7 +30,7 @@ export class LoginUseCase implements UseCase<LoginDTO, Promise<Response>> {
       return left(new LoginUseCaseErrors.InvalidCredential());
     }
 
-    const userLoginResult = await this.usersService.loginWithEmail({
+    const userLoginResult = await this.loginWithProviderUseCase.execute({
       email: decodedToken.email,
       provider: 'firebase_google',
       googleDecodedToken: decodedToken,
