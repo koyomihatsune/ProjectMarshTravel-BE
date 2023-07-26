@@ -28,7 +28,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const httpStatus = isHttpException
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
-
     const responseBody: TransformResponse<any> = {
       message: STR_COMMON.Fail,
       data: isHttpException

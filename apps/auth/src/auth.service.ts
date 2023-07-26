@@ -2,9 +2,9 @@ import { firebaseAdmin } from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './user/users.service';
-import { User } from './user/schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 import { JWT_CONSTANTS } from './constants';
+import { User } from './user/domain/user.entity';
 
 export interface firebaseAuthPayload {
   token: string;
@@ -33,8 +33,8 @@ export class AuthService {
   // Tạo token mới cho user
   async generateAccessToken(user: User) {
     const jwtPayload = {
-      sub: user._id,
-      username: user.email,
+      sub: user.userId.getValue().toString(),
+      username: user.email.value,
       //username key here should be email
     };
 

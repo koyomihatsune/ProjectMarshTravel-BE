@@ -28,6 +28,9 @@ export class DestinationController {
     return await this.googleMapsService.getMultiplePlacesFromText({
       input: 'highlands coffee',
       language: GOOGLE_MAPS_API.QUERY_PARAMS.LANGUAGE.VIETNAMESE,
+      lat: 21.0561746,
+      lon: 105.8219055,
+      opennow: true,
     });
   }
 }

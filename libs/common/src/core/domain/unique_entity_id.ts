@@ -5,6 +5,7 @@ import { version as uuidVersion } from 'uuid';
 import { validate as uuidValidate } from 'uuid';
 
 import { Identifier } from './identifier';
+import { Types } from 'mongoose';
 
 export class UniqueEntityID extends Identifier<string | number> {
   constructor(id?: string | number) {
@@ -22,6 +23,11 @@ export class UniqueEntityID extends Identifier<string | number> {
     } catch {
       return Buffer.from(id);
     }
+  }
+
+  public toMongoObjectID() {
+    const id = this.toString();
+    return new Types.ObjectId(id);
   }
 }
 

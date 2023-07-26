@@ -15,7 +15,7 @@ import { Public } from './decorators/auth.decorator';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { MessagePattern } from '@nestjs/microservices';
 import { CurrentUser } from './current-user.decorator';
-import { User } from './user/schemas/user.schema';
+import { UserDAO } from './user/schemas/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -49,7 +49,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @MessagePattern('validate_user')
-  async validateUser(@CurrentUser() user: User) {
+  async validateUser(@CurrentUser() user: UserDAO) {
     return user;
   }
 }

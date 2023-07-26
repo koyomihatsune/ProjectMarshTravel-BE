@@ -9,7 +9,7 @@ import {
   // RmqModule
 } from '@app/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './user/schemas/user.schema';
+import { UserDAO, UserSchema } from './user/schemas/user.schema';
 import { UsersModule } from './user/users.module';
 import { LoginUseCase } from './usecase/login/login.usecase';
 import { APP_FILTER } from '@nestjs/core';
@@ -40,7 +40,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     DatabaseModule,
     RmqModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: UserDAO.name, schema: UserSchema }]),
     UsersModule,
     RmqModule.register({
       name: DESTINATION_SERVICE,
