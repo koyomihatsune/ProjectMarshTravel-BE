@@ -17,6 +17,7 @@ export const ERROR_MESSAGE = {
 export const STR_COMMON = {
   Success: 'Success',
   Fail: 'Fail',
+  UserUpdated: 'User has been updated',
 };
 
 export const GUARD_MESSAGE = {

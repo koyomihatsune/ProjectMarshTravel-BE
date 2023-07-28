@@ -36,6 +36,8 @@ export class JwtAuthGuard implements CanActivate {
       })
       .pipe(
         tap((res) => {
+          // eslint-disable-next-line no-console
+          console.log(res);
           this.addUser(res, context);
         }),
         catchError(() => {
@@ -48,6 +50,7 @@ export class JwtAuthGuard implements CanActivate {
     let authentication: string;
     if (context.getType() === 'rpc') {
       authentication = context.switchToRpc().getData().Authentication;
+      return authentication;
     } else if (context.getType() === 'http') {
       const isPublic = this.reflector.getAllAndOverride<boolean>(
         IS_PUBLIC_KEY,
@@ -60,6 +63,7 @@ export class JwtAuthGuard implements CanActivate {
       const authorizationHeader = request.headers.authorization;
       if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
         authentication = authorizationHeader.substring(7);
+        return authentication;
         // Extract the token without the "Bearer " prefix
       }
     }

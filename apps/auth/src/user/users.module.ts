@@ -7,6 +7,9 @@ import { UserDAO } from './schemas/user.schema';
 import { AuthModule } from '../auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
+import { LoginWithProviderUseCase } from './usecase/login_with_provider/login_with_provider.usecase';
+import { UpdateUserProfileUseCase } from './usecase/update_profile/update_profile.usecase';
+import { GetUserProfileUseCase } from './usecase/get_profile/get_profile.usecase';
 
 @Module({
   imports: [
@@ -14,7 +17,20 @@ import { AuthService } from '../auth.service';
     forwardRef(() => AuthModule),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, AuthService, JwtService],
-  exports: [UsersService],
+  providers: [
+    UsersService,
+    UsersRepository,
+    AuthService,
+    JwtService,
+    LoginWithProviderUseCase,
+    UpdateUserProfileUseCase,
+    GetUserProfileUseCase,
+  ],
+  exports: [
+    UsersService,
+    LoginWithProviderUseCase,
+    UpdateUserProfileUseCase,
+    GetUserProfileUseCase,
+  ],
 })
 export class UsersModule {}

@@ -12,12 +12,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserDAO, UserSchema } from './user/schemas/user.schema';
 import { UsersModule } from './user/users.module';
 import { LoginUseCase } from './usecase/login/login.usecase';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AllExceptionsFilter } from '@app/common/core/infra/http/exceptions/exception.filter';
 import { PassportModule } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { DESTINATION_SERVICE } from './constants/services';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { UsersController } from './user/users.controller';
+import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
+import { AUTH_SERVICE } from '@app/common/auth/services';
 // import { DESTINATION_SERVICE } from './constants/services';
 
 @Module({
@@ -45,13 +48,21 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     RmqModule.register({
       name: DESTINATION_SERVICE,
     }),
+    RmqModule.register({
+      name: AUTH_SERVICE,
+    }),
   ],
-  controllers: [AuthController],
+  // Map cả 2 controller vào AuthModule vì AuthModule là module chính
+  controllers: [AuthController, UsersController],
   providers: [
     AuthService,
     JwtService,
     JwtStrategy,
     LoginUseCase,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,

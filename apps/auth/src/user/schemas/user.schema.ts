@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AbstractDocument } from '@app/common';
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, collection: 'users' })
 export class UserDAO extends AbstractDocument {
-  @Prop()
-  username?: string;
+  @Prop({ unique: true })
+  username: string;
 
   @Prop()
   name: string;
@@ -12,11 +12,14 @@ export class UserDAO extends AbstractDocument {
   @Prop()
   provider: string;
 
-  @Prop()
+  @Prop({ unique: true })
   email: string;
 
   @Prop()
   phoneNumber?: string;
+
+  @Prop()
+  dob?: Date;
 
   @Prop()
   createdAt: Date;
