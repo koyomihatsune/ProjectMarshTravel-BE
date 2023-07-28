@@ -1,11 +1,13 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UsersRepository } from './users.repo';
-import { CreateUserRequest } from './dto/create-user.request';
+import { CreateUserRequest } from './service_dto/create-user.request';
 import { AuthService } from '../auth.service';
 import { User } from './domain/user.entity';
 import { UserEmail } from './domain/user_email';
 import { UserMapper } from './mapper/user.mapper';
 import { UserId } from './domain/user_id';
+import { UpdateUserProfileEntityDTO } from './usecase/update_profile/update_profile.dto';
+import { UserUsername } from './domain/user_username';
 
 export interface TokenPayload {
   accessToken: string;
@@ -23,6 +25,13 @@ export class UsersService {
     return user;
   }
 
+  async updateUser(
+    id: UserId,
+    request: UpdateUserProfileEntityDTO,
+  ): Promise<boolean> {
+    return await this.usersRepository.updateUser(id, request);
+  }
+
   async getUserByEmail(email: UserEmail): Promise<User> {
     const user = await this.usersRepository.getUserByEmail(email);
     return user;
@@ -33,6 +42,11 @@ export class UsersService {
       _id: id.getValue().toMongoObjectID(),
     });
     return UserMapper.toEntity(result);
+  }
+
+  async getUserByUsername(username: UserUsername): Promise<User> {
+    const user = await this.usersRepository.getUserByUsername(username);
+    return user;
   }
 
   async getUserByAccessToken(token: string): Promise<User> {

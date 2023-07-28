@@ -32,6 +32,20 @@ export class EntityNotFoundError extends Result<UseCaseError> {
   }
 }
 
+export class InvalidPayloadError extends Result<UseCaseError> {
+  public constructor(fieldName: string, err?: any) {
+    super(false, {
+      code: ERROR_CODE.InvalidFormat,
+      message: 'Invalid payload at {0}'.format(fieldName),
+      payload: err,
+    });
+  }
+
+  public static create(entityName: string, err?: any): EntityNotFoundError {
+    return new EntityNotFoundError(entityName, err);
+  }
+}
+
 export class TooManyRequestError extends Result<UseCaseError> {
   public constructor(err?: any) {
     super(false, {

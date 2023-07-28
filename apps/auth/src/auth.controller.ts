@@ -12,10 +12,10 @@ import * as LoginUseCaseErrors from './usecase/login/login.errors';
 import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
 import { USER_RESPONSE_MESSAGES } from '@app/common/core/infra/http/decorators/response.constants';
 import { Public } from './decorators/auth.decorator';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { MessagePattern } from '@nestjs/microservices';
 import { CurrentUser } from './current-user.decorator';
 import { UserDAO } from './user/schemas/user.schema';
+import JwtAuthGuard from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {

@@ -16,6 +16,7 @@ export const COMMON_CONSTANTS = {
 // Next error happens on auth domain because of client will have value 410001
 export const ERROR_CODE = {
   UnexpectedError: 500000,
+  InvalidProvider: 500409,
   NotFoundError: 500404,
   TooManyRequest: 400429,
   InvalidClassValidator: 400001,

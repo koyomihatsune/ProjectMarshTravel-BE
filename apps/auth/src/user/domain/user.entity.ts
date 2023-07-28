@@ -9,12 +9,14 @@ import { UserEmail } from './user_email';
 import { UserPhoneNumber } from './user_phonenumber';
 import { UserToken } from './user_token';
 import { UserId } from './user_id';
+import { UserDOB } from './user_dob';
 
 export interface UserProps {
   username?: UserUsername;
   name: UserName;
   provider: UserProvider;
   email: UserEmail;
+  dob?: UserDOB;
   phoneNumber?: UserPhoneNumber;
   createdAt: Date;
   accessToken?: UserToken;
@@ -30,7 +32,7 @@ export class User extends AggregateRoot<UserProps> {
     return UserId.create(this._id);
   }
 
-  get username(): UserUsername | undefined {
+  get username(): UserUsername {
     return this.props.username;
   }
 
@@ -40,6 +42,10 @@ export class User extends AggregateRoot<UserProps> {
 
   get provider(): UserProvider {
     return this.props.provider;
+  }
+
+  get dob(): UserDOB | undefined {
+    return this.props.dob;
   }
 
   get email(): UserEmail {
