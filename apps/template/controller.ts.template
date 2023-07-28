@@ -1,0 +1,46 @@
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Put,
+  Req,
+  Res,
+} from '@nestjs/common';
+import AppErrors from '@app/common/core/app.error';
+import { USER_RESPONSE_MESSAGES } from '@app/common/core/infra/http/decorators/response.constants';
+import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
+import { JWTPayload } from 'apps/auth/src/types/type.declare';
+import { Result } from '@app/common/core/result';
+
+@Controller('template')
+export class UsersController {
+  //   constructor(
+  //     private readonly templateUseCase: TemplateUseCase,
+  //   ) {}
+
+  @Put('profile')
+  @ResponseMessage(USER_RESPONSE_MESSAGES.UserUpdated)
+  async updateUserProfile(
+    @Req() req: Request & { user: JWTPayload },
+    @Body() updateUserProfileDTO: UpdateUserProfileDTO,
+  ) {
+    // const result = await this.templateUseCase.execute({
+    //   userId: req.user.sub,
+    //   request: updateUserProfileDTO,
+    // });
+    // Because of using swich object.constructor, we need to check isRight first to avoid never type
+    // if (result.isRight()) {
+    //   return;
+    // }
+    // const error = result.value;
+
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+}

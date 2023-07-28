@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GOOGLE_MAPS_API } from '../constants/services';
+import { GOOGLE_MAPS_API } from '../src/constants/services';
 import {
   GetOnePlaceFromTextDTO,
   GetMultiplePlacesFromTextDTO,

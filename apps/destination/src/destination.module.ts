@@ -6,7 +6,7 @@ import * as Joi from 'joi';
 import { DatabaseModule } from '@app/common';
 // import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '@app/common/auth/auth.module';
-import { GoogleMapsModule } from './gmaps/gmaps.module';
+import { GoogleMapsModule } from '../gmaps/gmaps.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AllExceptionsFilter } from '@app/common/core/infra/http/exceptions/exception.filter';
 import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';

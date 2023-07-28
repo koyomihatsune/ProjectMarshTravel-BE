@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { DestinationService } from './destination.service';
-import { GoogleMapsService } from './gmaps/gmaps.service';
+import { GoogleMapsService } from '../gmaps/gmaps.service';
 import { RESULT_RESPONSE_MESSAGE } from '@app/common/core/infra/http/decorators/response.constants';
 import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
 import { GOOGLE_MAPS_API } from './constants/services';

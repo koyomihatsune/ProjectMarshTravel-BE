@@ -1,0 +1,55 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import * as AppErrors from '@app/common/core/app.error';
+import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
+import { Either, Result, left, right } from '@app/common/core/result';
+import { UseCase } from '@app/common/core/usecase';
+import { Injectable } from '@nestjs/common';
+import { UserId } from 'apps/auth/src/user/domain/user_id';
+
+/* eslint-disable prettier/prettier */
+type Response = Either<
+  AppErrors.EntityNotFoundError | AppErrors.InvalidPayloadError,
+  Result<void>
+>;
+
+type TemplateDTO = {
+    value: string;
+}
+type TemplateDTOWithID = {
+  userId: string;
+  request: TemplateDTO;
+};
+
+@Injectable()
+export class TemplateUseCase
+  implements UseCase<TemplateDTOWithID, Promise<Response>>
+{
+//   constructor(
+//     private readonly userService: UsersService
+//   ) {}
+
+  execute = async (payload: TemplateDTOWithID): Promise<Response> => {
+    try {
+      const { userId, request } = payload;
+    //   const userIdOrError = UserId.create(new UniqueEntityID(userId));
+    //   const user = await this.userService.getUser(userIdOrError);
+    //   if (user === undefined) {
+    //     return left(new AppErrors.EntityNotFoundError('User'));
+    //   }
+
+      const dto = {};
+    
+
+      //   const result = await this.userService.updateUser(userIdOrError, dto);
+      const result = '';
+      
+      if (!result) {
+        return left(new AppErrors.UnexpectedError('Update user failed'));
+      }
+
+      return right(Result.ok<void>());
+    } catch (err) {
+      return left(new AppErrors.UnexpectedError(err.toString()));
+    }
+  };
+}

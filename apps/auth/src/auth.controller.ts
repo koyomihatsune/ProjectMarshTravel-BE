@@ -14,7 +14,7 @@ import { USER_RESPONSE_MESSAGES } from '@app/common/core/infra/http/decorators/r
 import { Public } from './decorators/auth.decorator';
 import { MessagePattern } from '@nestjs/microservices';
 import { CurrentUser } from './current-user.decorator';
-import { UserDAO } from './user/schemas/user.schema';
+import { UserDAO } from '../user/schemas/user.schema';
 import JwtAuthGuard from './guards/jwt-auth.guard';
 
 @Controller('auth')

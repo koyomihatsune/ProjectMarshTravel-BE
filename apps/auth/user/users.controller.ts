@@ -10,7 +10,7 @@ import {
 import AppErrors from '@app/common/core/app.error';
 import { USER_RESPONSE_MESSAGES } from '@app/common/core/infra/http/decorators/response.constants';
 import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
-import { JWTPayload } from '../types/type.declare';
+import { JWTPayload } from '../src/types/type.declare';
 import { UpdateUserProfileDTO } from './usecase/update_profile/update_profile.dto';
 import { UpdateUserProfileUseCase } from './usecase/update_profile/update_profile.usecase';
 import { GetUserProfileUseCase } from './usecase/get_profile/get_profile.usecase';

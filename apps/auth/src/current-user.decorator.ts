@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { UserDAO } from './user/schemas/user.schema';
+import { UserDAO } from '../user/schemas/user.schema';
 
 export const getCurrentUserByContext = (context: ExecutionContext): UserDAO => {
   if (context.getType() === 'http') {
