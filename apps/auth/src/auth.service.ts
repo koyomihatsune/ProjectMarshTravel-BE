@@ -20,6 +20,15 @@ export class AuthService {
   // Authenticate bằng Firebase
   async firebaseAuthenticateWithToken(request: firebaseAuthPayload) {
     try {
+      // eslint-disable-next-line no-console
+      console.log(request);
+      // eslint-disable-next-line no-console
+      console.log(this.configService.get<string>(OAUTH2_CONSTANTS.WebClientID));
+      // eslint-disable-next-line no-console
+      console.log(
+        this.configService.get<string>(OAUTH2_CONSTANTS.AndroidClientID),
+      );
+
       const decodedIdToken = await firebaseAdmin.verifyIdToken({
         idToken: request.token,
         audience: [
@@ -27,8 +36,12 @@ export class AuthService {
           this.configService.get<string>(OAUTH2_CONSTANTS.AndroidClientID),
         ],
       });
+      console.log("Success");
+      console.log(decodedIdToken);
       return decodedIdToken;
     } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
       return null;
     }
   }
