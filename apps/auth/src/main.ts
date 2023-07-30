@@ -5,7 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import registerGlobals from '@app/common/global/app.setup';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AuthModule);
+  const app = await NestFactory.create(AuthModule, {
+    logger: console,
+  });
   registerGlobals(app);
   const rmqService = app.get<RmqService>(RmqService);
   app.connectMicroservice(rmqService.getOptions('AUTH', true));

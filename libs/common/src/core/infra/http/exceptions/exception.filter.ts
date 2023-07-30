@@ -18,6 +18,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
   catch(exception: any, host: ArgumentsHost): void {
     // eslint-disable-next-line no-console
+    console.log("Exception happened");
     console.log(exception);
     // In certain situations `httpAdapter` might not be available in the
     // constructor method, thus we should resolve it here.
