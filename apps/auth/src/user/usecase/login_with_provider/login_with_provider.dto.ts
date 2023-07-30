@@ -1,7 +1,7 @@
-import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+import { LoginTicket } from 'google-auth-library';
 
 export interface LoginWithProviderDTO {
   email: string;
   provider: string;
-  googleDecodedToken?: DecodedIdToken;
+  googleDecodedToken?: LoginTicket;
 }

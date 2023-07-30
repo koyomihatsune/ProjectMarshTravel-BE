@@ -4,7 +4,6 @@ import { LoginWithProviderDTO } from './login_with_provider.dto';
 import { AuthService } from 'apps/auth/src/auth.service';
 import { UsersService } from '../../users.service';
 import { UserEmail } from '../../domain/user_email';
-import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { User } from '../../domain/user.entity';
 import { CreateUserRequest } from '../../service_dto/create-user.request';
 import { LoginResponseDTO } from 'apps/auth/src/usecase/login/login.dto';
@@ -14,6 +13,7 @@ import { UserProvider } from '../../domain/user_provider';
 import { UserName } from '../../domain/user_name';
 import * as AppErrors from '@app/common/core/app.error';
 import { UserUsername } from '../../domain/user_username';
+import { TokenPayload } from 'google-auth-library';
 
 type Response = Either<
   | AppErrors.EntityNotFoundError
@@ -48,9 +48,9 @@ export class LoginWithProviderUseCase
 
       // User chưa tồn tại, tạo user mới
       if (!user) {
-        let decodedToken: DecodedIdToken | null;
+        let decodedToken: TokenPayload | null;
         if (payload.provider === 'firebase_google') {
-          decodedToken = payload.googleDecodedToken;
+          decodedToken = payload.googleDecodedToken.getPayload();
 
           const userEmailOrError = UserEmail.create({
             value: decodedToken.email,
@@ -59,20 +59,16 @@ export class LoginWithProviderUseCase
             return left(new LoginWithProviderUseCaseErrors.EmailInvalid());
           }
 
-          const userProviderOrError = UserProvider.create(
-            decodedToken.firebase.sign_in_provider,
-          );
+          const userProviderOrError = UserProvider.create('google.com');
           if (userProviderOrError.isFailure) {
             return left(new LoginWithProviderUseCaseErrors.ProviderInvalid());
           }
-
           const userUsernameOrError = UserUsername.create({
-            value: decodedToken.sub,
+            value: decodedToken.sub.toString(),
           });
           if (userUsernameOrError.isFailure) {
             return left(new LoginWithProviderUseCaseErrors.UsernameInvalid());
           }
-
           const userNameOrError = UserName.create({ value: decodedToken.name });
           if (userNameOrError.isFailure) {
             return left(new LoginWithProviderUseCaseErrors.NameInvalid());
