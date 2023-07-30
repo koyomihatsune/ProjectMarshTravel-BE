@@ -1,10 +1,8 @@
-import * as admin from 'firebase-admin';
+// import * as admin from 'firebase-admin';
+import { OAuth2Client } from 'google-auth-library';
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_SA);
+// const serviceAccount = JSON.parse(process.env.FIREBASE_SA);
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-  // Add any additional configuration options if required
-});
+const client = new OAuth2Client();
 
-export const firebaseAdmin = admin;
+export const firebaseAdmin = client;

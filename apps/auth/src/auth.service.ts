@@ -3,9 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from './user/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { JWT_CONSTANTS } from './constants';
+import { JWT_CONSTANTS, OAUTH2_CONSTANTS } from './constants';
 import { User } from './user/domain/user.entity';
-
 export interface firebaseAuthPayload {
   token: string;
 }
@@ -21,9 +20,13 @@ export class AuthService {
   // Authenticate bằng Firebase
   async firebaseAuthenticateWithToken(request: firebaseAuthPayload) {
     try {
-      const decodedIdToken = await firebaseAdmin
-        .auth()
-        .verifyIdToken(request.token);
+      const decodedIdToken = await firebaseAdmin.verifyIdToken({
+        idToken: request.token,
+        audience: [
+          this.configService.get<string>(OAUTH2_CONSTANTS.WebClientID),
+          this.configService.get<string>(OAUTH2_CONSTANTS.AndroidClientID),
+        ],
+      });
       return decodedIdToken;
     } catch (err) {
       return null;

@@ -25,3 +25,9 @@ export const JWT_CONSTANTS = {
   AccessSecretKey: 'JWT_SECRET_KEY',
   RefreshSecretKey: 'JWT_REFRESH_KEY',
 };
+
+export const OAUTH2_CONSTANTS = {
+  AndroidClientID: 'OAUTH2_CLIENT_ID_ANDROID',
+  iOSClientID: 'OAUTH2_CLIENT_ID_IOS',
+  WebClientID: 'OAUTH2_CLIENT_ID_WEB',
+};

@@ -153,6 +153,9 @@ jobs:
           MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           JWT_REFRESH_KEY: ${{ secrets.JWT_REFRESH_KEY }}
+          OAUTH2_CLIENT_ID_WEB: ${{ secrets.OAUTH2_CLIENT_ID_WEB }}
+          OAUTH2_CLIENT_ID_ANDROID: ${{ secrets.OAUTH2_CLIENT_ID_ANDROID }}
+          OAUTH2_CLIENT_ID_IOS: ${{ secrets.OAUTH2_CLIENT_ID_IOS }}
           FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
@@ -168,6 +171,9 @@ jobs:
           yq eval-all -i 'select(fileIndex == 0) | select(.mongodb.auth.password) | .mongodb.auth.password = env(MONGODB_PASSWORD)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.jwtSecret.secretKey) | .jwtSecret.secretKey = env(JWT_SECRET_KEY)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.jwtSecret.refreshKey) | .jwtSecret.refreshKey = env(JWT_REFRESH_KEY)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.oauth2.clientIdWeb) | .oauth2.clientIdWeb = env(OAUTH2_CLIENT_ID_WEB)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.oauth2.clientIdAndroid) | .oauth2.clientIdAndroid = env(OAUTH2_CLIENT_ID_ANDROID)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.oauth2.clientIdIos) | .oauth2.clientIdIos = env(OAUTH2_CLIENT_ID_IOS)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.firebase.serviceAccount) | .firebase.serviceAccount = env(FIREBASE_SA)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.googleMapsAPIKey) | .googleMapsAPIKey = env(GOOGLE_MAPS_API_KEY)' values.yaml values.yaml.example
           echo "End writing secrets"
