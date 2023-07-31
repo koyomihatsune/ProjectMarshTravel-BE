@@ -28,7 +28,7 @@ export class LoginUseCase implements UseCase<LoginDTO, Promise<Response>> {
     }
 
     const userLoginResult = await this.loginWithProviderUseCase.execute({
-      email: decodedToken.email,
+      email: decodedToken.getPayload().email,
       provider: 'firebase_google',
       googleDecodedToken: decodedToken,
     });

@@ -1,5 +1,5 @@
 import { firebaseAdmin } from '@app/common';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../user/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -21,11 +21,20 @@ export class AuthService {
   // Authenticate bằng Firebase
   async firebaseAuthenticateWithToken(request: firebaseAuthPayload) {
     try {
-      const decodedIdToken = await firebaseAdmin
-        .auth()
-        .verifyIdToken(request.token);
+      // eslint-disable-next-line no-console
+      Logger.log(request);
+      const decodedIdToken = await firebaseAdmin.verifyIdToken({
+        idToken: request.token,
+        audience: [
+          this.configService.get<string>(OAUTH2_CONSTANTS.WebClientID),
+          this.configService.get<string>(OAUTH2_CONSTANTS.AndroidClientID),
+        ],
+      });
+      Logger.log(decodedIdToken.getPayload());
       return decodedIdToken;
     } catch (err) {
+      // eslint-disable-next-line no-console
+      Logger.error(err);
       return null;
     }
   }
