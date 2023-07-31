@@ -6,7 +6,7 @@ import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
 import {
   DestinationSingleResponseDTO,
   GetDestinationDetailsRequestDTO,
-} from './get_destination_details.dto';
+} from '../dtos/get_destination_details.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<

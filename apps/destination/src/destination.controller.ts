@@ -2,7 +2,7 @@ import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { RESULT_RESPONSE_MESSAGE } from '@app/common/core/infra/http/decorators/response.constants';
 import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
 import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
-import { SearchDestinationsRequestDTO } from './usecase/search_destinations/search_destinations.dto';
+import { SearchDestinationsRequestDTO } from './usecase/dtos/destination.dto';
 
 @Controller('destination')
 export class DestinationController {

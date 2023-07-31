@@ -8,7 +8,7 @@ import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
 import {
   DestinationMultipleResponseDTO,
   SearchDestinationsRequestDTO,
-} from './search_destinations.dto';
+} from '../dtos/destination.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
