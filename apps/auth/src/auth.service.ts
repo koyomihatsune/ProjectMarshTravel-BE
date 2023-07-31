@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../user/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { JWT_CONSTANTS } from './constants';
+import { JWT_CONSTANTS, OAUTH2_CONSTANTS } from './constants';
 import { User } from '../user/domain/user.entity';
 
 export interface firebaseAuthPayload {

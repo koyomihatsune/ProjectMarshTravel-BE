@@ -10,6 +10,7 @@ import { GoogleMapsModule } from '../gmaps/gmaps.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AllExceptionsFilter } from '@app/common/core/infra/http/exceptions/exception.filter';
 import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
+import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
   controllers: [DestinationController],
   providers: [
     DestinationService,
+    SearchDestinationsUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
