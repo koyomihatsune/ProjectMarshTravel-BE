@@ -6,11 +6,7 @@ import { Guard } from '@app/common/core/guard';
 
 export interface DestinationProps {
   place_id: string;
-  name: string;
-  formatted_address: string;
-  image_url: string;
-  lat: number;
-  lon: number;
+  image_url?: string;
   mapsSearchDetails?: any;
   mapsFullDetails?: any;
   reviewIds: UniqueEntityID[];
@@ -30,24 +26,8 @@ export class Destination extends AggregateRoot<DestinationProps> {
     return this.props.place_id;
   }
 
-  get name(): string {
-    return this.props.name;
-  }
-
-  get formatted_address(): string {
-    return this.props.formatted_address;
-  }
-
   get image_url(): string {
     return this.props.image_url;
-  }
-
-  get lat(): number {
-    return this.props.lat;
-  }
-
-  get lon(): number {
-    return this.props.lon;
   }
 
   get mapsSearchDetails(): any | undefined {

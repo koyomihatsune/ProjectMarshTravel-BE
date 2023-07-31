@@ -2,32 +2,32 @@ import { Types } from 'mongoose';
 import { Destination } from '../entity/destination.entity';
 import { DestinationDAO } from '../schemas/destination.schema';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
+import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
+import { Inject } from '@nestjs/common';
 
 export class DestinationMapper {
+  constructor(
+    @Inject() private readonly googleMapsService: GoogleMapsService,
+  ) {}
+
   public static async toDAO(destination: Destination): Promise<DestinationDAO> {
     return {
       _id: new Types.ObjectId(destination.id.toString()),
       place_id: destination.place_id,
-      name: destination.name,
-      formatted_address: destination.formatted_address,
-      image_url: destination.image_url,
-      lat: destination.lat,
-      lon: destination.lon,
+      image_url: destination.image_url ? destination.image_url : undefined,
       reviewIds: destination.reviewIds.map((id) => id.toString()),
     };
   }
 
-  public static toEntity(dao: DestinationDAO): Destination | undefined {
+  public static async toEntity(
+    dao: DestinationDAO,
+  ): Promise<Destination | undefined> {
     const destinationIdString = dao._id.toHexString();
 
     const destinationOrError = Destination.create(
       {
         place_id: dao.place_id,
-        name: dao.name,
-        formatted_address: dao.formatted_address,
         image_url: dao.image_url,
-        lat: dao.lat,
-        lon: dao.lon,
         reviewIds: dao.reviewIds.map((id) => new UniqueEntityID(id)),
         isRegistered: true,
       },

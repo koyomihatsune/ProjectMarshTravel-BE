@@ -7,19 +7,7 @@ export class DestinationDAO extends AbstractDocument {
   place_id: string;
 
   @Prop()
-  name: string;
-
-  @Prop()
-  formatted_address: string;
-
-  @Prop()
-  image_url: string;
-
-  @Prop()
-  lat: number;
-
-  @Prop()
-  lon: number;
+  image_url?: string;
 
   @Prop()
   reviewIds: string[];

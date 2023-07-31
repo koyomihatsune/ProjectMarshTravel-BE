@@ -31,9 +31,11 @@ export const GOOGLE_MAPS_API = {
   },
 };
 
-export const PLACE_TYPES = {
-  PARK: 'park',
-  MUSEUM: 'museum',
-  ZOO: 'zoo',
-  AMUSEMENT_PARK: 'amusement_park',
-};
+export const DestinationTypeEnumValue = {
+  RESTAURANT: 'restaurant',
+} as const;
+
+export const LanguageEnumValue = {
+  ENGLISH: 'en',
+  VIETNAMESE: 'vi',
+} as const;

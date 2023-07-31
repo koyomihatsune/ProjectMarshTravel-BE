@@ -1,13 +1,6 @@
 import { IsIn, IsNotEmpty, IsOptional } from 'class-validator';
-
-export const DestinationTypeEnumValue = {
-  RESTAURANT: 'restaurant',
-} as const;
-
-export const LanguageEnumValue = {
-  ENGLISH: 'en',
-  VIETNAMESE: 'vi',
-} as const;
+import { LanguageEnumValue } from '../../constants/services';
+import { DestinationSingleResponseDTO } from '../get_destination_details/get_destination_details.dto';
 
 export class SearchDestinationsRequestDTO {
   @IsNotEmpty()
@@ -30,21 +23,7 @@ export class SearchDestinationsRequestDTO {
   lon: number;
 }
 
-export class SearchDestinationsSingleResponseDTO {
-  //use placeId by Google Maps - but put in database as destinationId
-  destinationId: string;
-  name: string;
-  location: {
-    lat: number;
-    lng: number;
-  };
-  mapsSearchDetails?: any;
-  mapsFullDetails?: any;
-  reviews?: any[];
-  isRegistered: boolean;
-}
-
-export class SearchDestinationsMultipleResponseDTO {
-  destinations: SearchDestinationsSingleResponseDTO[];
+export class DestinationMultipleResponseDTO {
+  destinations: DestinationSingleResponseDTO[];
   nextPageToken?: string;
 }
