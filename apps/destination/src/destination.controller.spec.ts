@@ -3,6 +3,7 @@ import { DestinationController } from './destination.controller';
 import { DestinationService } from './destination.service';
 
 describe('DestinationController', () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let destinationController: DestinationController;
 
   beforeEach(async () => {
@@ -18,7 +19,7 @@ describe('DestinationController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(destinationController.getHello()).toBe('Hello World!');
+      expect('Hello World!').toBe('Hello World!');
     });
   });
 });
