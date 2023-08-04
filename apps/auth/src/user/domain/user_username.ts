@@ -20,7 +20,8 @@ export class UserUsername extends ValueObject<UserUserNameProps> {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private static isValidUserName(username: string): boolean {
-    return true;
+    const regex = /^[a-zA-Z0-9_]+$/;
+    return regex.test(username);
   }
 
   public static create(props: UserUserNameProps): Result<UserUsername> {
