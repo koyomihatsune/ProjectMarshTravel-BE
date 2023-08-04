@@ -58,7 +58,7 @@ export class UpdateUserProfileUseCase
           const userWithUsername = await this.userService.getUserByUsername(
             userUserNameOrError.getValue(),
           );
-          if (userWithUsername && userWithUsername.id !== user.id) {
+          if (userWithUsername && !userWithUsername.id.equals(user.id)) {
             return left(
               new UpdateUserProfileUseCaseError.UsernameAlreadyTaken(),
             );
