@@ -13,5 +13,5 @@ export class UserProfileResponseDTO {
   provider: string;
   username: string;
   phoneNumber: string;
-  dob: string;
+  dateOfBirth: string;
 }

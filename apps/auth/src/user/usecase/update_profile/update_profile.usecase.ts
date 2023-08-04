@@ -9,9 +9,12 @@ import { UpdateUserProfileDTO } from './update_profile.dto';
 import { UserName } from '../../domain/user_name';
 import { UserDOB } from '../../domain/user_dob';
 import { UserUsername } from '../../domain/user_username';
+import * as UpdateUserProfileUseCaseError from './update_profile.error';
 
 type Response = Either<
-  AppErrors.EntityNotFoundError | AppErrors.InvalidPayloadError,
+  | AppErrors.EntityNotFoundError
+  | AppErrors.InvalidPayloadError
+  | UpdateUserProfileUseCaseError.UsernameAlreadyTaken,
   Result<void>
 >;
 
@@ -52,12 +55,23 @@ export class UpdateUserProfileUseCase
       if (request.username) {
         userUserNameOrError = UserUsername.create({ value: request.username });
         if (userUserNameOrError.isSuccess) {
-          dto = { ...dto, username: userUserNameOrError.getValue() };
+          const userWithUsername = await this.userService.getUserByUsername(
+            userUserNameOrError.getValue(),
+          );
+          if (userWithUsername && userWithUsername.id !== user.id) {
+            return left(
+              new UpdateUserProfileUseCaseError.UsernameAlreadyTaken(),
+            );
+          } else {
+            dto = { ...dto, username: userUserNameOrError.getValue() };
+          }
         }
       }
 
-      if (request.dob) {
-        userDOBOrError = UserDOB.create({ value: new Date(request.dob) });
+      if (request.dateOfBirth) {
+        userDOBOrError = UserDOB.create({
+          value: new Date(request.dateOfBirth),
+        });
         if (userDOBOrError.isSuccess) {
           dto = { ...dto, dob: userDOBOrError.getValue() };
         }
@@ -74,7 +88,7 @@ export class UpdateUserProfileUseCase
               ? 'name'
               : userUserNameOrError?.isFailure
               ? 'username'
-              : 'dob',
+              : 'dateOfBirth',
           ),
         );
       }
