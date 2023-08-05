@@ -10,3 +10,12 @@ export class InvalidPayload extends Result<UseCaseError> {
     });
   }
 }
+
+export class UsernameAlreadyTaken extends Result<UseCaseError> {
+  constructor() {
+    super(false, {
+      message: `Username Already Taken`,
+      code: ERROR_CODE.UsernameAlreadyTaken,
+    });
+  }
+}

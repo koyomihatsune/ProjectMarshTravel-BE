@@ -5,7 +5,7 @@ import { UserUsername } from '../../domain/user_username';
 export class UpdateUserProfileDTO {
   username?: string;
   name?: string;
-  dob?: string;
+  dateOfBirth?: string;
 }
 
 export class UpdateUserProfileEntityDTO {

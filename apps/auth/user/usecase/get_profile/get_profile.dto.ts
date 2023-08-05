@@ -6,11 +6,12 @@ export class GetUserProfileDTO {
 }
 
 export class UserProfileResponseDTO {
+  id: string;
   name: string;
   email: string;
   avatar: string;
   provider: string;
   username: string;
   phoneNumber: string;
-  dob: string;
+  dateOfBirth: string;
 }
