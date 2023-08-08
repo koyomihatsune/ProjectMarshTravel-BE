@@ -6,10 +6,12 @@ import * as Joi from 'joi';
 import { DatabaseModule } from '@app/common';
 // import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '@app/common/auth/auth.module';
-import { GoogleMapsModule } from './gmaps/gmaps.module';
+import { GoogleMapsModule } from '../gmaps/gmaps.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AllExceptionsFilter } from '@app/common/core/infra/http/exceptions/exception.filter';
 import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
+import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
+import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/get_destination_details.usecase';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
   controllers: [DestinationController],
   providers: [
     DestinationService,
+    SearchDestinationsUseCase,
+    GetDestinationDetailsUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

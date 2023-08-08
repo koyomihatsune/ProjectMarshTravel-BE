@@ -1,4 +1,4 @@
-export const AUTH_SERVICE = 'RABBIT_MQ_AUTH_SERVICE';
+export const DESTINATION_SERVICE = 'RABBIT_MQ_DESTINATION_SERVICE';
 
 export const GOOGLE_MAPS_API = {
   BASE_URL: 'https://maps.googleapis.com/maps/api',
@@ -31,9 +31,11 @@ export const GOOGLE_MAPS_API = {
   },
 };
 
-export const PLACE_TYPES = {
-  PARK: 'park',
-  MUSEUM: 'museum',
-  ZOO: 'zoo',
-  AMUSEMENT_PARK: 'amusement_park',
-};
+export const DestinationTypeEnumValue = {
+  RESTAURANT: 'restaurant',
+} as const;
+
+export const LanguageEnumValue = {
+  ENGLISH: 'en',
+  VIETNAMESE: 'vi',
+} as const;

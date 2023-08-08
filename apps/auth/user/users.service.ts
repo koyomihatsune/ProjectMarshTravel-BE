@@ -1,7 +1,7 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UsersRepository } from './users.repo';
 import { CreateUserRequest } from './service_dto/create-user.request';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../src/auth.service';
 import { User } from './domain/user.entity';
 import { UserEmail } from './domain/user_email';
 import { UserMapper } from './mapper/user.mapper';

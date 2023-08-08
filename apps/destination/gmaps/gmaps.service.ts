@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GOOGLE_MAPS_API } from '../constants/services';
+import { GOOGLE_MAPS_API } from '../src/constants/services';
 import {
   GetOnePlaceFromTextDTO,
   GetMultiplePlacesFromTextDTO,
@@ -78,7 +78,11 @@ export class GoogleMapsService {
 
   public async getMultiplePlacesFromText(
     dto: GetMultiplePlacesFromTextDTO,
-  ): Promise<any> {
+  ): Promise<{
+    htmlAttributions: any[];
+    nextPageToken?: string;
+    results: any[];
+  }> {
     const queryParams = new URLSearchParams({
       query: dto.input,
       radius: dto.radius ? dto.radius.toString() : '50000', // meters
@@ -100,7 +104,10 @@ export class GoogleMapsService {
             results: [] // Mảng kết quả
     } */
     return {
-      nextPageToken: result.next_page_token,
+      htmlAttributions: result.html_attributions,
+      nextPageToken: result.next_page_token
+        ? result.next_page_token
+        : undefined,
       results: result.results,
     };
   }
