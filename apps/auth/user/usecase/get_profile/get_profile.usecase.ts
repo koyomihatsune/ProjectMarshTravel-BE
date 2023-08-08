@@ -28,6 +28,7 @@ export class GetUserProfileUseCase
       }
 
       const response: UserProfileResponseDTO = {
+        id: user.userId.getValue().toString(),
         name: user.name.value,
         email: user.email.value,
         avatar:
@@ -35,7 +36,7 @@ export class GetUserProfileUseCase
         provider: user.provider.value,
         username: user.username ? user.username.value : '',
         phoneNumber: user.phoneNumber ? user.phoneNumber.value : '',
-        dob: user.dob ? user.dob.value.toISOString() : '',
+        dateOfBirth: user.dob ? user.dob.value.toISOString() : '',
       };
 
       return right(Result.ok<UserProfileResponseDTO>(response));

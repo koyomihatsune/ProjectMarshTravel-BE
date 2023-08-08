@@ -27,6 +27,7 @@ export const ERROR_CODE = {
   UnverifiedOnly: 420004,
   EmailSendLimit: 420005,
   EmailAlreadyTaken: 420000,
+  UsernameAlreadyTaken: 420009,
   UnmatchedExpectedData: 420002,
   InvalidFormat: 420003,
   CustomerIdExist: 440000,
