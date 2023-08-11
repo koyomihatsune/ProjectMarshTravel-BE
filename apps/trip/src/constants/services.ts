@@ -1,0 +1,1 @@
+export const TRIP_SERVICE = 'RABBIT_MQ_TRIP_SERVICE';

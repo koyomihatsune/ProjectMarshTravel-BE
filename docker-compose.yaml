@@ -31,6 +31,24 @@ services:
     depends_on:
       - rabbitmq
       - auth
+
+  trip:
+    build:
+      context: .
+      dockerfile: ./apps/trip/Dockerfile
+      target: development
+    command: npm run start:dev trip
+    env_file:
+      - ./apps/trip/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3003:3003'
+    depends_on:
+      - rabbitmq
+      - auth
+      - destination
     
   rabbitmq:
     image: rabbitmq
