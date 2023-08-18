@@ -1,7 +1,7 @@
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
 import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserId } from '../../domain/user_id';
 import { UsersService } from '../../users.service';
 import { GetUserProfileDTO, UserProfileResponseDTO } from './get_profile.dto';
@@ -20,12 +20,7 @@ export class GetUserProfileUseCase
   execute = async (request: GetUserProfileDTO): Promise<Response> => {
     try {
       const userIdOrError = UserId.create(new UniqueEntityID(request.userId));
-
       const user = await this.userService.getUser(userIdOrError);
-
-      if (user === undefined) {
-        return left(new AppErrors.EntityNotFoundError('User'));
-      }
 
       const response: UserProfileResponseDTO = {
         id: user.userId.getValue().toString(),
@@ -41,7 +36,10 @@ export class GetUserProfileUseCase
 
       return right(Result.ok<UserProfileResponseDTO>(response));
     } catch (err) {
-      return left(new AppErrors.UnexpectedError(err.toString()));
+      if (err instanceof NotFoundException) {
+        return left(new AppErrors.EntityNotFoundError('User'));
+      }
+      return left(new AppErrors.UnexpectedError(err));
     }
   };
 }

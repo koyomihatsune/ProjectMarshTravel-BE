@@ -5,6 +5,8 @@ services:
       dockerfile: ./apps/auth/Dockerfile
       target: development
     command: npm run start:dev auth
+    environment:            
+      - TZ=Asia/Ho_Chi_Minh
     env_file:
       - ./apps/auth/.env
     volumes:
@@ -21,6 +23,8 @@ services:
       dockerfile: ./apps/destination/Dockerfile
       target: development
     command: npm run start:dev destination
+    environment:            
+      - TZ=Asia/Ho_Chi_Minh
     env_file:
       - ./apps/destination/.env
     volumes:
@@ -31,6 +35,26 @@ services:
     depends_on:
       - rabbitmq
       - auth
+
+  trip:
+    build:
+      context: .
+      dockerfile: ./apps/trip/Dockerfile
+      target: development
+    command: npm run start:dev trip
+    environment:            
+      - TZ=Asia/Ho_Chi_Minh
+    env_file:
+      - ./apps/trip/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3003:3003'
+    depends_on:
+      - rabbitmq
+      - auth
+      - destination
     
   rabbitmq:
     image: rabbitmq

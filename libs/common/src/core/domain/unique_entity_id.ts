@@ -1,4 +1,3 @@
-import { v1 as uuidv1 } from 'uuid';
 import { parse as uuidParse } from 'uuid';
 import { version as uuidVersion } from 'uuid';
 
@@ -9,7 +8,7 @@ import { Types } from 'mongoose';
 
 export class UniqueEntityID extends Identifier<string | number> {
   constructor(id?: string | number) {
-    super(id ? id : uuidv1());
+    super(id ? id : new Types.ObjectId().toHexString());
   }
 
   /**

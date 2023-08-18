@@ -2,10 +2,10 @@ import { Logger, NotFoundException } from '@nestjs/common';
 import {
   FilterQuery,
   Model,
-  Types,
   UpdateQuery,
   SaveOptions,
   Connection,
+  Types,
 } from 'mongoose';
 import { AbstractDocument } from './abstract.schema';
 

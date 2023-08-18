@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build destination
+RUN npm run build trip
 
 FROM node:alpine as production
 
@@ -26,4 +26,4 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD ["node", "dist/apps/destination/main"]
+CMD ["node", "dist/apps/trip/main"]

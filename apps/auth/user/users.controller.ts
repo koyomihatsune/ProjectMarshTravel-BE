@@ -14,6 +14,7 @@ import { JWTPayload } from '../src/types/type.declare';
 import { UpdateUserProfileDTO } from './usecase/update_profile/update_profile.dto';
 import { UpdateUserProfileUseCase } from './usecase/update_profile/update_profile.usecase';
 import { GetUserProfileUseCase } from './usecase/get_profile/get_profile.usecase';
+import { MessagePattern, RpcException } from '@nestjs/microservices';
 
 @Controller('user')
 export class UsersController {
@@ -62,6 +63,27 @@ export class UsersController {
         throw new NotFoundException(error);
       default:
         throw new BadRequestException(error);
+    }
+  }
+
+  @MessagePattern('get_user_profile') // Message pattern
+  async getUserProfileByUserId(body: { userId: string }): Promise<any> {
+    const result = await this.getUserProfileUseCase.execute({
+      userId: body.userId,
+    });
+
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+
+    const error = result.value;
+    switch (error.constructor) {
+      // Với các hàm RPC, luôn throw RpcException, bên kia sẽ xủ lý theo dạng text
+      case AppErrors.EntityNotFoundError:
+        throw new RpcException(new NotFoundException());
+      default:
+        throw new RpcException(new BadRequestException());
     }
   }
 }
