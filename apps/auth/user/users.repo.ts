@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model, Connection } from 'mongoose';
 import { AbstractRepository } from '@app/common';
 import { UserDAO } from './schemas/user.schema';
-import { CreateUserRequest } from './service_dto/create-user.request';
+import { CreateUserRequest } from './dtos/service_dto/create-user.request';
 import { User } from './domain/user.entity';
 import { UserMapper } from './mapper/user.mapper';
 import { UserId } from './domain/user_id';
