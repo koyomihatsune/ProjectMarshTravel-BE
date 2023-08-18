@@ -1,6 +1,9 @@
 import { AbstractDocument } from '@app/common';
-import { Prop, Schema } from '@nestjs/mongoose';
-import { TripDestinationDAO } from 'apps/trip/trip_destination/schema/trip_destination.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import {
+  TripDestinationDAO,
+  TripDestinationSchema,
+} from 'apps/trip/trip_destination/schema/trip_destination.schema';
 
 @Schema({ versionKey: false })
 export class TripDayDAO extends AbstractDocument {
@@ -10,6 +13,8 @@ export class TripDayDAO extends AbstractDocument {
   @Prop()
   startOffsetFromMidnight: number;
 
-  @Prop({ type: [TripDestinationDAO] })
+  @Prop({ type: [TripDestinationSchema] })
   destinations: TripDestinationDAO[];
 }
+
+export const TripDaySchema = SchemaFactory.createForClass(TripDayDAO);

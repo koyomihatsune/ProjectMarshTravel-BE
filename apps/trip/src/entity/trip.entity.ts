@@ -6,15 +6,15 @@ import { TripId } from './trip_id';
 import { TripDay } from 'apps/trip/trip_day/entity/trip_day.entity';
 
 export interface TripProps {
-	name:  string,
-	userId: UniqueEntityID,
-	description: string,
-	isArchived: boolean
-	startAt: Date
-	tripLength: number
-	createdAt: Date
-	updatedAt: Date
-	days: TripDay[]
+  name: string;
+  userId: UniqueEntityID;
+  description: string;
+  isArchived: boolean;
+  startAt: Date;
+  tripLength: number; // in days
+  createdAt: Date;
+  updatedAt: Date;
+  days: TripDay[];
 }
 
 export class Trip extends AggregateRoot<TripProps> {

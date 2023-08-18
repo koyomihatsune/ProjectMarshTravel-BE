@@ -28,6 +28,15 @@
         "tsConfigPath": "apps/destination/tsconfig.app.json"
       }
     },
+    "trip": {
+      "type": "application",
+      "root": "apps/trip",
+      "entryFile": "main",
+      "sourceRoot": "apps/trip/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/trip/tsconfig.app.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",

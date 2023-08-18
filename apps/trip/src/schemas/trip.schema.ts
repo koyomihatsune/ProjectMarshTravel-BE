@@ -1,6 +1,9 @@
 import { AbstractDocument } from '@app/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { TripDayDAO } from 'apps/trip/trip_day/schema/trip_day.schema';
+import {
+  TripDayDAO,
+  TripDaySchema,
+} from 'apps/trip/trip_day/schema/trip_day.schema';
 import { Types } from 'mongoose';
 
 @Schema({ versionKey: false, collection: 'trips' })
@@ -29,7 +32,7 @@ export class TripDAO extends AbstractDocument {
   @Prop()
   updatedAt: Date;
 
-  @Prop({ type: [TripDayDAO] }) // Nested array of TripDayDAO
+  @Prop({ type: [TripDaySchema] }) // Nested array of TripDayDAO
   days: TripDayDAO[];
 }
 

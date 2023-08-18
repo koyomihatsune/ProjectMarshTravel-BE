@@ -15,10 +15,10 @@ export class TripMapper {
 
   public static async toDAO(trip: Trip): Promise<TripDAO> {
     return {
-      _id: trip.id.toMongoObjectID(),
+      _id: trip.tripId.getValue().toMongoObjectID(),
       name: trip.name,
       userId: trip.userId.toMongoObjectID(),
-      description: trip.description,
+      description: trip.description ?? '',
       isArchived: trip.isArchived,
       startAt: trip.startAt,
       tripLength: trip.tripLength,
@@ -45,13 +45,14 @@ export class TripMapper {
     return {
       _id: destination.tripDestinationId.getValue().toMongoObjectID(),
       position: destination.position,
+      type: destination.type,
       place_id: destination.place_id,
     };
   }
 
   public static async toEntity(dao: TripDAO): Promise<Trip | undefined> {
-    const tripIdToString = dao._id.toHexString();
-    const userIdToString = dao.userId.toHexString();
+    const tripIdToString = dao._id.toString();
+    const userIdToString = dao.userId.toString();
 
     const tripOrError = Trip.create(
       {
@@ -80,7 +81,7 @@ export class TripMapper {
           dayDao.destinations.map(this.toDestinationEntity),
         ),
       },
-      new UniqueEntityID(dayDao._id.toHexString()),
+      new UniqueEntityID(dayDao._id.toString()),
     );
     return tripDayOrError.isSuccess ? tripDayOrError.getValue() : undefined;
   }
@@ -91,9 +92,10 @@ export class TripMapper {
     const tripDestinationOrError = TripDestination.create(
       {
         position: destinationDao.position,
+        type: 'destination',
         place_id: destinationDao.place_id,
       },
-      new UniqueEntityID(destinationDao._id.toHexString()),
+      new UniqueEntityID(destinationDao._id.toString()),
     );
     return tripDestinationOrError.isSuccess
       ? tripDestinationOrError.getValue()

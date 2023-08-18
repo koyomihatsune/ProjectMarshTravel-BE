@@ -1,4 +1,4 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext, Logger } from '@nestjs/common';
 import { UserDAO } from '../user/schemas/user.schema';
 
 export const getCurrentUserByContext = (context: ExecutionContext): UserDAO => {
@@ -6,6 +6,7 @@ export const getCurrentUserByContext = (context: ExecutionContext): UserDAO => {
     return context.switchToHttp().getRequest().user;
   }
   if (context.getType() === 'rpc') {
+    Logger.log('user', context.switchToRpc().getData());
     return context.switchToRpc().getData().user;
   }
 };

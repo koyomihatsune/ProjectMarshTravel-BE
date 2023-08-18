@@ -18,6 +18,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: any, host: ArgumentsHost): void {
+    const isRpcRequest = host.getType() === 'rpc'; // Check if it's an RPC request
+    if (isRpcRequest) {
+      return; // Skip processing for RPC requests
+    }
     // eslint-disable-next-line no-console
     Logger.error(exception);
     // In certain situations `httpAdapter` might not be available in the

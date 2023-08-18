@@ -14,6 +14,7 @@ FROM node:alpine as production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
+ENV TZ=Asia/Ho_Chi_Minh
 
 WORKDIR /usr/src/app
 

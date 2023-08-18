@@ -6,6 +6,7 @@ import { TripDestinationId } from './trip_destination_id';
 
 export interface TripDestinationProps {
   position: number;
+  type: string;
   place_id: string;
 }
 
@@ -24,6 +25,10 @@ export class TripDestination extends AggregateRoot<TripDestinationProps> {
 
   get place_id(): string {
     return this.props.place_id;
+  }
+
+  get type(): string {
+    return this.props.type;
   }
 
   // Factory method to create a new Destination entity

@@ -3,6 +3,8 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model, Connection } from 'mongoose';
 import { AbstractRepository } from '@app/common';
 import { TripDAO } from './schemas/trip.schema';
+import { Trip } from './entity/trip.entity';
+import { TripMapper } from './mapper/trip.mapper';
 
 @Injectable()
 export class TripRepository extends AbstractRepository<TripDAO> {
@@ -15,20 +17,19 @@ export class TripRepository extends AbstractRepository<TripDAO> {
     super(tripModel, connection);
   }
 
-  // async createTrip(request: {
-  //   place_id: string;
-  // }): Promise<Destination | undefined> {
-  //   try {
-  //     const destination = await this.create({
-  //       place_id: request.place_id,
-  //       reviewIds: [],
-  //     });
-  //     return DestinationMapper.toEntity(destination);
-  //   } catch (err) {
-  //     Logger.error(err);
-  //     return undefined;
-  //   }
-  // }
+  async createTrip(trip: Trip): Promise<Trip | undefined> {
+    try {
+      const tripDAO = await TripMapper.toDAO(trip);
+
+      await this.create({
+        ...tripDAO,
+      });
+      return trip;
+    } catch (err) {
+      Logger.error(err);
+      return undefined;
+    }
+  }
 
   // // Untested
   // addReviews = async (place_id: string, reviewIds: string[]) => {

@@ -5,7 +5,7 @@ import { AuthService } from 'apps/auth/src/auth.service';
 import { UsersService } from '../../users.service';
 import { UserEmail } from '../../domain/user_email';
 import { User } from '../../domain/user.entity';
-import { CreateUserRequest } from '../../service_dto/create-user.request';
+import { CreateUserRequest } from '../../dtos/service_dto/create-user.request';
 import { LoginResponseDTO } from 'apps/auth/src/usecase/login/login.dto';
 import { Either, Result, left, right } from '@app/common/core/result';
 import * as LoginWithProviderUseCaseErrors from './login.errors';

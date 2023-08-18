@@ -1,1 +1,2 @@
-export const TRIP_SERVICE = 'RABBIT_MQ_TRIP_SERVICE';
+export const DESTINATION_SERVICE = 'DESTINATION';
+export const AUTH_SERVICE = 'AUTH';
