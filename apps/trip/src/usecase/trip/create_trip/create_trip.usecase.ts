@@ -13,6 +13,7 @@ import { Trip } from 'apps/trip/src/entity/trip.entity';
 import { User } from 'apps/auth/user/domain/user.entity';
 import { UserProfileResponseDTO } from 'apps/auth/user/usecase/get_profile/get_profile.dto';
 import { SingleTripResponseDTO } from 'apps/trip/src/dto/trip.dto';
+import { TripDay } from 'apps/trip/trip_day/entity/trip_day.entity';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -50,7 +51,6 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
         description: request.description,
         isArchived: false,
         startAt: request.startAt,
-        tripLength: request.tripLength,
         createdAt: new Date(),
         updatedAt: new Date(),
         days: [],
@@ -60,6 +60,19 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
         return left(new AppErrors.UnexpectedError("Can not create Trip for unknown reason"));
       }
 
+      for (let i = 0; i < request.tripLength; i++) {
+        const tripDayOrError = TripDay.create({
+          position: i,
+          startOffsetFromMidnight: request.initialStartOffsetFromMidnight,
+          destinations: [],
+        });
+        if (tripDayOrError.isFailure) {
+          return left(new AppErrors.UnexpectedError("Can not create Trip for unknown reason"));
+        }
+        tripOrError.getValue().days.push(tripDayOrError.getValue());
+      }
+      // add days to trip days
+
       const result = await this.tripService.createTrip(tripOrError.getValue());
       return right(Result.ok<any>({
         id: result.id.toString(),
@@ -68,10 +81,16 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
         description: result.description,
         isArchived: result.isArchived,
         startAt: result.startAt,
-        tripLength: result.tripLength,
         createdAt: result.createdAt,
         updatedAt: result.updatedAt,
-        days: [],
+        days: result.days.map((day) => {
+          return {
+            id: day.id.toString(),
+            position: day.position,
+            startOffsetFromMidnight: day.startOffsetFromMidnight,
+            destinations: [],
+          };
+        }).sort((a, b) => a.position - b.position),
       }));
     } catch (err) {
       // RPC Exception

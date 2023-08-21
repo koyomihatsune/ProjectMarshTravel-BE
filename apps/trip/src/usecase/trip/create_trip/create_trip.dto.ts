@@ -12,6 +12,10 @@ export class CreateTripDTO {
   startAt: Date;
 
   @IsNotEmpty()
+  @Min(0)
+  initialStartOffsetFromMidnight: number;
+
+  @IsNotEmpty()
   @Min(1)
   tripLength: number;
 }

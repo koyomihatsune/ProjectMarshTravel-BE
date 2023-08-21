@@ -11,7 +11,6 @@ export interface TripProps {
   description: string;
   isArchived: boolean;
   startAt: Date;
-  tripLength: number; // in days
   createdAt: Date;
   updatedAt: Date;
   days: TripDay[];
@@ -44,10 +43,6 @@ export class Trip extends AggregateRoot<TripProps> {
 
   get startAt(): Date {
     return this.props.startAt;
-  }
-
-  get tripLength(): number {
-    return this.props.tripLength;
   }
 
   get days(): TripDay[] {

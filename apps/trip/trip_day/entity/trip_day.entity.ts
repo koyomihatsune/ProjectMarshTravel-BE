@@ -29,6 +29,10 @@ export class TripDay extends AggregateRoot<TripDayProps> {
     return this.props.position;
   }
 
+  set position(position: number) {
+    this.props.position = position;
+  }
+
   get destinations(): TripDestination[] {
     return this.props.destinations;
   }
