@@ -17,6 +17,8 @@ import { CreateTripDayUseCase } from './usecase/trip_day/create_trip_day/create_
 import { UpdateTripDayDTO } from './usecase/trip_day/update_trip_day/update_trip_day.dto';
 import { UpdateTripUseCase } from './usecase/trip/update_trip/update_trip.usecase';
 import { UpdateTripDTO } from './usecase/trip/update_trip/update_trip.dto';
+import { UpdateTripDayPositionDTO } from './usecase/trip_day/update_trip_day_position/update_trip_day_position.dto';
+import { UpdateTripDayPositionUseCase } from './usecase/trip_day/update_trip_day_position/update_trip_day_position.usecase';
 
 @Controller('trip')
 export class TripController {
@@ -25,6 +27,7 @@ export class TripController {
     private readonly updateTripUseCase: UpdateTripUseCase,
     private readonly createTripDayUseCase: CreateTripDayUseCase,
     private readonly updateTripDayUseCase: UpdateTripDayUseCase,
+    private readonly updateTripDayPositionUseCase: UpdateTripDayPositionUseCase,
   ) {}
 
   @Post('create')
@@ -101,8 +104,28 @@ export class TripController {
       request: body,
     });
     if (result.isRight()) {
-      const dto = result.value.getValue();
-      return dto;
+      return;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Put('day/position')
+  async updateTripDayPosition(
+    @Req() req: Request & { user: JWTPayload },
+    @Body() body: UpdateTripDayPositionDTO,
+  ) {
+    const result = await this.updateTripDayPositionUseCase.execute({
+      userId: req.user.sub,
+      request: body,
+    });
+    if (result.isRight()) {
+      return;
     }
     const error = result.value;
     switch (error.constructor) {

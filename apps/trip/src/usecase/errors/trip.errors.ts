@@ -20,6 +20,15 @@ export class TripDayPositionInvalidError extends Result<UseCaseError> {
   }
 }
 
+export class TripDayPositionSequenceInvalidError extends Result<UseCaseError> {
+  constructor() {
+    super(false, {
+      message: `Invalid position sequence. Each number should only appear once. Each number should be in range [0, maxPosition]. Each number should be in increasing sequence from 0.`,
+      code: ERROR_CODE.InvalidLength,
+    });
+  }
+}
+
 export default {
   TripDoesNotBelongToUser,
   TripDayPositionInvalidError,

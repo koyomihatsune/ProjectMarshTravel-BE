@@ -22,6 +22,7 @@ import { CreateTripUseCase } from './usecase/trip/create_trip/create_trip.usecas
 import { UpdateTripUseCase } from './usecase/trip/update_trip/update_trip.usecase';
 import { CreateTripDayUseCase } from './usecase/trip_day/create_trip_day/create_trip_day.usecase';
 import { UpdateTripDayUseCase } from './usecase/trip_day/update_trip_day/update_trip_day.usecase';
+import { UpdateTripDayPositionUseCase } from './usecase/trip_day/update_trip_day_position/update_trip_day_position.usecase';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -58,6 +59,7 @@ import { UpdateTripDayUseCase } from './usecase/trip_day/update_trip_day/update_
     UpdateTripUseCase,
     CreateTripDayUseCase,
     UpdateTripDayUseCase,
+    UpdateTripDayPositionUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
