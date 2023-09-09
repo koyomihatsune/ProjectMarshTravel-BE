@@ -19,6 +19,9 @@ import {
   TripDestinationSchema,
 } from '../trip_destination/schema/trip_destination.schema';
 import { CreateTripUseCase } from './usecase/trip/create_trip/create_trip.usecase';
+import { UpdateTripUseCase } from './usecase/trip/update_trip/update_trip.usecase';
+import { CreateTripDayUseCase } from './usecase/trip_day/create_trip_day/create_trip_day.usecase';
+import { UpdateTripDayUseCase } from './usecase/trip_day/update_trip_day/update_trip_day.usecase';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -52,6 +55,9 @@ import { CreateTripUseCase } from './usecase/trip/create_trip/create_trip.usecas
     TripService,
     TripRepository,
     CreateTripUseCase,
+    UpdateTripUseCase,
+    CreateTripDayUseCase,
+    UpdateTripDayUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

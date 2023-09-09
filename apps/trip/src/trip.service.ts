@@ -17,7 +17,7 @@ export class TripService {
     return result;
   }
 
-  async getTripWithId(tripId: TripId): Promise<Trip> {
+  async getTripById(tripId: TripId): Promise<Trip> {
     const trip = await this.tripRepostiory.findTripById(tripId);
     return trip;
   }

@@ -9,13 +9,13 @@ import { CreateTripDayDTO } from './create_trip_day.dto';
 import { AUTH_SERVICE } from '@app/common/auth/services';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
-import * as CreateTripDayUseCaseErrors from './create_trip_day.errors';
+import * as TripErrors from '../../errors/trip.errors';
 import { TripDay } from 'apps/trip/trip_day/entity/trip_day.entity';
 import { TripId } from 'apps/trip/src/entity/trip_id';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
-  AppErrors.EntityNotFoundError | AppErrors.InvalidPayloadError | CreateTripDayUseCaseErrors.TripDayPositionInvalidError| CreateTripDayUseCaseErrors.TripDoesNotBelongToUser,
+  AppErrors.EntityNotFoundError | AppErrors.InvalidPayloadError | TripErrors.TripDayPositionInvalidError| TripErrors.TripDoesNotBelongToUser,
   Result<void>
 >;
 
@@ -42,13 +42,12 @@ export class CreateTripDayUseCase implements UseCase<CreateTripDayDTOWithUserId,
       const userOrError = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId})); 
 
       const tripIdOrError = TripId.create(new UniqueEntityID(request.tripId));
-      const tripOrError = await this.tripService.getTripWithId(tripIdOrError);
+      const tripOrError = await this.tripService.getTripById(tripIdOrError);
 
       // kiểm tra xem tripday có vị trí hợp lệ không
-
       const tripLength = tripOrError.days.length;
       if (request.position > tripLength) {
-        return left(new CreateTripDayUseCaseErrors.TripDayPositionInvalidError());
+        return left(new TripErrors.TripDayPositionInvalidError(tripLength.toString()));
       }
 
       const newDays: TripDay[] = [];
@@ -75,40 +74,14 @@ export class CreateTripDayUseCase implements UseCase<CreateTripDayDTOWithUserId,
       newDays.splice(request.position, 0, tripDayOrError.getValue());
 
       // thay đổi vị trí các trip sau tripday
-
+      tripOrError.days = newDays;
+      
       const result = await this.tripService.updateTrip(tripOrError);
 
-      return right(Result.ok<any>({
-        id: result.id.toString(),
-        name: result.name,
-        userId: result.userId.toString(),
-        description: result.description,
-        isArchived: result.isArchived,
-        startAt: result.startAt,
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt,
-        days: result.days.map((day) => {
-          return {
-            id: day.id.toString(),
-            position: day.position,
-            startOffsetFromMidnight: day.startOffsetFromMidnight,
-            destinations: day.destinations.map((destination) => {
-              return {
-                id: destination.id.toString(),
-                position: destination.position,
-                name: "test",
-                address: "test",
-                lat: "test",
-                lng: "test",
-                createdAt: "test",
-                updatedAt: "test",
-              };
-            }),
-          };
-        }),
-      }));
+      return right(Result.ok<any>());
     } catch (err) {
       // RPC Exception
+      
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));
       }

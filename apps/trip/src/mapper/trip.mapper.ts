@@ -1,7 +1,7 @@
 import { Trip } from '../entity/trip.entity';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
 import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { TripDAO } from '../schemas/trip.schema';
 import { TripDay } from 'apps/trip/trip_day/entity/trip_day.entity';
 import { TripDayDAO } from 'apps/trip/trip_day/schema/trip_day.schema';
@@ -14,6 +14,7 @@ export class TripMapper {
   ) {}
 
   public static async toDAO(trip: Trip): Promise<TripDAO> {
+    Logger.log(trip.days);
     return {
       _id: trip.tripId.getValue().toMongoObjectID(),
       name: trip.name,
@@ -23,17 +24,20 @@ export class TripMapper {
       startAt: trip.startAt,
       createdAt: trip.createdAt,
       updatedAt: trip.updatedAt,
-      days: await Promise.all(trip.days.map(this.toDayDAO)),
+      days: await Promise.all(trip.days.map((day) => this.toDayDAO(day))),
     };
   }
 
   private static async toDayDAO(day: TripDay): Promise<TripDayDAO> {
+    Logger.log(day.destinations);
     return {
       _id: day.tripDayId.getValue().toMongoObjectID(),
       position: day.position,
       startOffsetFromMidnight: day.startOffsetFromMidnight,
       destinations: await Promise.all(
-        day.destinations.map(this.toDestinationDAO),
+        day.destinations.map((destination) =>
+          this.toDestinationDAO(destination),
+        ),
       ),
     };
   }
@@ -62,7 +66,7 @@ export class TripMapper {
         startAt: dao.startAt,
         createdAt: dao.createdAt,
         updatedAt: dao.updatedAt,
-        days: await Promise.all(dao.days.map(this.toDayEntity)),
+        days: await Promise.all(dao.days.map((day) => this.toDayEntity(day))),
       },
       new UniqueEntityID(tripIdToString),
     );
@@ -76,7 +80,9 @@ export class TripMapper {
         position: dayDao.position,
         startOffsetFromMidnight: dayDao.startOffsetFromMidnight,
         destinations: await Promise.all(
-          dayDao.destinations.map(this.toDestinationEntity),
+          dayDao.destinations.map((destination) =>
+            this.toDestinationEntity(destination),
+          ),
         ),
       },
       new UniqueEntityID(dayDao._id.toString()),

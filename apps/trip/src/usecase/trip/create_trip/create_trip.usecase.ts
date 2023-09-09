@@ -71,9 +71,11 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
         }
         tripOrError.getValue().days.push(tripDayOrError.getValue());
       }
+
       // add days to trip days
 
       const result = await this.tripService.createTrip(tripOrError.getValue());
+      Logger.log(result);
       return right(Result.ok<any>({
         id: result.id.toString(),
         name: result.name,
@@ -93,6 +95,7 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
         }).sort((a, b) => a.position - b.position),
       }));
     } catch (err) {
+      Logger.error(err);
       // RPC Exception
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));

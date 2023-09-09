@@ -12,9 +12,9 @@ export class TripDoesNotBelongToUser extends Result<UseCaseError> {
 }
 
 export class TripDayPositionInvalidError extends Result<UseCaseError> {
-  constructor() {
+  constructor(maxPosition: string) {
     super(false, {
-      message: `Invalid position (start from 0)`,
+      message: `Invalid position. Max is: ${maxPosition}`,
       code: ERROR_CODE.InvalidLength,
     });
   }
@@ -22,4 +22,5 @@ export class TripDayPositionInvalidError extends Result<UseCaseError> {
 
 export default {
   TripDoesNotBelongToUser,
+  TripDayPositionInvalidError,
 };

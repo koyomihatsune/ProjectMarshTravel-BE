@@ -5,7 +5,6 @@ export class SingleTripResponseDTO {
   description: string;
   startAt: Date;
   isArchived: boolean;
-  tripLength: number;
   createdAt: Date;
   updatedAt: Date;
   days: SingleTripDayResponseDTO[];

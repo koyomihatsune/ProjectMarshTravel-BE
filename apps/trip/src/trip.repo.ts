@@ -21,7 +21,6 @@ export class TripRepository extends AbstractRepository<TripDAO> {
   async createTrip(trip: Trip): Promise<Trip | undefined> {
     try {
       const tripDAO = await TripMapper.toDAO(trip);
-
       await this.create({
         ...tripDAO,
       });
@@ -47,12 +46,13 @@ export class TripRepository extends AbstractRepository<TripDAO> {
 
   async updateTrip(tripInput: Trip): Promise<Trip | undefined> {
     try {
+      const tripDAO = await TripMapper.toDAO(tripInput);
       const result = await this.findOneAndUpdate(
         {
           _id: tripInput.tripId.getValue().toMongoObjectID(),
         },
         {
-          ...tripInput,
+          ...tripDAO,
         },
       );
       const trip = TripMapper.toEntity(result);

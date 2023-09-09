@@ -29,6 +29,10 @@ export class Trip extends AggregateRoot<TripProps> {
     return this.props.name;
   }
 
+  set name(name: string) {
+    this.props.name = name;
+  }
+
   get userId(): UniqueEntityID {
     return this.props.userId;
   }
@@ -37,16 +41,32 @@ export class Trip extends AggregateRoot<TripProps> {
     return this.props.description;
   }
 
+  set description(description: string) {
+    this.props.description = description;
+  }
+
   get isArchived(): boolean {
     return this.props.isArchived;
+  }
+
+  set isArchived(isArchived: boolean) {
+    this.props.isArchived = isArchived;
   }
 
   get startAt(): Date {
     return this.props.startAt;
   }
 
+  set startAt(startAt: Date) {
+    this.props.startAt = startAt;
+  }
+
   get days(): TripDay[] {
     return this.props.days;
+  }
+
+  set days(days: TripDay[]) {
+    this.props.days = days;
   }
 
   get createdAt(): Date {
