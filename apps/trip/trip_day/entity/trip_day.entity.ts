@@ -37,6 +37,10 @@ export class TripDay extends AggregateRoot<TripDayProps> {
     return this.props.destinations;
   }
 
+  set destinations(destinations: TripDestination[]) {
+    this.props.destinations = destinations;
+  }
+
   // Factory method to create a new Destination entity
   public static create(
     props: TripDayProps,

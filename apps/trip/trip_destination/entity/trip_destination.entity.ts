@@ -23,8 +23,16 @@ export class TripDestination extends AggregateRoot<TripDestinationProps> {
     return this.props.position;
   }
 
+  set position(value: number) {
+    this.props.position = value;
+  }
+
   get place_id(): string {
     return this.props.place_id;
+  }
+
+  set place_id(value: string) {
+    this.props.place_id = value;
   }
 
   get type(): string {
