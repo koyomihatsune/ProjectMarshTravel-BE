@@ -5,6 +5,7 @@ import { AbstractRepository } from '@app/common';
 import { TripDAO } from './schemas/trip.schema';
 import { Trip } from './entity/trip.entity';
 import { TripMapper } from './mapper/trip.mapper';
+import { TripId } from './entity/trip_id';
 
 @Injectable()
 export class TripRepository extends AbstractRepository<TripDAO> {
@@ -20,10 +21,41 @@ export class TripRepository extends AbstractRepository<TripDAO> {
   async createTrip(trip: Trip): Promise<Trip | undefined> {
     try {
       const tripDAO = await TripMapper.toDAO(trip);
-
       await this.create({
         ...tripDAO,
       });
+      return trip;
+    } catch (err) {
+      Logger.error(err);
+      return undefined;
+    }
+  }
+
+  async findTripById(tripId: TripId): Promise<Trip | undefined> {
+    try {
+      const result = await this.findOne({
+        _id: tripId.getValue().toMongoObjectID(),
+      });
+      const trip = TripMapper.toEntity(result);
+      return trip;
+    } catch (err) {
+      Logger.error(err);
+      return undefined;
+    }
+  }
+
+  async updateTrip(tripInput: Trip): Promise<Trip | undefined> {
+    try {
+      const tripDAO = await TripMapper.toDAO(tripInput);
+      const result = await this.findOneAndUpdate(
+        {
+          _id: tripInput.tripId.getValue().toMongoObjectID(),
+        },
+        {
+          ...tripDAO,
+        },
+      );
+      const trip = TripMapper.toEntity(result);
       return trip;
     } catch (err) {
       Logger.error(err);

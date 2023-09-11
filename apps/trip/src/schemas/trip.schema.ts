@@ -24,9 +24,6 @@ export class TripDAO extends AbstractDocument {
   startAt: Date;
 
   @Prop()
-  tripLength: number;
-
-  @Prop()
   createdAt: Date;
 
   @Prop()

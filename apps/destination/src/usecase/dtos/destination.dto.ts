@@ -28,6 +28,14 @@ export class GetDestinationDetailsRequestDTO {
   language: string;
 }
 
+export class GetMultipleDestinationDetailsRequestDTO {
+  @IsNotEmpty()
+  place_ids: string[];
+
+  @IsIn(Object.values(LanguageEnumValue))
+  language: string;
+}
+
 export class SearchDestinationsRequestDTO {
   @IsNotEmpty()
   query: string;
