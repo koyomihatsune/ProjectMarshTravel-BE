@@ -135,7 +135,7 @@ jobs:
 
       - name: 'Config Gcloud cluster in kubectl'
         run: |
-          gcloud container clusters get-credentials marshtravel --region=us-central1-a
+          gcloud container clusters get-credentials marshtravel --region=asia-southeast1-a
           kubectl config current-context
 
       - name: Checkout CD Helm Repo
