@@ -42,7 +42,7 @@ export class GetDestinationDetailsUseCase
 
       /* TO DO:
       Kiểm tra xem destination nào có trong database, nếu có thì query review, set isRegistered = true và gán review của destination đó vào */
-
+      
       return right(Result.ok<DestinationSingleResponseDTO>(response));
     } catch (err) {
       return left(new AppErrors.UnexpectedError(err.toString()));

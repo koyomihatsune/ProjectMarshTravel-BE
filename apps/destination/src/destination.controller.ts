@@ -10,15 +10,18 @@ import { ResponseMessage } from '@app/common/core/infra/http/decorators/response
 import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
 import {
   GetDestinationDetailsRequestDTO,
+  GetMultipleDestinationDetailsRequestDTO,
   SearchDestinationsRequestDTO,
 } from './usecase/dtos/destination.dto';
 import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/get_destination_details.usecase';
+import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_destination_details/get_multiple_destination_details.usecase';
 
 @Controller('destination')
 export class DestinationController {
   constructor(
     private readonly searchDestinationsUseCase: SearchDestinationsUseCase,
     private readonly getDestinationDetailsUseCase: GetDestinationDetailsUseCase,
+    private readonly getMultipleDestinationDetailsUseCase: GetMultipleDestinationDetailsUseCase,
   ) {}
 
   @Get('search/text')
@@ -41,6 +44,25 @@ export class DestinationController {
   @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
   async getDestinationDetails(@Query() query: GetDestinationDetailsRequestDTO) {
     const result = await this.getDestinationDetailsUseCase.execute(query);
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      default:
+        throw new BadRequestException(error.getErrorValue());
+    }
+  }
+
+  @Get('get/multiple')
+  @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
+  async getMultipleDestinationDetails(
+    @Query() query: GetMultipleDestinationDetailsRequestDTO,
+  ) {
+    const result = await this.getMultipleDestinationDetailsUseCase.execute(
+      query,
+    );
     if (result.isRight()) {
       const dto = result.value.getValue();
       return dto;

@@ -12,6 +12,7 @@ import { AllExceptionsFilter } from '@app/common/core/infra/http/exceptions/exce
 import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
 import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
 import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/get_destination_details.usecase';
+import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_destination_details/get_multiple_destination_details.usecase';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/
     DestinationService,
     SearchDestinationsUseCase,
     GetDestinationDetailsUseCase,
+    GetMultipleDestinationDetailsUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

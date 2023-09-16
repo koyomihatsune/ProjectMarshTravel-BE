@@ -85,10 +85,10 @@ export class GoogleMapsService {
   }> {
     const queryParams = new URLSearchParams({
       query: dto.input,
-      radius: dto.radius ? dto.radius.toString() : '50000', // meters
+      radius: dto.radius ? dto.radius.toString() : '', // meters
       language: dto.language ? 'vi' : '',
-      region: this.isVietnamOnly ? 'VN' : '',
-      opennow: dto.opennow ? 'true' : '',
+      region: this.isVietnamOnly ? 'VN' : 'VN',
+      // opennow: dto.opennow ? 'true' : '',
       type: dto.type ? dto.type : '',
       locationbias: dto.lat && dto.lon ? `${dto.lat},${dto.lon}` : '',
     });
