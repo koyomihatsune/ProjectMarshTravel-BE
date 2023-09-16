@@ -15,6 +15,7 @@ import {
 } from './usecase/dtos/destination.dto';
 import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/get_destination_details.usecase';
 import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_destination_details/get_multiple_destination_details.usecase';
+import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 
 @Controller('destination')
 export class DestinationController {
@@ -57,7 +58,7 @@ export class DestinationController {
 
   @Get('get/multiple')
   @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
-  async getMultipleDestinationDetails(
+  async getMultipleDestinationsDetails(
     @Query() query: GetMultipleDestinationDetailsRequestDTO,
   ) {
     const result = await this.getMultipleDestinationDetailsUseCase.execute(
@@ -74,15 +75,34 @@ export class DestinationController {
     }
   }
 
-  @Get('search/autocomplete')
-  @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
-  async searchDestinationsAutocomplete() {
-    // return await this.googleMapsService.getMultiplePlacesFromText({
-    //   input: 'highlands coffee',
-    //   language: GOOGLE_MAPS_API.QUERY_PARAMS.LANGUAGE.VIETNAMESE,
-    //   lat: 21.0561746,
-    //   lon: 105.8219055,
-    //   opennow: true,
-    // });
+  @MessagePattern('get_multiple_destinations')
+  async getMultipleDestinationsDetailsRPC(
+    @Payload() data: GetMultipleDestinationDetailsRequestDTO,
+  ) {
+    const result = await this.getMultipleDestinationDetailsUseCase.execute(
+      data,
+    );
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      default:
+        throw new RpcException(new BadRequestException(error.getErrorValue()));
+    }
   }
+
+  // Bỏ api này
+  // @Get('search/autocomplete')
+  // @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
+  // async searchDestinationsAutocomplete() {
+  //   // return await this.googleMapsService.getMultiplePlacesFromText({
+  //   //   input: 'highlands coffee',
+  //   //   language: GOOGLE_MAPS_API.QUERY_PARAMS.LANGUAGE.VIETNAMESE,
+  //   //   lat: 21.0561746,
+  //   //   lon: 105.8219055,
+  //   //   opennow: true,
+  //   // });
+  // }
 }

@@ -3,7 +3,7 @@ import { DestinationController } from './destination.controller';
 import { DestinationService } from './destination.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { DatabaseModule } from '@app/common';
+import { DatabaseModule, RmqModule } from '@app/common';
 // import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '@app/common/auth/auth.module';
 import { GoogleMapsModule } from '../gmaps/gmaps.module';
@@ -13,6 +13,7 @@ import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
 import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
 import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/get_destination_details.usecase';
 import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_destination_details/get_multiple_destination_details.usecase';
+import { DESTINATION_SERVICE } from '@app/common/global/services';
 
 @Module({
   imports: [
@@ -31,7 +32,11 @@ import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_des
     }),
     DatabaseModule,
     AuthModule,
+    RmqModule,
     GoogleMapsModule,
+    RmqModule.register({
+      name: DESTINATION_SERVICE,
+    }),
   ],
   controllers: [DestinationController],
   providers: [

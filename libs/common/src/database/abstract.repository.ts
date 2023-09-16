@@ -73,9 +73,20 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return this.model.find(filterQuery, {}, { lean: true });
   }
 
-  async startTransaction() {
-    const session = await this.connection.startSession();
-    session.startTransaction();
-    return session;
+  async findPagination(
+    filterQuery: FilterQuery<TDocument>,
+    page: number,
+    pageSize: number,
+  ) {
+    return this.model
+      .find(filterQuery, {}, { lean: true })
+      .skip((page - 1) * pageSize) // page start from 1
+      .limit(pageSize);
   }
+
+  // async startTransaction() {
+  //   const session = await this.connection.startSession();
+  //   session.startTransaction();
+  //   return session;
+  // }
 }

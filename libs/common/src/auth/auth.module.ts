@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { RmqModule } from '../rmq/rmq.module';
-import { AUTH_SERVICE } from './services';
+import { AUTH_SERVICE } from '../global/services';
 
 @Module({
   imports: [RmqModule.register({ name: AUTH_SERVICE })],

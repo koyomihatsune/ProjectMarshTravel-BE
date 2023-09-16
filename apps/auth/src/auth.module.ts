@@ -19,7 +19,6 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UsersController } from '../user/users.controller';
 import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
-import { AUTH_SERVICE } from '@app/common/auth/services';
 
 @Module({
   imports: [
@@ -44,7 +43,7 @@ import { AUTH_SERVICE } from '@app/common/auth/services';
     MongooseModule.forFeature([{ name: UserDAO.name, schema: UserSchema }]),
     UsersModule,
     RmqModule.register({
-      name: AUTH_SERVICE,
+      name: 'AUTH',
     }),
   ],
   // Map cả 2 controller vào AuthModule vì AuthModule là module chính

@@ -37,9 +37,10 @@ export class SingleTripResponseWithoutDaysDTO {
   name: string;
   description: string;
   startAt: Date;
-  tripLength: Date;
+  isArchived: boolean;
   createdAt: Date;
   updatedAt: Date;
+  daysLength: number;
 }
 
 export class SingleTripDayResponseWithoutDestinationsDTO {
@@ -50,5 +51,8 @@ export class SingleTripDayResponseWithoutDestinationsDTO {
 
 export class MultipleTripsResponseDTO {
   trips: SingleTripResponseDTO[];
-  startOffset: number; // offset theo trip từ mới nhất tới cũ nhất
+}
+
+export class MultipleTripResponseWithoutDaysDTO {
+  trips: SingleTripResponseWithoutDaysDTO[];
 }

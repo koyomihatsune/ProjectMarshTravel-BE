@@ -2,9 +2,12 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   NotFoundException,
+  Param,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
 import { CreateTripUseCase } from './usecase/trip/create_trip/create_trip.usecase';
@@ -23,10 +26,12 @@ import { CreateTripDestinationDTO } from './usecase/trip_destination/create_trip
 import { CreateTripDestinationUseCase } from './usecase/trip_destination/create_trip_destination/create_trip_destination.usecase';
 import { UpdateTripDestinationPositionUseCase } from './usecase/trip_destination/update_trip_destination_position/update_trip_destination_position.usecase';
 import { UpdateTripDestinationPositionDTO } from './usecase/trip_destination/update_trip_destination_position/update_trip_destination_position.dto';
+import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_trip_list.usecase';
 
 @Controller('trip')
 export class TripController {
   constructor(
+    private readonly getTripListPaginationUseCase: GetTripListPaginationUseCase,
     private readonly createTripUseCase: CreateTripUseCase,
     private readonly updateTripUseCase: UpdateTripUseCase,
     private readonly createTripDayUseCase: CreateTripDayUseCase,
@@ -44,6 +49,29 @@ export class TripController {
     const result = await this.createTripUseCase.execute({
       userId: req.user.sub,
       request: body,
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Get('')
+  async getTripList(
+    @Req() req: Request & { user: JWTPayload },
+    @Query() query: { page: number; limit: number },
+  ) {
+    const result = await this.getTripListPaginationUseCase.execute({
+      userId: req.user.sub,
+      page: query.page,
+      limit: query.limit,
     });
     if (result.isRight()) {
       const dto = result.value.getValue();

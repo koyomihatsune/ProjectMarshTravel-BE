@@ -6,6 +6,7 @@ import { TripDAO } from './schemas/trip.schema';
 import { Trip } from './entity/trip.entity';
 import { TripMapper } from './mapper/trip.mapper';
 import { TripId } from './entity/trip_id';
+import { UserId } from 'apps/auth/user/domain/user_id';
 
 @Injectable()
 export class TripRepository extends AbstractRepository<TripDAO> {
@@ -36,8 +37,35 @@ export class TripRepository extends AbstractRepository<TripDAO> {
       const result = await this.findOne({
         _id: tripId.getValue().toMongoObjectID(),
       });
-      const trip = TripMapper.toEntity(result);
+      const trip = await TripMapper.toEntity(result);
       return trip;
+    } catch (err) {
+      Logger.error(err);
+      return undefined;
+    }
+  }
+
+  async findTripsByUserIdPagination(
+    userId: UserId,
+    page: number,
+    pageSize: number,
+  ): Promise<Trip[] | undefined> {
+    try {
+      console.log(page);
+      console.log(pageSize);
+      const result = await this.findPagination(
+        {
+          userId: userId.getValue().toMongoObjectID(),
+        },
+        page,
+        pageSize,
+      );
+      const trips = await Promise.all(
+        result.map(async (trip) => {
+          return await TripMapper.toEntity(trip);
+        }),
+      );
+      return trips;
     } catch (err) {
       Logger.error(err);
       return undefined;
