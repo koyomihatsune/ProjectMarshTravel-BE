@@ -14,7 +14,10 @@ import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
 import { GetTripDetailsDTO } from './get_trip_details.dto';
 import { TripId } from 'apps/trip/src/entity/trip_id';
 import * as TripErrors from '../../errors/trip.errors';
-import { DestinationMultipleResponseDTO, DestinationSingleResponseDTO } from 'apps/destination/src/usecase/dtos/destination.dto';
+import {
+  DestinationMultipleResponseDTO,
+  DestinationSingleResponseDTO,
+} from 'apps/destination/src/usecase/dtos/destination.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<

@@ -36,7 +36,6 @@ export class SearchDestinationsUseCase
             lat: lat,
             lon: lon,
       });
-      console.log(queryResult);
 
       const response: DestinationMultipleResponseDTO = {
         destinations: [],
