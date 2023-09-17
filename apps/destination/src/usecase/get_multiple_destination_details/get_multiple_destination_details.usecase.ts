@@ -33,8 +33,10 @@ export class GetMultipleDestinationDetailsUseCase
       await Promise.all(place_ids.map( async (place_id) => {
         // Gọi service của google, trả về query Result. Tạm thời chưa có type nào
         const subqueryResult = await this.googleMapsService.getPlaceByID({placeId: place_id, language : language});
-        // chưa handle trường hợp lỗi, nếu lỗi sẽ thay thế bằng error response và cả bên trip cũng vậy
-        const singleResponse: DestinationSingleResponseDTO = {
+        if (subqueryResult === undefined) {
+          Logger.error(`Place ${place_id} not found`, 'GetMultipleDestinationDetailsUseCase');
+        } else {
+          const singleResponse: DestinationSingleResponseDTO = {
             destinationId: subqueryResult.place_id,
             name: subqueryResult.name,
             location: {
@@ -45,8 +47,9 @@ export class GetMultipleDestinationDetailsUseCase
             reviews: [],
             isRegistered: false,
           };
-        
-        queryResult.push(singleResponse);
+          queryResult.push(singleResponse);
+        }
+        // đã handle trường hợp lỗi, nếu lỗi sẽ thay thế bằng error response và cả bên trip cũng vậy
       }));
 
       const result: DestinationMultipleResponseDTO = {
@@ -58,7 +61,7 @@ export class GetMultipleDestinationDetailsUseCase
 
       return right(Result.ok<DestinationMultipleResponseDTO>(result));
     } catch (err) {
-      Logger.log(err);
+      Logger.error(err, err.stack);
       return left(new AppErrors.UnexpectedError(err.toString()));
     }
   };

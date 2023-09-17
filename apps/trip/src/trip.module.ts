@@ -26,6 +26,7 @@ import { CreateTripDestinationUseCase } from './usecase/trip_destination/create_
 import { UpdateTripDestinationPositionUseCase } from './usecase/trip_destination/update_trip_destination_position/update_trip_destination_position.usecase';
 import { AUTH_SERVICE, DESTINATION_SERVICE } from '@app/common/global/services';
 import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_trip_list.usecase';
+import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_details.usecase';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -41,17 +42,18 @@ import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_t
     }),
     DatabaseModule,
     AuthModule,
-    RmqModule.register({
-      name: DESTINATION_SERVICE,
-    }),
     MongooseModule.forFeature([
       { name: TripDAO.name, schema: TripSchema },
       { name: TripDayDAO.name, schema: TripDaySchema },
       { name: TripDestinationDAO.name, schema: TripDestinationSchema },
       // Other feature modules...
     ]),
+    RmqModule,
     RmqModule.register({
       name: AUTH_SERVICE,
+    }),
+    RmqModule.register({
+      name: DESTINATION_SERVICE,
     }),
   ],
   controllers: [TripController],
@@ -59,6 +61,7 @@ import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_t
     TripService,
     TripRepository,
     GetTripListPaginationUseCase,
+    GetTripDetailsUseCase,
     CreateTripUseCase,
     UpdateTripUseCase,
     CreateTripDayUseCase,

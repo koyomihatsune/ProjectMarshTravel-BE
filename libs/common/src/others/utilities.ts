@@ -1,4 +1,7 @@
 export function isValidPositionArray(n: number, arr: number[]): boolean {
+  if (arr.length !== n) {
+    return false;
+  }
   // Check if each number only appears once in the array
   const uniqueNumbers = new Set(arr);
   if (uniqueNumbers.size !== arr.length) {

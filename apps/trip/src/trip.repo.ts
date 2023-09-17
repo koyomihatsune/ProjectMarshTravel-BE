@@ -21,13 +21,13 @@ export class TripRepository extends AbstractRepository<TripDAO> {
 
   async createTrip(trip: Trip): Promise<Trip | undefined> {
     try {
-      const tripDAO = await TripMapper.toDAO(trip);
+      const tripDAO = TripMapper.toDAO(trip);
       await this.create({
         ...tripDAO,
       });
       return trip;
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return undefined;
     }
   }
@@ -37,10 +37,10 @@ export class TripRepository extends AbstractRepository<TripDAO> {
       const result = await this.findOne({
         _id: tripId.getValue().toMongoObjectID(),
       });
-      const trip = await TripMapper.toEntity(result);
+      const trip = TripMapper.toEntity(result);
       return trip;
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return undefined;
     }
   }
@@ -51,8 +51,6 @@ export class TripRepository extends AbstractRepository<TripDAO> {
     pageSize: number,
   ): Promise<Trip[] | undefined> {
     try {
-      console.log(page);
-      console.log(pageSize);
       const result = await this.findPagination(
         {
           userId: userId.getValue().toMongoObjectID(),
@@ -60,21 +58,19 @@ export class TripRepository extends AbstractRepository<TripDAO> {
         page,
         pageSize,
       );
-      const trips = await Promise.all(
-        result.map(async (trip) => {
-          return await TripMapper.toEntity(trip);
-        }),
-      );
+      const trips = result.map((trip) => {
+        return TripMapper.toEntity(trip);
+      });
       return trips;
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return undefined;
     }
   }
 
   async updateTrip(tripInput: Trip): Promise<Trip | undefined> {
     try {
-      const tripDAO = await TripMapper.toDAO(tripInput);
+      const tripDAO = TripMapper.toDAO(tripInput);
       const result = await this.findOneAndUpdate(
         {
           _id: tripInput.tripId.getValue().toMongoObjectID(),
@@ -83,10 +79,11 @@ export class TripRepository extends AbstractRepository<TripDAO> {
           ...tripDAO,
         },
       );
+
       const trip = TripMapper.toEntity(result);
       return trip;
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return undefined;
     }
   }

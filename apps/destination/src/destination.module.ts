@@ -13,7 +13,6 @@ import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
 import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
 import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/get_destination_details.usecase';
 import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_destination_details/get_multiple_destination_details.usecase';
-import { DESTINATION_SERVICE } from '@app/common/global/services';
 
 @Module({
   imports: [
@@ -34,9 +33,6 @@ import { DESTINATION_SERVICE } from '@app/common/global/services';
     AuthModule,
     RmqModule,
     GoogleMapsModule,
-    RmqModule.register({
-      name: DESTINATION_SERVICE,
-    }),
   ],
   controllers: [DestinationController],
   providers: [

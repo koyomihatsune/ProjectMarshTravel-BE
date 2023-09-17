@@ -13,7 +13,7 @@ export class TripMapper {
     @Inject() private readonly googleMapsService: GoogleMapsService,
   ) {}
 
-  public static async toDAO(trip: Trip): Promise<TripDAO> {
+  public static toDAO(trip: Trip): TripDAO {
     Logger.log(trip.days);
     return {
       _id: trip.tripId.getValue().toMongoObjectID(),
@@ -24,27 +24,25 @@ export class TripMapper {
       startAt: trip.startAt,
       createdAt: trip.createdAt,
       updatedAt: trip.updatedAt,
-      days: await Promise.all(trip.days.map((day) => this.toDayDAO(day))),
+      days: trip.days.map((day) => this.toDayDAO(day)),
     };
   }
 
-  private static async toDayDAO(day: TripDay): Promise<TripDayDAO> {
+  private static toDayDAO(day: TripDay): TripDayDAO {
     Logger.log(day.destinations);
     return {
       _id: day.tripDayId.getValue().toMongoObjectID(),
       position: day.position,
       startOffsetFromMidnight: day.startOffsetFromMidnight,
-      destinations: await Promise.all(
-        day.destinations.map((destination) =>
-          this.toDestinationDAO(destination),
-        ),
+      destinations: day.destinations.map((destination) =>
+        this.toDestinationDAO(destination),
       ),
     };
   }
 
-  private static async toDestinationDAO(
+  private static toDestinationDAO(
     destination: TripDestination,
-  ): Promise<TripDestinationDAO> {
+  ): TripDestinationDAO {
     return {
       _id: destination.tripDestinationId.getValue().toMongoObjectID(),
       position: destination.position,
@@ -53,7 +51,7 @@ export class TripMapper {
     };
   }
 
-  public static async toEntity(dao: TripDAO): Promise<Trip | undefined> {
+  public static toEntity(dao: TripDAO): Trip {
     const tripIdToString = dao._id.toString();
     const userIdToString = dao.userId.toString();
 
@@ -66,7 +64,7 @@ export class TripMapper {
         startAt: dao.startAt,
         createdAt: dao.createdAt,
         updatedAt: dao.updatedAt,
-        days: await Promise.all(dao.days.map((day) => this.toDayEntity(day))),
+        days: dao.days.map((day) => this.toDayEntity(day)),
       },
       new UniqueEntityID(tripIdToString),
     );
@@ -74,15 +72,13 @@ export class TripMapper {
     return tripOrError.isSuccess ? tripOrError.getValue() : undefined;
   }
 
-  private static async toDayEntity(dayDao: TripDayDAO): Promise<TripDay> {
+  private static toDayEntity(dayDao: TripDayDAO): TripDay {
     const tripDayOrError = TripDay.create(
       {
         position: dayDao.position,
         startOffsetFromMidnight: dayDao.startOffsetFromMidnight,
-        destinations: await Promise.all(
-          dayDao.destinations.map((destination) =>
-            this.toDestinationEntity(destination),
-          ),
+        destinations: dayDao.destinations.map((destination) =>
+          this.toDestinationEntity(destination),
         ),
       },
       new UniqueEntityID(dayDao._id.toString()),
@@ -90,9 +86,9 @@ export class TripMapper {
     return tripDayOrError.isSuccess ? tripDayOrError.getValue() : undefined;
   }
 
-  private static async toDestinationEntity(
+  private static toDestinationEntity(
     destinationDao: TripDestinationDAO,
-  ): Promise<TripDestination> {
+  ): TripDestination {
     const tripDestinationOrError = TripDestination.create(
       {
         position: destinationDao.position,

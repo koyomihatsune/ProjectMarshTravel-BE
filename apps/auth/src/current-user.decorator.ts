@@ -6,7 +6,9 @@ export const getCurrentUserByContext = (context: ExecutionContext): UserDAO => {
     return context.switchToHttp().getRequest().user;
   }
   if (context.getType() === 'rpc') {
-    Logger.log('user', context.switchToRpc().getData());
+    Logger.log(
+      'Request through RPC by' + context.switchToRpc().getData().user.username,
+    );
     return context.switchToRpc().getData().user;
   }
 };

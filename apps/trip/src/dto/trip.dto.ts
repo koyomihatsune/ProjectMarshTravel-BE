@@ -14,12 +14,13 @@ export class SingleTripDayResponseDTO {
   id: string;
   position: number;
   startOffsetFromMidnight: number;
-  destinations: SingleTripDestinationResponseDTO[];
+  dayLength: number;
+  destinations?: SingleTripDestinationResponseDTO[];
 }
 
 export class SingleTripDestinationResponseDTO {
-  destinationId: string;
   name: string;
+  position: number;
   location: {
     lat: number;
     lng: number;
@@ -47,10 +48,6 @@ export class SingleTripDayResponseWithoutDestinationsDTO {
   id: string;
   position: number;
   startOffsetFromMidnight: number;
-}
-
-export class MultipleTripsResponseDTO {
-  trips: SingleTripResponseDTO[];
 }
 
 export class MultipleTripResponseWithoutDaysDTO {

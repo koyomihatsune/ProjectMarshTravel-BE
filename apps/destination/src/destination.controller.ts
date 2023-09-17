@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Logger,
-  Query,
-} from '@nestjs/common';
+import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { RESULT_RESPONSE_MESSAGE } from '@app/common/core/infra/http/decorators/response.constants';
 import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
 import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
@@ -33,7 +27,6 @@ export class DestinationController {
       const dto = result.value.getValue();
       return dto;
     }
-    Logger.log('Search start');
     const error = result.value;
     switch (error.constructor) {
       default:

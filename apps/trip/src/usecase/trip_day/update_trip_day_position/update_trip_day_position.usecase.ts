@@ -76,6 +76,7 @@ export class UpdateTripDayPositionUseCase implements UseCase<UpdateTripDayPositi
       await this.tripService.updateTrip(trip);
       return right(Result.ok<void>());
     } catch (err) {
+      Logger.error(err, err.stack);
       // RPC Exception
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));

@@ -91,7 +91,7 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
         }).sort((a, b) => a.position - b.position),
       }));
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       // RPC Exception
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));

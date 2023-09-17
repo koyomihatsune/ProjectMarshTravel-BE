@@ -42,8 +42,6 @@ export class UpdateTripDayUseCase implements UseCase<UpdateTripDayDTOWithUserId,
       // kiểm tra xem user có tồn tại hay không
       const userOrError = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId})); 
 
-      Logger.log(userOrError);
-
       // // chưa handle trường hợp không có user
 
       const tripIdOrError = TripId.create(new UniqueEntityID(request.tripId));

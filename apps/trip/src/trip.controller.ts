@@ -4,7 +4,6 @@ import {
   Controller,
   Get,
   NotFoundException,
-  Param,
   Post,
   Put,
   Query,
@@ -27,11 +26,13 @@ import { CreateTripDestinationUseCase } from './usecase/trip_destination/create_
 import { UpdateTripDestinationPositionUseCase } from './usecase/trip_destination/update_trip_destination_position/update_trip_destination_position.usecase';
 import { UpdateTripDestinationPositionDTO } from './usecase/trip_destination/update_trip_destination_position/update_trip_destination_position.dto';
 import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_trip_list.usecase';
+import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_details.usecase';
 
 @Controller('trip')
 export class TripController {
   constructor(
     private readonly getTripListPaginationUseCase: GetTripListPaginationUseCase,
+    private readonly getTripDetailsUseCase: GetTripDetailsUseCase,
     private readonly createTripUseCase: CreateTripUseCase,
     private readonly updateTripUseCase: UpdateTripUseCase,
     private readonly createTripDayUseCase: CreateTripDayUseCase,
@@ -63,7 +64,7 @@ export class TripController {
     }
   }
 
-  @Get('')
+  @Get('all')
   async getTripList(
     @Req() req: Request & { user: JWTPayload },
     @Query() query: { page: number; limit: number },
@@ -72,6 +73,33 @@ export class TripController {
       userId: req.user.sub,
       page: query.page,
       limit: query.limit,
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Get('')
+  async getTripDetailsWithId(
+    @Req() req: Request & { user: JWTPayload },
+    @Query()
+    query: { tripId: string; dayPositionWithDetails: number; language: string },
+  ) {
+    const result = await this.getTripDetailsUseCase.execute({
+      userId: req.user.sub,
+      request: {
+        tripId: query.tripId,
+        dayPositionWithDetails: query.dayPositionWithDetails,
+        language: query.language,
+      },
     });
     if (result.isRight()) {
       const dto = result.value.getValue();

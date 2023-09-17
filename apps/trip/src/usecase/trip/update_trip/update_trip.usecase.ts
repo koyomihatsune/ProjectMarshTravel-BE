@@ -66,7 +66,6 @@ export class UpdateTripUseCase implements UseCase<UpdateTripDTOWithUserId, Promi
       const result = await this.tripService.updateTrip(trip);
       return right(Result.ok<void>());
     } catch (err) {
-      Logger.error(err);
       // RPC Exception
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));

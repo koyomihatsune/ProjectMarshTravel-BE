@@ -37,7 +37,6 @@ export class JwtAuthGuard implements CanActivate {
       .pipe(
         tap((res) => {
           // eslint-disable-next-line no-console
-          console.log(res);
           this.addUser(res, context);
         }),
         catchError(() => {

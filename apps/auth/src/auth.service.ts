@@ -34,7 +34,7 @@ export class AuthService {
       return decodedIdToken;
     } catch (err) {
       // eslint-disable-next-line no-console
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return null;
     }
   }

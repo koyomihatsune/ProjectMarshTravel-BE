@@ -4,7 +4,6 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import {
@@ -22,8 +21,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (isRpcRequest) {
       return; // Skip processing for RPC requests
     }
-    // eslint-disable-next-line no-console
-    Logger.error(exception);
     // In certain situations `httpAdapter` might not be available in the
     // constructor method, thus we should resolve it here.
     const { httpAdapter } = this.httpAdapterHost;
