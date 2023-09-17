@@ -3,7 +3,7 @@ import { DestinationController } from './destination.controller';
 import { DestinationService } from './destination.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { DatabaseModule } from '@app/common';
+import { DatabaseModule, RmqModule } from '@app/common';
 // import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '@app/common/auth/auth.module';
 import { GoogleMapsModule } from '../gmaps/gmaps.module';
@@ -31,6 +31,7 @@ import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_des
     }),
     DatabaseModule,
     AuthModule,
+    RmqModule,
     GoogleMapsModule,
   ],
   controllers: [DestinationController],

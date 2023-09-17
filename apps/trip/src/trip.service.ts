@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TripRepository } from './trip.repo';
 import { Trip } from './entity/trip.entity';
 import { TripId } from './entity/trip_id';
+import { UserId } from 'apps/auth/user/domain/user_id';
 
 @Injectable()
 export class TripService {
@@ -19,6 +20,19 @@ export class TripService {
 
   async getTripById(tripId: TripId): Promise<Trip> {
     const trip = await this.tripRepostiory.findTripById(tripId);
+    return trip;
+  }
+
+  async getTripsByUserIdPagination(
+    userId: UserId,
+    page: number,
+    pageSize: number,
+  ): Promise<Trip[]> {
+    const trip = await this.tripRepostiory.findTripsByUserIdPagination(
+      userId,
+      page,
+      pageSize,
+    );
     return trip;
   }
 }

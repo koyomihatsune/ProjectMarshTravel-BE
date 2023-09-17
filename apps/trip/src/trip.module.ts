@@ -9,7 +9,6 @@ import { AllExceptionsFilter } from '@app/common/core/infra/http/exceptions/exce
 import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
 import { TripController } from './trip.controller';
 import { TripService } from './trip.service';
-import { AUTH_SERVICE, DESTINATION_SERVICE } from './constants/services';
 import { TripRepository } from './trip.repo';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TripDAO, TripSchema } from './schemas/trip.schema';
@@ -25,6 +24,9 @@ import { UpdateTripDayUseCase } from './usecase/trip_day/update_trip_day/update_
 import { UpdateTripDayPositionUseCase } from './usecase/trip_day/update_trip_day_position/update_trip_day_position.usecase';
 import { CreateTripDestinationUseCase } from './usecase/trip_destination/create_trip_destination/create_trip_destination.usecase';
 import { UpdateTripDestinationPositionUseCase } from './usecase/trip_destination/update_trip_destination_position/update_trip_destination_position.usecase';
+import { AUTH_SERVICE, DESTINATION_SERVICE } from '@app/common/global/services';
+import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_trip_list.usecase';
+import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_details.usecase';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -40,23 +42,26 @@ import { UpdateTripDestinationPositionUseCase } from './usecase/trip_destination
     }),
     DatabaseModule,
     AuthModule,
-    RmqModule.register({
-      name: DESTINATION_SERVICE,
-    }),
     MongooseModule.forFeature([
       { name: TripDAO.name, schema: TripSchema },
       { name: TripDayDAO.name, schema: TripDaySchema },
       { name: TripDestinationDAO.name, schema: TripDestinationSchema },
       // Other feature modules...
     ]),
+    RmqModule,
     RmqModule.register({
       name: AUTH_SERVICE,
+    }),
+    RmqModule.register({
+      name: DESTINATION_SERVICE,
     }),
   ],
   controllers: [TripController],
   providers: [
     TripService,
     TripRepository,
+    GetTripListPaginationUseCase,
+    GetTripDetailsUseCase,
     CreateTripUseCase,
     UpdateTripUseCase,
     CreateTripDayUseCase,

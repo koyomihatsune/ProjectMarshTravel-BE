@@ -14,7 +14,7 @@ import { JWTPayload } from '../src/types/type.declare';
 import { UpdateUserProfileDTO } from './usecase/update_profile/update_profile.dto';
 import { UpdateUserProfileUseCase } from './usecase/update_profile/update_profile.usecase';
 import { GetUserProfileUseCase } from './usecase/get_profile/get_profile.usecase';
-import { MessagePattern, RpcException } from '@nestjs/microservices';
+import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 
 @Controller('user')
 export class UsersController {
@@ -67,7 +67,9 @@ export class UsersController {
   }
 
   @MessagePattern('get_user_profile') // Message pattern
-  async getUserProfileByUserId(body: { userId: string }): Promise<any> {
+  async getUserProfileByUserId(
+    @Payload() body: { userId: string },
+  ): Promise<any> {
     const result = await this.getUserProfileUseCase.execute({
       userId: body.userId,
     });

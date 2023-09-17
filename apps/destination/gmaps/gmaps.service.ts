@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GOOGLE_MAPS_API } from '../src/constants/services';
 import {
@@ -162,7 +162,12 @@ export class GoogleMapsService {
         sessiontoken: dto.sessionToken ? dto.sessionToken : '',
       }),
     );
-    return result.result;
+    if (result.error)
+      Logger.error(
+        "Can't find any place with place_id " + dto.placeId,
+        'GoogleMapsService',
+      );
+    return result.result ? result.result : undefined;
   }
 
   public async getPlaceAutocomplete(

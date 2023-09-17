@@ -6,7 +6,7 @@ import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { TripService } from 'apps/trip/src/trip.service';
 import { CreateTripDayDTO } from './create_trip_day.dto';
-import { AUTH_SERVICE } from '@app/common/auth/services';
+import { AUTH_SERVICE } from '@app/common/global/services';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import * as TripErrors from '../../errors/trip.errors';

@@ -5,7 +5,7 @@ import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { TripService } from 'apps/trip/src/trip.service';
-import { AUTH_SERVICE } from '@app/common/auth/services';
+import { AUTH_SERVICE } from '@app/common/global/services';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { UpdateTripDayPositionDTO } from './update_trip_day_position.dto';
@@ -76,6 +76,7 @@ export class UpdateTripDayPositionUseCase implements UseCase<UpdateTripDayPositi
       await this.tripService.updateTrip(trip);
       return right(Result.ok<void>());
     } catch (err) {
+      Logger.error(err, err.stack);
       // RPC Exception
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));

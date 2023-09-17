@@ -27,7 +27,7 @@ export class DestinationRepository extends AbstractRepository<DestinationDAO> {
       });
       return DestinationMapper.toEntity(destination);
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return undefined;
     }
   }
@@ -44,7 +44,7 @@ export class DestinationRepository extends AbstractRepository<DestinationDAO> {
       return true;
     } catch (err) {
       // eslint-disable-next-line no-console
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return false;
     }
   };

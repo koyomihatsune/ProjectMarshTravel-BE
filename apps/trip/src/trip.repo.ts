@@ -6,6 +6,7 @@ import { TripDAO } from './schemas/trip.schema';
 import { Trip } from './entity/trip.entity';
 import { TripMapper } from './mapper/trip.mapper';
 import { TripId } from './entity/trip_id';
+import { UserId } from 'apps/auth/user/domain/user_id';
 
 @Injectable()
 export class TripRepository extends AbstractRepository<TripDAO> {
@@ -20,13 +21,13 @@ export class TripRepository extends AbstractRepository<TripDAO> {
 
   async createTrip(trip: Trip): Promise<Trip | undefined> {
     try {
-      const tripDAO = await TripMapper.toDAO(trip);
+      const tripDAO = TripMapper.toDAO(trip);
       await this.create({
         ...tripDAO,
       });
       return trip;
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return undefined;
     }
   }
@@ -39,14 +40,37 @@ export class TripRepository extends AbstractRepository<TripDAO> {
       const trip = TripMapper.toEntity(result);
       return trip;
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
+      return undefined;
+    }
+  }
+
+  async findTripsByUserIdPagination(
+    userId: UserId,
+    page: number,
+    pageSize: number,
+  ): Promise<Trip[] | undefined> {
+    try {
+      const result = await this.findPagination(
+        {
+          userId: userId.getValue().toMongoObjectID(),
+        },
+        page,
+        pageSize,
+      );
+      const trips = result.map((trip) => {
+        return TripMapper.toEntity(trip);
+      });
+      return trips;
+    } catch (err) {
+      Logger.error(err, err.stack);
       return undefined;
     }
   }
 
   async updateTrip(tripInput: Trip): Promise<Trip | undefined> {
     try {
-      const tripDAO = await TripMapper.toDAO(tripInput);
+      const tripDAO = TripMapper.toDAO(tripInput);
       const result = await this.findOneAndUpdate(
         {
           _id: tripInput.tripId.getValue().toMongoObjectID(),
@@ -55,10 +79,11 @@ export class TripRepository extends AbstractRepository<TripDAO> {
           ...tripDAO,
         },
       );
+
       const trip = TripMapper.toEntity(result);
       return trip;
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       return undefined;
     }
   }

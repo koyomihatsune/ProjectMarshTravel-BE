@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, Observable, tap } from 'rxjs';
-import { AUTH_SERVICE } from './services';
+import { AUTH_SERVICE } from '../global/services';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'apps/auth/src/decorators/auth.decorator';
 
@@ -37,7 +37,6 @@ export class JwtAuthGuard implements CanActivate {
       .pipe(
         tap((res) => {
           // eslint-disable-next-line no-console
-          console.log(res);
           this.addUser(res, context);
         }),
         catchError(() => {

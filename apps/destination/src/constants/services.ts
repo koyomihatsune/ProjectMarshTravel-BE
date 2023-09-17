@@ -1,5 +1,3 @@
-export const DESTINATION_SERVICE = 'RABBIT_MQ_DESTINATION_SERVICE';
-
 export const GOOGLE_MAPS_API = {
   BASE_URL: 'https://maps.googleapis.com/maps/api',
   ROUTES: {

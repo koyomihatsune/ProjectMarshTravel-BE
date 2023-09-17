@@ -5,7 +5,7 @@ import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { TripService } from 'apps/trip/src/trip.service';
-import { AUTH_SERVICE } from '@app/common/auth/services';
+import { AUTH_SERVICE } from '@app/common/global/services';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { UpdateTripDayDTO } from './update_trip_day.dto';
@@ -41,8 +41,6 @@ export class UpdateTripDayUseCase implements UseCase<UpdateTripDayDTOWithUserId,
 
       // kiểm tra xem user có tồn tại hay không
       const userOrError = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId})); 
-
-      Logger.log(userOrError);
 
       // // chưa handle trường hợp không có user
 

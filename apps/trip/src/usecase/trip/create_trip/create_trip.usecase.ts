@@ -6,13 +6,10 @@ import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { TripService } from 'apps/trip/src/trip.service';
 import { CreateTripDTO } from './create_trip.dto';
-import { AUTH_SERVICE } from '@app/common/auth/services';
-import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { AUTH_SERVICE } from '@app/common/global/services';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 import { Trip } from 'apps/trip/src/entity/trip.entity';
-import { User } from 'apps/auth/user/domain/user.entity';
-import { UserProfileResponseDTO } from 'apps/auth/user/usecase/get_profile/get_profile.dto';
-import { SingleTripResponseDTO } from 'apps/trip/src/dto/trip.dto';
 import { TripDay } from 'apps/trip/trip_day/entity/trip_day.entity';
 
 /* eslint-disable prettier/prettier */
@@ -42,8 +39,7 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
 
       // kiểm tra xem user có tồn tại hay không
       const userOrError = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId})); 
-
-      // // chưa handle trường hợp không có user
+      // chưa handle trường hợp không có user
 
       const tripOrError = Trip.create({
         name: request.name,
@@ -95,7 +91,7 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
         }).sort((a, b) => a.position - b.position),
       }));
     } catch (err) {
-      Logger.error(err);
+      Logger.error(err, err.stack);
       // RPC Exception
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));

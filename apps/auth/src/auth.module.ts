@@ -19,7 +19,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UsersController } from '../user/users.controller';
 import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
-import { AUTH_SERVICE } from '@app/common/auth/services';
+import { AUTH_SERVICE } from '@app/common/global/services';
 
 @Module({
   imports: [

@@ -28,8 +28,6 @@ export class SearchDestinationsAutocompleteUseCase
     try {
       const { query, radius, language, lat, lon } = dto;
 
-        Logger.error("This is DTO");
-      Logger.error(dto);
       // Gọi service của google, trả về query Result. Tạm thời chưa có type nào
       const queryResult = await this.googleMapsService.getMultiplePlacesFromText({
             input: query,
@@ -39,7 +37,6 @@ export class SearchDestinationsAutocompleteUseCase
             lat: lat,
             lon: lon,
       });
-      Logger.error(queryResult);
 
       const response: DestinationMultipleResponseDTO = {
         destinations: [],
