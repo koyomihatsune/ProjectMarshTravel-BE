@@ -4,14 +4,14 @@ import { UseCase } from '@app/common/core/usecase';
 import { Injectable } from '@nestjs/common';
 import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
 import {
-  DestinationSingleResponseDTO,
+  SingleDestinationResponseDTO,
   GetDestinationDetailsRequestDTO,
 } from '../dtos/destination.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
   AppErrors.InvalidPayloadError,
-  Result<DestinationSingleResponseDTO>
+  Result<SingleDestinationResponseDTO>
 >;
 
 @Injectable()
@@ -28,7 +28,7 @@ export class GetDestinationDetailsUseCase
 
       // Gọi service của google, trả về query Result. Tạm thời chưa có type nào
       const queryResult = await this.googleMapsService.getPlaceByID({placeId: place_id, language : language});
-      const response: DestinationSingleResponseDTO = {
+      const response: SingleDestinationResponseDTO = {
           destinationId: queryResult.place_id,
           name: queryResult.name,
           location: {
@@ -43,7 +43,7 @@ export class GetDestinationDetailsUseCase
       /* TO DO:
       Kiểm tra xem destination nào có trong database, nếu có thì query review, set isRegistered = true và gán review của destination đó vào */
       
-      return right(Result.ok<DestinationSingleResponseDTO>(response));
+      return right(Result.ok<SingleDestinationResponseDTO>(response));
     } catch (err) {
       return left(new AppErrors.UnexpectedError(err.toString()));
     }

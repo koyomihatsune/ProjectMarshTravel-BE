@@ -27,6 +27,7 @@ import { UpdateTripDestinationPositionUseCase } from './usecase/trip_destination
 import { AUTH_SERVICE, DESTINATION_SERVICE } from '@app/common/global/services';
 import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_trip_list.usecase';
 import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_details.usecase';
+import { GetTripDayDetailsUseCase } from './usecase/trip_day/g\u001Det_trip_day_details/get_trip_day_details.usecase';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -62,6 +63,7 @@ import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_
     TripRepository,
     GetTripListPaginationUseCase,
     GetTripDetailsUseCase,
+    GetTripDayDetailsUseCase,
     CreateTripUseCase,
     UpdateTripUseCase,
     CreateTripDayUseCase,

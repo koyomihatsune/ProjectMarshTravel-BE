@@ -27,12 +27,16 @@ import { UpdateTripDestinationPositionUseCase } from './usecase/trip_destination
 import { UpdateTripDestinationPositionDTO } from './usecase/trip_destination/update_trip_destination_position/update_trip_destination_position.dto';
 import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_trip_list.usecase';
 import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_details.usecase';
+import { GetTripDayDetailsUseCase } from './usecase/trip_day/g\u001Det_trip_day_details/get_trip_day_details.usecase';
+import { GetTripDayDetailsDTO } from './usecase/trip_day/g\u001Det_trip_day_details/get_trip_day_details.dto';
+import { GetTripDetailsDTO } from './usecase/trip/get_trip_details/get_trip_details.dto';
 
 @Controller('trip')
 export class TripController {
   constructor(
     private readonly getTripListPaginationUseCase: GetTripListPaginationUseCase,
     private readonly getTripDetailsUseCase: GetTripDetailsUseCase,
+    private readonly getTripDayDetailsUseCase: GetTripDayDetailsUseCase,
     private readonly createTripUseCase: CreateTripUseCase,
     private readonly updateTripUseCase: UpdateTripUseCase,
     private readonly createTripDayUseCase: CreateTripDayUseCase,
@@ -91,15 +95,11 @@ export class TripController {
   async getTripDetailsWithId(
     @Req() req: Request & { user: JWTPayload },
     @Query()
-    query: { tripId: string; dayPositionWithDetails: number; language: string },
+    query: GetTripDetailsDTO,
   ) {
     const result = await this.getTripDetailsUseCase.execute({
       userId: req.user.sub,
-      request: {
-        tripId: query.tripId,
-        dayPositionWithDetails: query.dayPositionWithDetails,
-        language: query.language,
-      },
+      request: query,
     });
     if (result.isRight()) {
       const dto = result.value.getValue();
@@ -125,6 +125,33 @@ export class TripController {
     });
     if (result.isRight()) {
       return;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Get('day')
+  async getTripDayDetailsWithId(
+    @Req() req: Request & { user: JWTPayload },
+    @Query()
+    query: GetTripDayDetailsDTO,
+  ) {
+    const result = await this.getTripDayDetailsUseCase.execute({
+      userId: req.user.sub,
+      request: {
+        tripId: query.tripId,
+        tripDayId: query.tripDayId,
+        language: query.language,
+      },
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
     }
     const error = result.value;
     switch (error.constructor) {
