@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Post,
@@ -30,6 +31,10 @@ import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_
 import { GetTripDayDetailsUseCase } from './usecase/trip_day/g\u001Det_trip_day_details/get_trip_day_details.usecase';
 import { GetTripDayDetailsDTO } from './usecase/trip_day/g\u001Det_trip_day_details/get_trip_day_details.dto';
 import { GetTripDetailsDTO } from './usecase/trip/get_trip_details/get_trip_details.dto';
+import { DeleteTripDayDTO } from './usecase/trip_day/delete_trip_day/delete_trip_day.dto';
+import { DeleteTripDayUseCase } from './usecase/trip_day/delete_trip_day/delete_trip_day.usecase';
+import { DeleteTripDestinationUseCase } from './usecase/trip_destination/delete_trip_destination/delete_trip_destination.usecase';
+import { DeleteTripDestinationDTO } from './usecase/trip_destination/delete_trip_destination/delete_trip_destination.dto';
 
 @Controller('trip')
 export class TripController {
@@ -41,8 +46,10 @@ export class TripController {
     private readonly updateTripUseCase: UpdateTripUseCase,
     private readonly createTripDayUseCase: CreateTripDayUseCase,
     private readonly updateTripDayUseCase: UpdateTripDayUseCase,
+    private readonly deleteTripDayUseCase: DeleteTripDayUseCase,
     private readonly updateTripDayPositionUseCase: UpdateTripDayPositionUseCase,
     private readonly createTripDestinationUseCase: CreateTripDestinationUseCase,
+    private readonly deleteTripDestinationUseCase: DeleteTripDestinationUseCase,
     private readonly updateTripDestinationPositionUseCase: UpdateTripDestinationPositionUseCase,
   ) {}
 
@@ -143,11 +150,7 @@ export class TripController {
   ) {
     const result = await this.getTripDayDetailsUseCase.execute({
       userId: req.user.sub,
-      request: {
-        tripId: query.tripId,
-        tripDayId: query.tripDayId,
-        language: query.language,
-      },
+      request: query,
     });
     if (result.isRight()) {
       const dto = result.value.getValue();
@@ -204,6 +207,28 @@ export class TripController {
     }
   }
 
+  @Delete('day/delete')
+  async deleteTripDayWithId(
+    @Req() req: Request & { user: JWTPayload },
+    @Body()
+    body: DeleteTripDayDTO,
+  ) {
+    const result = await this.deleteTripDayUseCase.execute({
+      userId: req.user.sub,
+      request: body,
+    });
+    if (result.isRight()) {
+      return;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
   @Put('day/position')
   async updateTripDayPosition(
     @Req() req: Request & { user: JWTPayload },
@@ -231,6 +256,28 @@ export class TripController {
     @Body() body: CreateTripDestinationDTO,
   ) {
     const result = await this.createTripDestinationUseCase.execute({
+      userId: req.user.sub,
+      request: body,
+    });
+    if (result.isRight()) {
+      return;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Delete('destination/delete')
+  async deleteTripDestinationWithId(
+    @Req() req: Request & { user: JWTPayload },
+    @Body()
+    body: DeleteTripDestinationDTO,
+  ) {
+    const result = await this.deleteTripDestinationUseCase.execute({
       userId: req.user.sub,
       request: body,
     });

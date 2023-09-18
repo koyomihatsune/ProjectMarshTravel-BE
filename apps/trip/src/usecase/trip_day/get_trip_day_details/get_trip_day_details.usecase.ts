@@ -93,6 +93,7 @@ export class GetTripDayDetailsUseCase
         if (destinationDetails === undefined) {
           Logger.log(`Place ${destination.place_id} not found in query result. Left out of array`, 'GetTripDetailsUseCase');
           result.destinations.push({
+            id: destination.tripDestinationId.getValue().toString(),
             place_id: destination.place_id,
             name: destinationDetails.name,
             position: destination.position,
@@ -105,6 +106,7 @@ export class GetTripDayDetailsUseCase
         } else {
           Logger.log("Found destination details: " + destinationDetails.name,'GetTripDetailsUseCase');
           result.destinations.push({
+            id: destination.tripDestinationId.getValue().toString(),
             place_id: destination.place_id,
             name: destinationDetails.name,
             position: destination.position,

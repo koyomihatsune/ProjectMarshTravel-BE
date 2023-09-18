@@ -3,7 +3,7 @@ import * as AppErrors from '@app/common/core/app.error';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
 import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { TripService } from 'apps/trip/src/trip.service';
 import { CreateTripDestinationDTO } from './create_trip_destination.dto';
 import { AUTH_SERVICE } from '@app/common/global/services';
@@ -59,7 +59,7 @@ export class CreateTripDestinationUseCase implements UseCase<CreateTripDestinati
       // Kiểm tra trip day tồn tại hay không
       const tripDayIndex = tripOrError.days.findIndex((day) => day.tripDayId.equals(tripDayIdOrError));
 
-      if (tripDayIndex === undefined) {
+      if (tripDayIndex === -1) {
         return left(new AppErrors.EntityNotFoundError('TripDay'));
       }
 
@@ -96,7 +96,7 @@ export class CreateTripDestinationUseCase implements UseCase<CreateTripDestinati
       return right(Result.ok<any>());
     } catch (err) {
       // RPC Exception
-      
+      Logger.error(err, err.stack, 'CreateTripDestinationUseCase');
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));
       }
