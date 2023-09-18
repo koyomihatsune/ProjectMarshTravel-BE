@@ -6,14 +6,14 @@ import { UseCase } from '@app/common/core/usecase';
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
 import {
-  DestinationMultipleResponseDTO,
+  MultipleDestinationResponseDTO,
   SearchDestinationsRequestDTO,
 } from '../dtos/destination.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
   AppErrors.InvalidPayloadError,
-  Result<DestinationMultipleResponseDTO>
+  Result<MultipleDestinationResponseDTO>
 >;
 
 @Injectable()
@@ -38,7 +38,7 @@ export class SearchDestinationsAutocompleteUseCase
             lon: lon,
       });
 
-      const response: DestinationMultipleResponseDTO = {
+      const response: MultipleDestinationResponseDTO = {
         destinations: [],
         nextPageToken: undefined,
       };
@@ -63,7 +63,7 @@ export class SearchDestinationsAutocompleteUseCase
       /* TO DO:
       Kiểm tra xem destination nào có trong database, nếu có thì query review, set isRegistered = true và gán review của destination đó vào */
 
-      return right(Result.ok<DestinationMultipleResponseDTO>(response));
+      return right(Result.ok<MultipleDestinationResponseDTO>(response));
     } catch (err) {
       return left(new AppErrors.UnexpectedError(err.toString()));
     }

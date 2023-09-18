@@ -4,15 +4,15 @@ import { UseCase } from '@app/common/core/usecase';
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
 import {
-  DestinationMultipleResponseDTO,
-  DestinationSingleResponseDTO,
+  MultipleDestinationResponseDTO,
+  SingleDestinationResponseDTO,
   GetMultipleDestinationDetailsRequestDTO,
 } from '../dtos/destination.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
   AppErrors.InvalidPayloadError,
-  Result<DestinationMultipleResponseDTO>
+  Result<MultipleDestinationResponseDTO>
 >;
 
 @Injectable()
@@ -36,7 +36,7 @@ export class GetMultipleDestinationDetailsUseCase
         if (subqueryResult === undefined) {
           Logger.error(`Place ${place_id} not found`, 'GetMultipleDestinationDetailsUseCase');
         } else {
-          const singleResponse: DestinationSingleResponseDTO = {
+          const singleResponse: SingleDestinationResponseDTO = {
             destinationId: subqueryResult.place_id,
             name: subqueryResult.name,
             location: {
@@ -52,14 +52,14 @@ export class GetMultipleDestinationDetailsUseCase
         // đã handle trường hợp lỗi, nếu lỗi sẽ thay thế bằng error response và cả bên trip cũng vậy
       }));
 
-      const result: DestinationMultipleResponseDTO = {
+      const result: MultipleDestinationResponseDTO = {
         destinations: queryResult,
       };
 
       /* TO DO:
       Kiểm tra xem destination nào có trong database, nếu có thì query review, set isRegistered = true và gán review của destination đó vào */
 
-      return right(Result.ok<DestinationMultipleResponseDTO>(result));
+      return right(Result.ok<MultipleDestinationResponseDTO>(result));
     } catch (err) {
       Logger.error(err, err.stack);
       return left(new AppErrors.UnexpectedError(err.toString()));

@@ -1,6 +1,9 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class GetTripDetailsDTO {
+export class DeleteTripDayDTO {
   @IsNotEmpty()
   tripId: string;
+
+  @IsNotEmpty()
+  tripDayId: string;
 }

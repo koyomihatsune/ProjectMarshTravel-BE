@@ -1,7 +1,7 @@
 import { IsIn, IsNotEmpty, IsOptional } from 'class-validator';
 import { LanguageEnumValue } from '../../constants/services';
 
-export class DestinationSingleResponseDTO {
+export class SingleDestinationResponseDTO {
   //use placeId by Google Maps - but put in database as destinationId
   destinationId: string;
   name: string;
@@ -15,8 +15,8 @@ export class DestinationSingleResponseDTO {
   isRegistered: boolean;
 }
 
-export class DestinationMultipleResponseDTO {
-  destinations: DestinationSingleResponseDTO[];
+export class MultipleDestinationResponseDTO {
+  destinations: SingleDestinationResponseDTO[];
   nextPageToken?: string;
 }
 
