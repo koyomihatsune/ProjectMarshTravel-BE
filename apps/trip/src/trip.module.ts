@@ -28,6 +28,8 @@ import { AUTH_SERVICE, DESTINATION_SERVICE } from '@app/common/global/services';
 import { GetTripListPaginationUseCase } from './usecase/trip/get_trip_list/get_trip_list.usecase';
 import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_details.usecase';
 import { GetTripDayDetailsUseCase } from './usecase/trip_day/g\u001Det_trip_day_details/get_trip_day_details.usecase';
+import { DeleteTripDayUseCase } from './usecase/trip_day/delete_trip_day/delete_trip_day.usecase';
+import { DeleteTripDestinationUseCase } from './usecase/trip_destination/delete_trip_destination/delete_trip_destination.usecase';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -68,8 +70,10 @@ import { GetTripDayDetailsUseCase } from './usecase/trip_day/g\u001Det_trip_day_
     UpdateTripUseCase,
     CreateTripDayUseCase,
     UpdateTripDayUseCase,
+    DeleteTripDayUseCase,
     UpdateTripDayPositionUseCase,
     CreateTripDestinationUseCase,
+    DeleteTripDestinationUseCase,
     UpdateTripDestinationPositionUseCase,
     {
       provide: APP_GUARD,

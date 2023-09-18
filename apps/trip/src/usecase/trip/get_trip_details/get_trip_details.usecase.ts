@@ -71,6 +71,7 @@ export class GetTripDetailsUseCase
             startOffsetFromMidnight: day.startOffsetFromMidnight,
             destinations: day.destinations.map((destination) => {
               return ({
+                id: destination.tripDestinationId.getValue().toString(),
                 position: destination.position,
                 type: destination.type,
                 place_id: destination.place_id,

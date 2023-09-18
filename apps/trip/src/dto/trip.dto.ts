@@ -19,9 +19,10 @@ export class SingleTripDayWithoutDestinationDetailsResponseDTO {
 }
 
 export class SingleTripDestinationWithoutDetailsResponseDTO {
+  id: string;
   position: number;
-  type: string;
   place_id: string;
+  type: string;
 }
 
 export class SingleTripDayResponseDTO {
@@ -33,10 +34,11 @@ export class SingleTripDayResponseDTO {
 }
 
 export class SingleTripDestinationResponseDTO {
-  place_id: string;
-  name: string;
-  type: string;
+  id: string;
   position: number;
+  name: string;
+  place_id: string;
+  type: string;
   location?: {
     lat: number;
     lng: number;
