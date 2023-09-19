@@ -15,6 +15,7 @@ export class SingleTripDayWithoutDestinationDetailsResponseDTO {
   position: number;
   startOffsetFromMidnight: number;
   dayLength: number;
+  firstDestinationName?: string;
   destinations: SingleTripDestinationWithoutDetailsResponseDTO[];
 }
 
