@@ -2,7 +2,7 @@ import { AUTH_SERVICE, DESTINATION_SERVICE } from '@app/common/global/services';
 import * as AppErrors from '@app/common/core/app.error';
 import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { SingleTripResponseDTO } from 'apps/trip/src/dto/trip.dto';
 import { TripService } from 'apps/trip/src/trip.service';
@@ -11,6 +11,10 @@ import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
 import { GetTripDetailsDTO } from './get_trip_details.dto';
 import { TripId } from 'apps/trip/src/entity/trip_id';
 import * as TripErrors from '../../errors/trip.errors';
+import {
+  MultipleDestinationResponseDTO,
+  SingleDestinationResponseDTO,
+} from 'apps/destination/src/usecase/dtos/destination.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -80,6 +84,30 @@ export class GetTripDetailsUseCase
           })
         })
       };
+
+      if (request.getFirstDestinationName) {
+        const placeIds = [];
+        result.days.forEach((day) => {
+          if (day.destinations[0]) {
+            placeIds.push(day.destinations[0].place_id);
+          }
+        });
+
+        const destinationQueryResult : MultipleDestinationResponseDTO = await firstValueFrom(this.destinationClient.send('get_multiple_destinations', { place_ids: placeIds, language: request.language ?? 'vi'}));
+
+        result.days.map((day) => {
+          if (day.destinations[0]) {
+            const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => destinationDetails.destinationId === day.destinations[0].place_id);
+            if (destinationDetails === undefined) {
+              Logger.log(`Place ${day.destinations[0].place_id} not found in query result. Left out of array`, 'GetTripDetailsUseCase');
+            } else {
+              day.firstDestinationName = destinationDetails.name;
+            }
+          }
+          return day;
+        })
+        console.log(result);
+      }
 
       return right(Result.ok<SingleTripResponseDTO>(result));
     } catch (err) {
