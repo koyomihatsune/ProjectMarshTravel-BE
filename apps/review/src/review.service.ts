@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { TripRepository } from './review.repo';
-import { Trip } from './entity/review.entity';
-import { TripId } from './entity/review_id';
-import { UserId } from 'apps/auth/user/domain/user_id';
 
 @Injectable()
 export class TripService {

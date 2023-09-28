@@ -177,9 +177,9 @@ jobs:
           yq eval-all -i 'select(fileIndex == 0) | select(.oauth2.clientIdAndroid) | .oauth2.clientIdAndroid = env(OAUTH2_CLIENT_ID_ANDROID)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.oauth2.clientIdIos) | .oauth2.clientIdIos = env(OAUTH2_CLIENT_ID_IOS)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.firebase.serviceAccount) | .firebase.serviceAccount = env(FIREBASE_SA)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.googleMapsAPIKey) | .googleMapsAPIKey = env(GOOGLE_MAPS_API_KEY)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.gcloud.serviceAccount) | .gcloud.serviceAccount = env(GCLOUD_SA)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.gcloud.storageBucketName) | .gcloud.storageBucketName = env(GCLOUD_STORAGE_BUCKET_NAME)' values.yaml values.yaml.example
-          yq eval-all -i 'select(fileIndex == 0) | select(.googleMapsAPIKey) | .googleMapsAPIKey = env(GOOGLE_MAPS_API_KEY)' values.yaml values.yaml.example
           echo "End writing secrets"
           cat values.yaml
       
