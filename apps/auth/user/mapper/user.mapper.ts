@@ -20,6 +20,7 @@ export class UserMapper {
       email: user.email.value,
       dob: user.dob?.value,
       phoneNumber: user.phoneNumber?.value,
+      avatarUrl: user.avatarUrl,
       accessToken: user.accessToken?.value,
       refreshToken: user.refreshToken?.value,
       createdAt: user.createdAt ?? new Date(),
@@ -69,6 +70,7 @@ export class UserMapper {
           ? userPhoneNumberOrError.getValue()
           : undefined,
         dob: dao.dob ? userDOBOrError.getValue() : undefined,
+        avatarUrl: dao.avatarUrl,
         createdAt: dao.createdAt,
       },
       new UniqueEntityID(userIdString),

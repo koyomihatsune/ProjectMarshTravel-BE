@@ -12,6 +12,7 @@ export const ERROR_MESSAGE = {
   EntityNotFound: 'Entity {0} not found',
   TooManyRequests: 'Too many requests',
   DateTimeNotValid: 'Datetime is not valid',
+  ConnectStorageError: 'Some Error when connect to Storage',
 };
 
 export const STR_COMMON = {

@@ -135,7 +135,7 @@ jobs:
 
       - name: 'Config Gcloud cluster in kubectl'
         run: |
-          gcloud container clusters get-credentials marshtravel --region=asia-southeast1-a
+          gcloud container clusters get-credentials marshtravel --region=asia-southeast2-a
           kubectl config current-context
 
       - name: Checkout CD Helm Repo
@@ -157,6 +157,8 @@ jobs:
           OAUTH2_CLIENT_ID_ANDROID: ${{ secrets.OAUTH2_CLIENT_ID_ANDROID }}
           OAUTH2_CLIENT_ID_IOS: ${{ secrets.OAUTH2_CLIENT_ID_IOS }}
           FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          GCLOUD_SA: ${{secrets.GCP_CREDENTIALS}}
+          GCLOUD_STORAGE_BUCKET_NAME: ${{ secrets.GCLOUD_STORAGE_BUCKET_NAME }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           ls
@@ -176,6 +178,8 @@ jobs:
           yq eval-all -i 'select(fileIndex == 0) | select(.oauth2.clientIdIos) | .oauth2.clientIdIos = env(OAUTH2_CLIENT_ID_IOS)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.firebase.serviceAccount) | .firebase.serviceAccount = env(FIREBASE_SA)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.googleMapsAPIKey) | .googleMapsAPIKey = env(GOOGLE_MAPS_API_KEY)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.gcloud.serviceAccount) | .gcloud.serviceAccount = env(GCLOUD_SA)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.gcloud.storageBucketName) | .gcloud.storageBucketName = env(GCLOUD_STORAGE_BUCKET_NAME)' values.yaml values.yaml.example
           echo "End writing secrets"
           cat values.yaml
       

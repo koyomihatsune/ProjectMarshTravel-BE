@@ -16,6 +16,9 @@ export class UserDAO extends AbstractDocument {
   email: string;
 
   @Prop()
+  avatarUrl: string;
+
+  @Prop()
   phoneNumber?: string;
 
   @Prop()
