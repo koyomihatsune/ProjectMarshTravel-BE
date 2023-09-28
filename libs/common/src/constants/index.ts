@@ -34,6 +34,6 @@ export const ERROR_CODE = {
 
 export const STORAGE_PATH = {
   //user
-  UserAvatar: process.env.GCS_ENV + '/avatars',
-  UserAudio: process.env.GCS_ENV + '/user_audio_records',
+  UserAvatar: 'staging/user/avatar',
+  UserReview: 'staging/user/review',
 };

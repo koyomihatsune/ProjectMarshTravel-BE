@@ -8,7 +8,10 @@ import { UserMapper } from './mapper/user.mapper';
 import { UserId } from './domain/user_id';
 import { UpdateUserProfileEntityDTO } from './usecase/update_profile/update_profile.dto';
 import { UserUsername } from './domain/user_username';
-
+import { Either, left, right } from '@app/common/core/result';
+import * as AppErrors from '@app/common/core/app.error';
+import { StorageService } from '@app/common/storage/storage.service';
+import { STORAGE_PATH } from '@app/common/constants';
 export interface TokenPayload {
   accessToken: string;
 }
@@ -18,6 +21,7 @@ export class UsersService {
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     private readonly usersRepository: UsersRepository,
+    private readonly storageService: StorageService,
   ) {}
 
   async createUser(request: CreateUserRequest): Promise<User> {
@@ -68,4 +72,30 @@ export class UsersService {
   ) {
     return this.usersRepository.updateUserToken(id, tokenPayload);
   }
+
+  updateUserAvatar = async (
+    userId: UserId,
+    userPayload: {
+      avatar: Express.Multer.File;
+    },
+  ): Promise<Either<AppErrors.UnexpectedError, string>> => {
+    // Send image to GCS and Take Link Url
+    const imageUrl = await this.storageService.uploadFileToStorage(
+      userPayload.avatar,
+      STORAGE_PATH.UserAvatar,
+      `user-avatar-${userId.getValue().toString()}`,
+    );
+    if (imageUrl.isLeft()) {
+      return left(imageUrl.value);
+    }
+
+    await this.usersRepository.upsert(
+      {
+        _id: userId.getValue().toBuffer(),
+      },
+      { avatarUrl: imageUrl.value },
+    );
+
+    return right(imageUrl.value);
+  };
 }

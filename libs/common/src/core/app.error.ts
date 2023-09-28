@@ -66,10 +66,21 @@ export class DateTimeNotValid extends Result<UseCaseError> {
   }
 }
 
+export class GCSError extends Result<UseCaseError> {
+  public constructor(err?: any) {
+    super(false, {
+      code: ERROR_CODE.ConnectStorageError,
+      message: ERROR_MESSAGE.ConnectStorageError,
+      payload: err,
+    });
+  }
+}
+
 const AppErrors = {
   UnexpectedError,
   EntityNotFoundError,
   TooManyRequestError,
+  GCSError,
 };
 
 export default AppErrors;

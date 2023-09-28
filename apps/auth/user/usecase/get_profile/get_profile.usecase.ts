@@ -26,8 +26,7 @@ export class GetUserProfileUseCase
         id: user.userId.getValue().toString(),
         name: user.name.value,
         email: user.email.value,
-        avatar:
-          'https://pjsekai.sega.jp/assets/images/special/download/sns-icon/unit01/icon_01_unit01_miku.png',
+        avatar: user.avatarUrl,
         provider: user.provider.value,
         username: user.username ? user.username.value : '',
         phoneNumber: user.phoneNumber ? user.phoneNumber.value : '',

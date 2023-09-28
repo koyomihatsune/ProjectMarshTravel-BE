@@ -17,6 +17,7 @@ export interface UserProps {
   provider: UserProvider;
   email: UserEmail;
   dob?: UserDOB;
+  avatarUrl: string;
   phoneNumber?: UserPhoneNumber;
   createdAt: Date;
   accessToken?: UserToken;
@@ -54,6 +55,10 @@ export class User extends AggregateRoot<UserProps> {
 
   get phoneNumber(): UserPhoneNumber | undefined {
     return this.props.phoneNumber;
+  }
+
+  get avatarUrl(): string {
+    return this.props.avatarUrl;
   }
 
   get createdAt(): Date | undefined {

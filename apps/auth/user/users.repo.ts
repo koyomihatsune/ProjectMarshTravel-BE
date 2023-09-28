@@ -30,6 +30,8 @@ export class UsersRepository extends AbstractRepository<UserDAO> {
         email: request.email.value,
         provider: request.provider.value,
         username: request.username.value,
+        avatarUrl:
+          'https://pjsekai.sega.jp/assets/images/special/download/sns-icon/unit01/icon_01_unit01_miku.png',
         accessToken: '',
         refreshToken: '',
         createdAt: new Date(),

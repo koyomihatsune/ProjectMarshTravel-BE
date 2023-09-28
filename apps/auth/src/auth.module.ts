@@ -34,6 +34,8 @@ import { AUTH_SERVICE } from '@app/common/global/services';
         JWT_SECRET_KEY: Joi.string().required(),
         JWT_REFRESH_KEY: Joi.string().required(),
         FIREBASE_SA: Joi.string().required(),
+        GCLOUD_SA: Joi.string().required(),
+        GCLOUD_STORAGE_BUCKET_NAME: Joi.string().required(),
       }),
       ignoreEnvFile: true,
       // Nếu không tìm được một environment variable nào đó sẽ báo lỗi

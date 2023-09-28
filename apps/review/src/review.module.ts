@@ -8,6 +8,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthModule } from 'apps/auth/src/auth.module';
 import Joi from 'joi';
 import { ReviewController } from './review.controller';
+import { StorageModule } from '@app/common/storage/storage.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ReviewController } from './review.controller';
         RABBIT_MQ_URI: Joi.string().required(),
         RABBIT_MQ_AUTH_QUEUE: Joi.string().required(),
         RABBIT_MQ_DESTINATION_QUEUE: Joi.string().required(),
+        GCLOUD_SA: Joi.string().required(),
       }),
       ignoreEnvFile: true,
     }),
@@ -37,6 +39,7 @@ import { ReviewController } from './review.controller';
     RmqModule.register({
       name: DESTINATION_SERVICE,
     }),
+    StorageModule,
   ],
   controllers: [ReviewController],
   providers: [

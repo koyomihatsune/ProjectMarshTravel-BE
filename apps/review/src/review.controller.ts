@@ -3,14 +3,15 @@ import { Controller } from '@nestjs/common';
 @Controller('review')
 export class ReviewController {
   // @Post('create')
-  // async createTrip(
+  // @UseInterceptors(FileInterceptor('avatar'))
+  // async createReview(
   //   @Req() req: Request & { user: JWTPayload },
   //   @Body() body: CreateTripDTO,
   // ) {
-  //   const result = await this.createTripUseCase.execute({
-  //     userId: req.user.sub,
-  //     request: body,
-  //   });
+  //   // const result = await this.createTripUseCase.execute({
+  //   //   userId: req.user.sub,
+  //   //   request: body,
+  //   // });
   //   if (result.isRight()) {
   //     const dto = result.value.getValue();
   //     return dto;
@@ -23,7 +24,6 @@ export class ReviewController {
   //       throw new BadRequestException(error);
   //   }
   // }
-  //
   // @Get('all')
   // async getTripList(
   //   @Req() req: Request & { user: JWTPayload },
