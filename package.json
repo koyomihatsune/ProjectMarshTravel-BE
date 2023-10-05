@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+    "administrative-init": "cd db_initializer && ../node_modules/.bin/tsc administrative_region_import.ts && node administrative_region_import.js && cd ..",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

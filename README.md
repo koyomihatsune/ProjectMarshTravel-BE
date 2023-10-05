@@ -19,6 +19,15 @@ $ brew services start mongodb-community
 $ cd /path/to/ProjectMarshTravel-BE
 
 $ yarn install
+
+```
+
+## Initialisation
+
+```bash
+# Administrative Region Database Initialisation
+$ npm run administrative-init
+
 ```
 
 ## Running the app
