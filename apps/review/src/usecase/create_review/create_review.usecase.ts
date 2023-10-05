@@ -47,8 +47,6 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
 
       // nếu trong review có ảnh thì upload ảnh lên storage
 
-      
-
       const imageUrls = await Promise.all(payload.request.images.map(async (image) => {
         return await this.storageService.uploadFileToStorage(image, 
           STORAGE_PATH.UserReview,
@@ -66,6 +64,10 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
         place_id: request.place_id,
         title: request.title,
         description: request.description,
+        tagging: {
+          province_code: "00",
+          highlighted: false,
+        },
         rating: request.rating,
         imageURLs: [],
         likes: [],

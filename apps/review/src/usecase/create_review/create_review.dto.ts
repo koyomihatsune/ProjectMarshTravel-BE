@@ -15,7 +15,5 @@ export class CreateReviewDTO {
   @IsNotEmpty()
   rating: number;
 
-  hashtag: string[];
-
   images: Express.Multer.File[];
 }

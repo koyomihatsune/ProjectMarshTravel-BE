@@ -16,6 +16,19 @@ export class ReviewDAO extends AbstractDocument {
   @Prop()
   place_id: string;
 
+  @Prop({
+    type: {
+      province_code: String,
+      district_code: String,
+      highlighted: Boolean,
+    },
+  })
+  tagging: {
+    province_code: string;
+    district_code?: string;
+    highlighted: boolean;
+  };
+
   @Prop()
   rating: number;
 

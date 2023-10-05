@@ -10,6 +10,7 @@ export class ReviewMapper {
       userId: review.userId.getValue().toMongoObjectID(),
       title: review.title,
       description: review.description,
+      tagging: review.tagging,
       place_id: review.place_id,
       rating: review.rating,
       imageURLs: review.imageURLs,
@@ -33,6 +34,7 @@ export class ReviewMapper {
         title: dao.title,
         description: dao.description,
         place_id: dao.place_id,
+        tagging: dao.tagging,
         rating: dao.rating,
         imageURLs: dao.imageURLs,
         likes: dao.likes.map((user) =>

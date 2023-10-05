@@ -1,4 +1,10 @@
 /* eslint-disable no-console */
+
+/* DISCLAIMER:
+This part of database is based on the following resources:
+- https://github.com/ThangLeQuoc/vietnamese-provinces-database
+*/
+
 import * as fs from 'fs';
 import * as mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
