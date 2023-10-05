@@ -5,112 +5,92 @@ import { Model, Connection } from 'mongoose';
 import { AbstractRepository } from '@app/common';
 import { UserId } from 'apps/auth/user/domain/user_id';
 import { ReviewDAO } from './schemas/review.schema';
-
+import { ReviewMapper } from './mapper/review.mapper';
+import { Review } from './entity/review.entity';
+import { ReviewId } from './entity/review_id';
 @Injectable()
-export class TripRepository extends AbstractRepository<ReviewDAO> {
-  protected readonly logger = new Logger(TripRepository.name);
+export class ReviewRepository extends AbstractRepository<ReviewDAO> {
+  protected readonly logger = new Logger(ReviewRepository.name);
 
-  // constructor(
-  //   @InjectModel(TripDAO.name) tripModel: Model<ReviewDAO>,
-  //   @InjectConnection() connection: Connection,
-  // ) {
-  //   super(tripModel, connection);
-  // }
+  constructor(
+    @InjectModel(ReviewDAO.name) reviewModel: Model<ReviewDAO>,
+    @InjectConnection() connection: Connection,
+  ) {
+    super(reviewModel, connection);
+  }
 
-  // async createTrip(trip: Trip): Promise<Trip | undefined> {
-  //   try {
-  //     const tripDAO = TripMapper.toDAO(trip);
-  //     await this.create({
-  //       ...tripDAO,
-  //     });
-  //     return trip;
-  //   } catch (err) {
-  //     Logger.error(err, err.stack);
-  //     return undefined;
-  //   }
-  // }
+  async createReview(review: Review): Promise<Review | undefined> {
+    try {
+      const reviewDAO = ReviewMapper.toDAO(review);
+      await this.create({
+        ...reviewDAO,
+      });
+      return review;
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
+  }
 
-  // async findTripById(tripId: TripId): Promise<Trip | undefined> {
-  //   try {
-  //     const result = await this.findOne({
-  //       _id: tripId.getValue().toMongoObjectID(),
-  //     });
-  //     const trip = TripMapper.toEntity(result);
-  //     return trip;
-  //   } catch (err) {
-  //     Logger.error(err, err.stack);
-  //     return undefined;
-  //   }
-  // }
+  async updateReview(reviewInput: Review): Promise<Review | undefined> {
+    try {
+      const reviewDAO = ReviewMapper.toDAO(reviewInput);
+      const result = await this.findOneAndUpdate(
+        {
+          _id: reviewInput.reviewId.getValue().toMongoObjectID(),
+        },
+        {
+          ...reviewDAO,
+        },
+      );
 
-  // async findTripsByUserIdPagination(
-  //   userId: UserId,
-  //   page: number,
-  //   pageSize: number,
-  // ): Promise<Trip[] | undefined> {
-  //   try {
-  //     const result = await this.findPagination(
-  //       {
-  //         userId: userId.getValue().toMongoObjectID(),
-  //       },
-  //       page,
-  //       pageSize,
-  //     );
-  //     const trips = result.map((trip) => {
-  //       return TripMapper.toEntity(trip);
-  //     });
-  //     return trips;
-  //   } catch (err) {
-  //     Logger.error(err, err.stack);
-  //     return undefined;
-  //   }
-  // }
+      const review = ReviewMapper.toEntity(result);
+      return review;
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
+  }
 
-  // async updateTrip(tripInput: Trip): Promise<Trip | undefined> {
-  //   try {
-  //     const tripDAO = TripMapper.toDAO(tripInput);
-  //     const result = await this.findOneAndUpdate(
-  //       {
-  //         _id: tripInput.tripId.getValue().toMongoObjectID(),
-  //       },
-  //       {
-  //         ...tripDAO,
-  //       },
-  //     );
+  async findReviewById(reviewId: ReviewId): Promise<Review | undefined> {
+    try {
+      const result = await this.findOne({
+        _id: reviewId.getValue().toMongoObjectID(),
+      });
+      const review = ReviewMapper.toEntity(result);
+      return review;
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
+  }
 
-  //     const trip = TripMapper.toEntity(result);
-  //     return trip;
-  //   } catch (err) {
-  //     Logger.error(err, err.stack);
-  //     return undefined;
-  //   }
-  // }
-
-  // // Untested
-  // addReviews = async (place_id: string, reviewIds: string[]) => {
-  //   try {
-  //     await this.findOneAndUpdate(
-  //       {
-  //         place_id: place_id,
-  //       },
-  //       { $push: { reviewIds: reviewIds } },
-  //     );
-  //     return true;
-  //   } catch (err) {
-  //     // eslint-disable-next-line no-console
-  //     Logger.error(err);
-  //     return false;
-  //   }
-  // };
-
-  // async getDestinationByPlaceId(
-  //   placeId: string,
-  // ): Promise<Destination | undefined> {
-  //   try {
-  //     const destination = await this.findOne({ place_id: placeId });
-  //     return DestinationMapper.toEntity(destination);
-  //   } catch (err) {
-  //     return undefined;
-  //   }
-  // }
+  // Có thể tìm review bằng UserId hoặc tìm bằng placeId
+  async findAllReviewsPagination(
+    params: {
+      userId?: UserId;
+      place_id?: string;
+    },
+    page: number,
+    pageSize: number,
+  ): Promise<Review[] | undefined> {
+    try {
+      const result = await this.findPagination(
+        { ...params, isDeleted: false },
+        page,
+        pageSize,
+      );
+      const reviews = result.map((review) => {
+        return ReviewMapper.toEntity(review);
+      });
+      // sort from newest to oldest
+      reviews.sort((a, b) => {
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
+      return reviews;
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
+  }
 }
