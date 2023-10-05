@@ -69,12 +69,30 @@ export class DestinationController {
   }
 
   @MessagePattern('get_multiple_destinations')
+  @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
   async getMultipleDestinationsDetailsRPC(
     @Payload() data: GetMultipleDestinationDetailsRequestDTO,
   ) {
     const result = await this.getMultipleDestinationDetailsUseCase.execute(
       data,
     );
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      default:
+        throw new RpcException(new BadRequestException(error.getErrorValue()));
+    }
+  }
+
+  @MessagePattern('get_destination_details')
+  @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
+  async getDestinationDetailsRPC(
+    @Query() query: GetDestinationDetailsRequestDTO,
+  ) {
+    const result = await this.getDestinationDetailsUseCase.execute(query);
     if (result.isRight()) {
       const dto = result.value.getValue();
       return dto;

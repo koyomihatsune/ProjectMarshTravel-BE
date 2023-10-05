@@ -25,6 +25,7 @@ export interface ReviewProps {
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
+  isApproved: boolean;
 }
 
 export class Review extends AggregateRoot<ReviewProps> {
@@ -81,6 +82,10 @@ export class Review extends AggregateRoot<ReviewProps> {
 
   get isDeleted(): boolean {
     return this.props.isDeleted;
+  }
+
+  get isApproved(): boolean {
+    return this.props.isApproved;
   }
 
   get tagging(): {

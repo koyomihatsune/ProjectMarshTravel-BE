@@ -14,6 +14,7 @@ import { ReviewService } from './review.service';
 import { ReviewRepository } from './review.repo';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ReviewDAO, ReviewSchema } from './schemas/review.schema';
+import { NestjsFormDataModule } from 'nestjs-form-data';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ReviewDAO, ReviewSchema } from './schemas/review.schema';
     DatabaseModule,
     AuthModule,
     RmqModule,
+    NestjsFormDataModule,
     MongooseModule.forFeature([
       { name: ReviewDAO.name, schema: ReviewSchema },
       // { name: TripDayDAO.name, schema: TripDaySchema },

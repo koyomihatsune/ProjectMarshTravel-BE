@@ -22,6 +22,7 @@ export class ReviewMapper {
       createdAt: review.createdAt,
       updatedAt: review.updatedAt,
       isDeleted: review.isDeleted,
+      isApproved: review.isApproved,
     };
   }
 
@@ -47,6 +48,7 @@ export class ReviewMapper {
         createdAt: dao.createdAt,
         updatedAt: dao.updatedAt,
         isDeleted: dao.isDeleted,
+        isApproved: dao.isApproved,
       },
       new UniqueEntityID(reviewIdToString),
     );

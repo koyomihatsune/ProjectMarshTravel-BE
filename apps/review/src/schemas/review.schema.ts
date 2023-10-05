@@ -52,6 +52,9 @@ export class ReviewDAO extends AbstractDocument {
 
   @Prop()
   isDeleted: boolean;
+
+  @Prop()
+  isApproved: boolean;
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(ReviewDAO);
