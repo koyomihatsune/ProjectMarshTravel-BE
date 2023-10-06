@@ -28,6 +28,8 @@ import { LikeCommitReviewUseCase } from './usecase/interactions/like_commit/like
 import { LikeCommitReviewDTO } from './usecase/interactions/like_commit/like_commit.dto';
 import { DeleteReviewDTO } from './usecase/delete_review/delete_review.dto';
 import { DeleteReviewUseCase } from './usecase/delete_review/delete_review.usecase';
+import { GetReviewsByPlaceIdUseCase } from './usecase/get_reviews_by_place_id/get_reviews_by_place_id.usecase';
+import { GetReviewsByPlaceIdDTO } from './usecase/get_reviews_by_place_id/get_reviews_by_place_id.dto';
 
 const imageType = /jpeg|png|webp|jpg/;
 @Controller('review')
@@ -38,6 +40,7 @@ export class ReviewController {
     private readonly updateReviewUseCase: UpdateReviewUseCase,
     private readonly deleteReviewUseCase: DeleteReviewUseCase,
     private readonly likeCommitReviewUseCase: LikeCommitReviewUseCase,
+    private readonly getReviewsByPlaceIdUseCase: GetReviewsByPlaceIdUseCase,
   ) {}
 
   @Post('create')
@@ -150,6 +153,28 @@ export class ReviewController {
     });
     if (result.isRight()) {
       return result.value.getValue();
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Get('multiple/placeId')
+  async getReviewsByPlaceId(
+    @Req() req: Request & { user: JWTPayload },
+    @Query() query: GetReviewsByPlaceIdDTO,
+  ) {
+    const result = await this.getReviewsByPlaceIdUseCase.execute({
+      userId: req.user.sub,
+      request: query,
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
     }
     const error = result.value;
     switch (error.constructor) {

@@ -12,6 +12,7 @@ import { UpdateUserProfileUseCase } from './usecase/update_profile/update_profil
 import { GetUserProfileUseCase } from './usecase/get_profile/get_profile.usecase';
 import { StorageModule } from '@app/common/storage/storage.module';
 import { UpdateUserAvatarUseCase } from './usecase/update_avatar/update_avatar.usecase';
+import { GetPublicUserProfilesUseCase } from './usecase/get_public_profiles/get_public_profiles.usecase';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UpdateUserAvatarUseCase } from './usecase/update_avatar/update_avatar.u
     UpdateUserProfileUseCase,
     GetUserProfileUseCase,
     UpdateUserAvatarUseCase,
+    GetPublicUserProfilesUseCase,
   ],
   exports: [
     UsersService,
@@ -36,6 +38,7 @@ import { UpdateUserAvatarUseCase } from './usecase/update_avatar/update_avatar.u
     UpdateUserProfileUseCase,
     GetUserProfileUseCase,
     UpdateUserAvatarUseCase,
+    GetPublicUserProfilesUseCase,
   ],
 })
 export class UsersModule {}

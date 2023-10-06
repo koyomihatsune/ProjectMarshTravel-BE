@@ -19,6 +19,7 @@ import { GetReviewDetailsUseCase } from './usecase/get_review_details/get_review
 import { UpdateReviewUseCase } from './usecase/update_review/update_review.usecase';
 import { LikeCommitReviewUseCase } from './usecase/interactions/like_commit/like_commit.usecase';
 import { DeleteReviewUseCase } from './usecase/delete_review/delete_review.usecase';
+import { GetReviewsByPlaceIdUseCase } from './usecase/get_reviews_by_place_id/get_reviews_by_place_id.usecase';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { DeleteReviewUseCase } from './usecase/delete_review/delete_review.useca
     UpdateReviewUseCase,
     DeleteReviewUseCase,
     LikeCommitReviewUseCase,
+    GetReviewsByPlaceIdUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

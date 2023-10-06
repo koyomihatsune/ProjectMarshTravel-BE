@@ -8,6 +8,7 @@ import * as AppErrors from '@app/common/core/app.error';
 import { STORAGE_PATH } from '@app/common/constants';
 import { Review } from './entity/review.entity';
 import { ReviewId } from './entity/review_id';
+import { ReviewMapper } from './mapper/review.mapper';
 
 @Injectable()
 export class ReviewService {
@@ -37,6 +38,40 @@ export class ReviewService {
 
   async unlike(reviewId: ReviewId, userId: UserId): Promise<Result<void>> {
     return await this.reviewRepository.unlikeReview(reviewId, userId);
+  }
+
+  async getReviewsByPlaceId(
+    place_id: string,
+    page: number,
+    pageSize: number,
+    sortBy: string,
+  ): Promise<Review[]> {
+    const reviews = await this.reviewRepository.findAllReviewsPagination(
+      {
+        place_id: place_id,
+      },
+      page,
+      pageSize,
+      sortBy,
+    );
+    return reviews;
+  }
+
+  async getReviewsByUserId(
+    userId: UserId,
+    page: number,
+    pageSize: number,
+    sortBy: string,
+  ): Promise<Review[]> {
+    const reviews = await this.reviewRepository.findAllReviewsPagination(
+      {
+        userId: userId,
+      },
+      page,
+      pageSize,
+      sortBy,
+    );
+    return reviews;
   }
 
   // async getTripsByUserIdPagination(

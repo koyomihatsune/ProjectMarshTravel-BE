@@ -107,20 +107,22 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     },
     page: number,
     pageSize: number,
+    sortBy: string,
   ): Promise<Review[] | undefined> {
     try {
       const result = await this.findPagination(
         { ...params, isDeleted: false },
         page,
         pageSize,
+        sortBy,
       );
       const reviews = result.map((review) => {
         return ReviewMapper.toEntity(review);
       });
       // sort from newest to oldest
-      reviews.sort((a, b) => {
-        return b.createdAt.getTime() - a.createdAt.getTime();
-      });
+      // reviews.sort((a, b) => {
+      //   return b.createdAt.getTime() - a.createdAt.getTime();
+      // });
       return reviews;
     } catch (err) {
       Logger.error(err, err.stack);

@@ -37,7 +37,7 @@ export class UsersService {
   }
 
   async getUserByEmail(email: UserEmail): Promise<User> {
-    const user = await this.usersRepository.getUserByEmail(email);
+    const user = await this.usersRepository.findUserByEmail(email);
     return user;
   }
 
@@ -48,18 +48,26 @@ export class UsersService {
     return UserMapper.toEntity(result);
   }
 
+  async getUsers(ids: UserId[]): Promise<User[]> {
+    const result = await this.usersRepository.findAllByList(
+      '_id',
+      ids.map((id) => id.getValue().toMongoObjectID()),
+    );
+    return result.map((userDAO) => UserMapper.toEntity(userDAO));
+  }
+
   async getUserByUsername(username: UserUsername): Promise<User> {
-    const user = await this.usersRepository.getUserByUsername(username);
+    const user = await this.usersRepository.findUserByUsername(username);
     return user;
   }
 
   async getUserByAccessToken(token: string): Promise<User> {
-    const user = await this.usersRepository.getUserByAccessToken(token);
+    const user = await this.usersRepository.findUserByAccessToken(token);
     return user;
   }
 
   async getUserByRefreshToken(token: string): Promise<User> {
-    const user = await this.usersRepository.getUserByRefreshToken(token);
+    const user = await this.usersRepository.findUserByRefreshToken(token);
     return user;
   }
 

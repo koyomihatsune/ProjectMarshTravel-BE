@@ -8,6 +8,7 @@ import {
   NotFoundException,
   ParseFilePipe,
   Put,
+  Query,
   Req,
   UploadedFile,
   UseInterceptors,
@@ -22,6 +23,8 @@ import { GetUserProfileUseCase } from './usecase/get_profile/get_profile.usecase
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { UpdateUserAvatarUseCase } from './usecase/update_avatar/update_avatar.usecase';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { GetPublicUserProfilesUseCase } from './usecase/get_public_profiles/get_public_profiles.usecase';
+import { GetPublicUserProfilesDTO } from './usecase/get_public_profiles/get_public_profiles.dto';
 
 const imageType = /jpeg|png|webp|jpg/;
 @Controller('user')
@@ -30,6 +33,7 @@ export class UsersController {
     private readonly updateUserProfileUseCase: UpdateUserProfileUseCase,
     private readonly getUserProfileUseCase: GetUserProfileUseCase,
     private readonly updateUserAvatarUseCase: UpdateUserAvatarUseCase,
+    private readonly getPublicUserProfilesUseCase: GetPublicUserProfilesUseCase,
   ) {}
 
   @Put('profile')
@@ -96,6 +100,36 @@ export class UsersController {
       default:
         throw new RpcException(new BadRequestException());
     }
+  }
+
+  // @Get('profiles')
+  @ResponseMessage(USER_RESPONSE_MESSAGES.CommonSuccess)
+  async getProfiles(
+    @Req() req: Request & { user: JWTPayload },
+    @Query() query: GetPublicUserProfilesDTO,
+  ) {
+    const result = await this.getPublicUserProfilesUseCase.execute(query);
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @MessagePattern('get_user_profiles')
+  @ResponseMessage(USER_RESPONSE_MESSAGES.CommonSuccess)
+  async getUserProfilesRPC(
+    @Req() req: Request & { user: JWTPayload },
+    @Payload() payload: GetPublicUserProfilesDTO,
+  ) {
+    const result = await this.getPublicUserProfilesUseCase.execute(payload);
+    return result;
   }
 
   @Put('avatar')

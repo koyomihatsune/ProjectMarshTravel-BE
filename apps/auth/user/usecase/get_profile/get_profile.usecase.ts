@@ -38,7 +38,7 @@ export class GetUserProfileUseCase
       if (err instanceof NotFoundException) {
         return left(new AppErrors.EntityNotFoundError('User'));
       }
-      return left(new AppErrors.UnexpectedError(err));
+      return left(new AppErrors.UnexpectedError(err.message));
     }
   };
 }
