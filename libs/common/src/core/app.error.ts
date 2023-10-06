@@ -76,11 +76,22 @@ export class GCSError extends Result<UseCaseError> {
   }
 }
 
+export class GoogleMapsError extends Result<UseCaseError> {
+  public constructor(err?: any) {
+    super(false, {
+      code: ERROR_CODE.DestinationNotFound,
+      message: ERROR_MESSAGE.GoogleMapsError,
+      payload: err,
+    });
+  }
+}
+
 const AppErrors = {
   UnexpectedError,
   EntityNotFoundError,
   TooManyRequestError,
   GCSError,
+  GoogleMapsError,
 };
 
 export default AppErrors;

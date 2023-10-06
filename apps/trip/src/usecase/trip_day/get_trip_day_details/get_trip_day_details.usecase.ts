@@ -4,7 +4,7 @@ import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SingleTripDayResponseDTO } from 'apps/trip/src/dto/trip.dto';
+import { SingleTripDayResponseDTO } from 'apps/trip/src/dtos/trip.response.dto';
 import { TripService } from 'apps/trip/src/trip.service';
 import { firstValueFrom } from 'rxjs';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
@@ -14,7 +14,7 @@ import * as TripErrors from '../../errors/trip.errors';
 import {
   MultipleDestinationResponseDTO,
   SingleDestinationResponseDTO,
-} from 'apps/destination/src/usecase/dtos/destination.dto';
+} from 'apps/destination/src/dtos/destination.response.dto';
 import { TripDayId } from 'apps/trip/trip_day/entity/trip_day_id';
 import { UserProfileResponseDTO } from '../../../../../auth/user/usecase/get_profile/get_profile.dto';
 
@@ -88,7 +88,7 @@ export class GetTripDayDetailsUseCase
          
       // push lần lượt vào từng destination của day bằng cách pick placeid tương ứng
       tripDay.destinations.forEach((destination) => {
-        const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => destinationDetails.destinationId === destination.place_id);
+        const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => destinationDetails.place_id === destination.place_id);
 
         if (destinationDetails === undefined) {
           Logger.log(`Place ${destination.place_id} not found in query result. Left out of array`, 'GetTripDetailsUseCase');

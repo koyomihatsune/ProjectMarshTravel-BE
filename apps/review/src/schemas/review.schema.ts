@@ -2,7 +2,7 @@ import { AbstractDocument } from '@app/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 
-@Schema({ versionKey: false, collection: 'review' })
+@Schema({ versionKey: false, collection: 'reviews' })
 export class ReviewDAO extends AbstractDocument {
   @Prop()
   userId: Types.ObjectId;

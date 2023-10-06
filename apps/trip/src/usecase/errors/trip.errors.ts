@@ -20,6 +20,15 @@ export class TripDayPositionInvalidError extends Result<UseCaseError> {
   }
 }
 
+export class TripDestinationPositionInvalidError extends Result<UseCaseError> {
+  constructor(maxPosition: string) {
+    super(false, {
+      message: `Invalid position. Max is: ${maxPosition}`,
+      code: ERROR_CODE.InvalidLength,
+    });
+  }
+}
+
 export class PositionSequenceInvalidError extends Result<UseCaseError> {
   constructor() {
     super(false, {

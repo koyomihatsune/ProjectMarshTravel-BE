@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ProvinceRepository } from './province.repo';
 import { ProvinceDAO } from './schemas/province.schema';
 
@@ -9,12 +9,17 @@ export class AdministrativeService {
   async getProvinceDetailsByName(
     name: string,
     language?: string,
-  ): Promise<ProvinceDAO> {
-    const foundProvince = await this.provinceRepository.findOne({
-      name: language === 'vi' ? name : undefined,
-      name_en: language !== 'vi' ? name : undefined,
-    });
-    return foundProvince;
+  ): Promise<ProvinceDAO | undefined> {
+    try {
+      const foundProvince = await this.provinceRepository.findOne({
+        name: language === 'vi' ? name : undefined,
+        // name_en: language !== 'vi' ? name : undefined,
+      });
+      return foundProvince;
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
   }
 
   async getProvinceDetailsByCode(code: string): Promise<ProvinceDAO> {

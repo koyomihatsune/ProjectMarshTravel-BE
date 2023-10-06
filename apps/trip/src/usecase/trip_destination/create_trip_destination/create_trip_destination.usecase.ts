@@ -16,7 +16,7 @@ import { TripDestination } from 'apps/trip/trip_destination/entity/trip_destinat
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
-  AppErrors.EntityNotFoundError | AppErrors.InvalidPayloadError | TripErrors.TripDayPositionInvalidError| TripErrors.TripDoesNotBelongToUser,
+  AppErrors.EntityNotFoundError | AppErrors.InvalidPayloadError | TripErrors.TripDestinationPositionInvalidError| TripErrors.TripDoesNotBelongToUser,
   Result<void>
 >;
 
@@ -61,6 +61,11 @@ export class CreateTripDestinationUseCase implements UseCase<CreateTripDestinati
 
       if (tripDayIndex === -1) {
         return left(new AppErrors.EntityNotFoundError('TripDay'));
+      }
+
+      const tripDayLength = tripOrError.days[tripDayIndex].destinations.length;
+      if (request.position > tripDayLength) {
+        return left(new TripErrors.TripDestinationPositionInvalidError(tripDayLength.toString()));
       }
 
       const newDestinations: TripDestination[] = [];

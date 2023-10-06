@@ -12,9 +12,9 @@ import { Review } from '../../entity/review.entity';
 import { UserId } from 'apps/auth/user/domain/user_id';
 import { ReviewService } from '../../review.service';
 import { StorageService } from '@app/common/storage/storage.service';
-import { STORAGE_PATH } from '@app/common/constants';
+import { ERROR_CODE, STORAGE_PATH } from '@app/common/constants';
 import { v1 as uuidv1 } from 'uuid';
-import { string } from 'joi';
+import * as ReviewErrors from '../errors/review.errors';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -42,13 +42,13 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
       const { userId, request } = payload;
       const userIdOrError = new UniqueEntityID(userId);
 
+      // console.log(request.place_id)
+
       // kiểm tra xem user có tồn tại hay không
-      const userOrError = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId})); 
+      const userOrError = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId })); 
       // chưa handle trường hợp không có user
 
-      // const destination = await firstValueFrom(this.destinationClient.send('get_destination_details', { place_id: request.place_id })); 
-      // Logger.log(destination)
-      // chưa handle trường hợp không có destination
+      const destination = await firstValueFrom(this.destinationClient.send('get_destination_details', { place_id: request.place_id, language: 'vi' })); 
 
       // nếu trong review có ảnh thì upload ảnh lên storage
       let successOnlyImageUrls = [];
@@ -100,10 +100,12 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
         message: "Create review successfully",
       }));
     } catch (err) {
-      Logger.error(err, err.stack);
-      // RPC Exception
+      Logger.log("This is error");
+      Logger.log(err, err.stack);
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));
+      } else if (err.response?.code === ERROR_CODE.DestinationNotFound){
+        return left(new AppErrors.GoogleMapsError());
       }
       return left(new AppErrors.UnexpectedError(err));
     }

@@ -4,7 +4,6 @@ import {
   Body,
   Controller,
   FileTypeValidator,
-  Logger,
   MaxFileSizeValidator,
   NotFoundException,
   ParseFilePipe,
@@ -38,24 +37,22 @@ export class ReviewController {
     )
     images?: Express.Multer.File[],
   ) {
-    try {
-      const result = await this.createReviewUseCase.execute({
-        userId: req.user.sub,
-        request: { ...body, images: images ?? [] },
-      });
-      if (result.isRight()) {
-        const dto = result.value.getValue();
-        return dto;
-      }
-      const error = result.value;
-      switch (error.constructor) {
-        case AppErrors.EntityNotFoundError:
-          throw new NotFoundException(error);
-        default:
-          throw new BadRequestException(error);
-      }
-    } catch (err) {
-      Logger.error(err, err.stack);
+    const result = await this.createReviewUseCase.execute({
+      userId: req.user.sub,
+      request: { ...body, images: images ?? [] },
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      case AppErrors.GoogleMapsError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
     }
   }
 

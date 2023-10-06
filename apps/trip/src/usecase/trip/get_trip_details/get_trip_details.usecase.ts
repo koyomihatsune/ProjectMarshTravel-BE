@@ -4,7 +4,7 @@ import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SingleTripResponseDTO } from 'apps/trip/src/dto/trip.dto';
+import { SingleTripResponseDTO } from 'apps/trip/src/dtos/trip.response.dto';
 import { TripService } from 'apps/trip/src/trip.service';
 import { firstValueFrom } from 'rxjs';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
@@ -14,7 +14,7 @@ import * as TripErrors from '../../errors/trip.errors';
 import {
   MultipleDestinationResponseDTO,
   SingleDestinationResponseDTO,
-} from 'apps/destination/src/usecase/dtos/destination.dto';
+} from 'apps/destination/src/dtos/destination.response.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -97,7 +97,7 @@ export class GetTripDetailsUseCase
 
         result.days.map((day) => {
           if (day.destinations[0]) {
-            const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => destinationDetails.destinationId === day.destinations[0].place_id);
+            const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => destinationDetails.place_id === day.destinations[0].place_id);
             if (destinationDetails === undefined) {
               Logger.log(`Place ${day.destinations[0].place_id} not found in query result. Left out of array`, 'GetTripDetailsUseCase');
             } else {
@@ -106,7 +106,7 @@ export class GetTripDetailsUseCase
           }
           return day;
         })
-        console.log(result);
+        // console.log(result);
       }
 
       return right(Result.ok<SingleTripResponseDTO>(result));

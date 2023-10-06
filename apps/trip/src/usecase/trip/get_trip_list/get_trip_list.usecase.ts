@@ -4,7 +4,7 @@ import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { MultipleTripResponseWithoutDaysDTO } from 'apps/trip/src/dto/trip.dto';
+import { MultipleTripResponseWithoutDaysDTO } from 'apps/trip/src/dtos/trip.response.dto';
 import { TripService } from 'apps/trip/src/trip.service';
 import { firstValueFrom } from 'rxjs';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
