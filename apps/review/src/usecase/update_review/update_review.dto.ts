@@ -1,9 +1,12 @@
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 
-export class CreateReviewDTO {
+export class UpdateReviewDTO {
   @IsNotEmpty()
-  @MinLength(15)
+  reviewId: string;
+
+  @IsNotEmpty()
   @MaxLength(200)
+  @MinLength(15)
   title: string;
 
   @IsNotEmpty()
@@ -12,10 +15,5 @@ export class CreateReviewDTO {
   description: string;
 
   @IsNotEmpty()
-  place_id: string;
-
-  @IsNotEmpty()
   rating: number;
-
-  images?: Express.Multer.File[];
 }

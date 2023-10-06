@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as AppErrors from '@app/common/core/app.error';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
-import { Either, Result, ResultRPC, left, right } from '@app/common/core/result';
+import {
+  Either,
+  Result,
+  ResultRPC,
+  left,
+  right,
+} from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateReviewDTO } from './create_review.dto';
@@ -44,10 +50,6 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
       const { userId, request } = payload;
       const userIdOrError = new UniqueEntityID(userId);
 
-      // console.log(request.place_id)
-
-      // kiểm tra xem user có tồn tại hay không
-      const userOrError : UserProfileResponseDTO = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId })); 
       // chưa handle trường hợp không có user
 
       const destination: ResultRPC<SingleDestinationResponseDTO> = await firstValueFrom(this.destinationClient.send('get_destination_details', { place_id: request.place_id, language: 'vi' })); 
@@ -87,7 +89,6 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
         rating: request.rating,
         imageURLs: successOnlyImageUrls,
         likes: [],
-        comments: [],
         createdAt: new Date(),
         updatedAt: new Date(),
         isDeleted: false,
@@ -105,7 +106,6 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
         message: "Create review successfully",
       }));
     } catch (err) {
-      Logger.log("This is error");
       Logger.log(err, err.stack);
       if (err.status === 404) {
         return left(new AppErrors.EntityNotFoundError('User'));

@@ -84,6 +84,26 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
       .limit(pageSize);
   }
 
+  async likeDocument(
+    filterQuery: FilterQuery<TDocument>,
+    userId: Types.ObjectId,
+  ) {
+    const update: UpdateQuery<TDocument> = {
+      $addToSet: { likes: userId },
+    };
+    const document = await this.findOneAndUpdate(filterQuery, update);
+    return document;
+  }
+
+  async unlikeDocument(
+    filterQuery: FilterQuery<TDocument>,
+    userId: Types.ObjectId,
+  ) {
+    const update: UpdateQuery<TDocument> = { $pull: { likes: userId } };
+    const document = await this.findOneAndUpdate(filterQuery, update);
+    return document;
+  }
+
   // async startTransaction() {
   //   const session = await this.connection.startSession();
   //   session.startTransaction();
