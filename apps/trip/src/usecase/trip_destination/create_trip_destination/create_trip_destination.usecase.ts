@@ -1,18 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as AppErrors from '@app/common/core/app.error';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
-import { Either, Result, left, right } from '@app/common/core/result';
+import {
+  Either,
+  Result,
+  ResultRPC,
+  left,
+  right,
+} from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { TripService } from 'apps/trip/src/trip.service';
 import { CreateTripDestinationDTO } from './create_trip_destination.dto';
-import { AUTH_SERVICE } from '@app/common/global/services';
+import { AUTH_SERVICE, DESTINATION_SERVICE } from '@app/common/global/services';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import * as TripErrors from '../../errors/trip.errors';
 import { TripId } from 'apps/trip/src/entity/trip_id';
 import { TripDayId } from 'apps/trip/trip_day/entity/trip_day_id';
 import { TripDestination } from 'apps/trip/trip_destination/entity/trip_destination.entity';
+import { SingleDestinationResponseDTO } from 'apps/destination/src/dtos/destination.response.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -31,6 +38,7 @@ export class CreateTripDestinationUseCase implements UseCase<CreateTripDestinati
   constructor(
     private readonly tripService: TripService,
     @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
+    @Inject(DESTINATION_SERVICE) private readonly destinationClient: ClientProxy,
   ) {}
 
   execute = async (payload: CreateTripDestinationDTOWithUserId): Promise<Response> => {
@@ -44,6 +52,13 @@ export class CreateTripDestinationUseCase implements UseCase<CreateTripDestinati
 
       const tripIdOrError = TripId.create(new UniqueEntityID(request.tripId));
       const tripDayIdOrError = TripDayId.create(new UniqueEntityID(request.tripDayId));
+
+      // Nếu placeId bố láo
+      const destination: ResultRPC<SingleDestinationResponseDTO> = await firstValueFrom(this.destinationClient.send('get_destination_details', { place_id: request.place_id, language: 'vi' })); 
+
+      if (destination.value.isFailure) {
+        return left(new AppErrors.GoogleMapsError(destination.value.error));
+      }
 
       // Kiểm tra trip có tồn tại hay không
       const tripOrError = await this.tripService.getTripById(tripIdOrError);

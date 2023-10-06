@@ -93,15 +93,16 @@ export class DestinationController {
     @Payload() data: GetDestinationDetailsRequestDTO,
   ) {
     const result = await this.getDestinationDetailsUseCase.execute(data);
-    if (result.isRight()) {
-      const dto = result.value.getValue();
-      return dto;
-    }
-    const error = result.value;
-    switch (error.constructor) {
-      default:
-        throw new RpcException(new BadRequestException(error.getErrorValue()));
-    }
+    return result;
+    // if (result.isRight()) {
+    //   const dto = result.value.getValue();
+    //   return dto;
+    // }
+    // const error = result.value;
+    // switch (error.constructor) {
+    //   default:
+    //     throw new RpcException(new BadRequestException(error.getErrorValue()));
+    // }
   }
 
   // Bỏ api này
