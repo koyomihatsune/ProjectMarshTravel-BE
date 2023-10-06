@@ -18,6 +18,7 @@ import { SingleReviewResponseDTO } from '../../dto/review.response.dto';
 import { ReviewId } from '../../entity/review_id';
 import { ReviewService } from '../../review.service';
 import { UserProfileResponseDTO } from 'apps/auth/user/usecase/get_profile/get_profile.dto';
+import { UserId } from 'apps/auth/user/domain/user_id';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -45,6 +46,8 @@ export class GetReviewDetailsUseCase
       const { userId, request } = dto;
 
       // chưa handle trường hợp không có user
+
+      const userIdOrError = UserId.create(new UniqueEntityID(userId));
       
       const reviewIdOrError = ReviewId.create(new UniqueEntityID(request.reviewId));
 
@@ -61,7 +64,6 @@ export class GetReviewDetailsUseCase
 
       // Lấy thông tin destination của Review      
       // console.log(destinationOrError);
-
 
       let result: SingleReviewResponseDTO = {
         id: reviewOrError.reviewId.getValue().toString(),
@@ -82,7 +84,8 @@ export class GetReviewDetailsUseCase
         description: reviewOrError.description,
         rating: reviewOrError.rating,
         likes_count: reviewOrError.likes.length,
-        comments_count: reviewOrError.comments.length,
+        liked: reviewOrError.likes.includes(userIdOrError),
+        comments_count: 0,
         // Làm phần này sau khi đã thêm comments
         highlighted_comments: [],
         imageURLs: reviewOrError.imageURLs,

@@ -15,10 +15,6 @@ export class ReviewMapper {
       rating: review.rating,
       imageURLs: review.imageURLs,
       likes: review.likes.map((like) => like.getValue().toMongoObjectID()),
-      comments: review.comments.map((comment) => ({
-        userId: comment.userId.getValue().toMongoObjectID(),
-        content: comment.content,
-      })),
       createdAt: review.createdAt,
       updatedAt: review.updatedAt,
       isDeleted: review.isDeleted,
@@ -41,10 +37,6 @@ export class ReviewMapper {
         likes: dao.likes.map((user) =>
           UserId.create(new UniqueEntityID(user.toString())),
         ),
-        comments: dao.comments.map((comment) => ({
-          userId: UserId.create(new UniqueEntityID(comment.userId.toString())),
-          content: comment.content,
-        })),
         createdAt: dao.createdAt,
         updatedAt: dao.updatedAt,
         isDeleted: dao.isDeleted,

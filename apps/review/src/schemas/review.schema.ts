@@ -39,12 +39,6 @@ export class ReviewDAO extends AbstractDocument {
   likes: Types.ObjectId[];
 
   @Prop()
-  comments: {
-    userId: Types.ObjectId;
-    content: string;
-  }[];
-
-  @Prop()
   createdAt: Date;
 
   @Prop()

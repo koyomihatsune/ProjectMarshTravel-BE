@@ -16,6 +16,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ReviewDAO, ReviewSchema } from './schemas/review.schema';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { GetReviewDetailsUseCase } from './usecase/get_review_details/get_review_details.usecase';
+import { UpdateReviewUseCase } from './usecase/update_review/update_review.usecase';
+import { LikeCommitReviewUseCase } from './usecase/interactions/like_commit/like_commit.usecase';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import { GetReviewDetailsUseCase } from './usecase/get_review_details/get_review
     ReviewRepository,
     CreateReviewUseCase,
     GetReviewDetailsUseCase,
+    UpdateReviewUseCase,
+    LikeCommitReviewUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

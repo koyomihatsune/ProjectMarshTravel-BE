@@ -8,6 +8,7 @@ import { ReviewDAO } from './schemas/review.schema';
 import { ReviewMapper } from './mapper/review.mapper';
 import { Review } from './entity/review.entity';
 import { ReviewId } from './entity/review_id';
+import { Result } from '@app/common/core/result';
 @Injectable()
 export class ReviewRepository extends AbstractRepository<ReviewDAO> {
   protected readonly logger = new Logger(ReviewRepository.name);
@@ -49,6 +50,39 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     } catch (err) {
       Logger.error(err, err.stack);
       return undefined;
+    }
+  }
+
+  async likeReview(reviewId: ReviewId, userId: UserId): Promise<Result<void>> {
+    try {
+      const result = await this.likeDocument(
+        {
+          _id: reviewId.getValue().toMongoObjectID(),
+        },
+        userId.getValue().toMongoObjectID(),
+      );
+      return Result.ok<void>();
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return Result.fail<void>(err);
+    }
+  }
+
+  async unlikeReview(
+    reviewId: ReviewId,
+    userId: UserId,
+  ): Promise<Result<void>> {
+    try {
+      const result = await this.unlikeDocument(
+        {
+          _id: reviewId.getValue().toMongoObjectID(),
+        },
+        userId.getValue().toMongoObjectID(),
+      );
+      return Result.ok<void>();
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return Result.fail<void>(err);
     }
   }
 

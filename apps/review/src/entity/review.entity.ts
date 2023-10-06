@@ -18,10 +18,6 @@ export interface ReviewProps {
   rating: number;
   imageURLs: string[];
   likes: UserId[];
-  comments: {
-    userId: UserId;
-    content: string;
-  }[];
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
@@ -45,12 +41,24 @@ export class Review extends AggregateRoot<ReviewProps> {
     return this.props.title;
   }
 
+  set title(title: string) {
+    this.props.title = title;
+  }
+
   get description(): string {
     return this.props.description;
   }
 
+  set description(description: string) {
+    this.props.description = description;
+  }
+
   get rating(): number {
     return this.props.rating;
+  }
+
+  set rating(rating: number) {
+    this.props.rating = rating;
   }
 
   get imageURLs(): string[] {
@@ -65,13 +73,6 @@ export class Review extends AggregateRoot<ReviewProps> {
     return this.props.likes;
   }
 
-  get comments(): {
-    userId: UserId;
-    content: string;
-  }[] {
-    return this.props.comments;
-  }
-
   get createdAt(): Date {
     return this.props.createdAt;
   }
@@ -80,12 +81,24 @@ export class Review extends AggregateRoot<ReviewProps> {
     return this.props.updatedAt;
   }
 
+  set updatedAt(updatedAt: Date) {
+    this.props.updatedAt = updatedAt;
+  }
+
   get isDeleted(): boolean {
     return this.props.isDeleted;
   }
 
+  set isDeleted(isDeleted: boolean) {
+    this.props.isDeleted = isDeleted;
+  }
+
   get isApproved(): boolean {
     return this.props.isApproved;
+  }
+
+  set isApproved(isApproved: boolean) {
+    this.props.isApproved = isApproved;
   }
 
   get tagging(): {
@@ -94,6 +107,14 @@ export class Review extends AggregateRoot<ReviewProps> {
     highlighted: boolean;
   } {
     return this.props.tagging;
+  }
+
+  set tagging(tagging: {
+    province_code: string;
+    district_code?: string;
+    highlighted: boolean;
+  }) {
+    this.props.tagging = tagging;
   }
 
   // Factory method to create a new Review entity

@@ -18,6 +18,7 @@ export type SingleReviewResponseDTO = {
   rating: number;
   imageURLs: string[];
   likes_count: number;
+  liked: boolean;
   comments_count: number;
   highlighted_comments: {
     user: {
