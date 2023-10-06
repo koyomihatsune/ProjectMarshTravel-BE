@@ -3,11 +3,13 @@ export type SingleReviewResponseDTO = {
   user: {
     id: string;
     name: string;
+    username: string;
     avatar: string;
   };
-  place: {
+  destination: {
     place_id: string;
-    place_name: string;
+    name: string;
+    address: string;
     province_code: string;
     province_name: string;
   };
@@ -28,6 +30,8 @@ export type SingleReviewResponseDTO = {
   }[];
   isApproved: boolean;
   isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type MultipleReviewResponseDTO = {

@@ -15,6 +15,7 @@ import { ReviewRepository } from './review.repo';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ReviewDAO, ReviewSchema } from './schemas/review.schema';
 import { NestjsFormDataModule } from 'nestjs-form-data';
+import { GetReviewDetailsUseCase } from './usecase/get_review_details/get_review_details.usecase';
 
 @Module({
   imports: [
@@ -52,9 +53,10 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
   ],
   controllers: [ReviewController],
   providers: [
-    CreateReviewUseCase,
     ReviewService,
     ReviewRepository,
+    CreateReviewUseCase,
+    GetReviewDetailsUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

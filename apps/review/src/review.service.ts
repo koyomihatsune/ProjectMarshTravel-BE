@@ -7,6 +7,7 @@ import { Either, left } from '@app/common/core/result';
 import * as AppErrors from '@app/common/core/app.error';
 import { STORAGE_PATH } from '@app/common/constants';
 import { Review } from './entity/review.entity';
+import { ReviewId } from './entity/review_id';
 
 @Injectable()
 export class ReviewService {
@@ -25,10 +26,10 @@ export class ReviewService {
     return result;
   }
 
-  // async getTripById(tripId: TripId): Promise<Trip> {
-  //   const trip = await this.tripRepostiory.findTripById(tripId);
-  //   return trip;
-  // }
+  async getReviewById(reviewId: ReviewId): Promise<Review> {
+    const review = await this.reviewRepository.findReviewById(reviewId);
+    return review;
+  }
 
   // async getTripsByUserIdPagination(
   //   userId: UserId,

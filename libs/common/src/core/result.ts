@@ -65,6 +65,19 @@ export class Result<T> {
   }
 }
 
+export type ResultRPC<T> = {
+  value: {
+    isSuccess: boolean;
+    isFailure: boolean;
+    error?: {
+      message?: string;
+      code?: number;
+      payload: any;
+    };
+    _value?: T;
+  };
+};
+
 export type Either<L, A> = Left<L, A> | Right<L, A>;
 
 export class Left<L, A> {

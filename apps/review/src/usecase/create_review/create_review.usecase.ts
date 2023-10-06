@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as AppErrors from '@app/common/core/app.error';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
-import { Either, Result, left, right } from '@app/common/core/result';
+import { Either, Result, ResultRPC, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateReviewDTO } from './create_review.dto';
@@ -15,6 +15,8 @@ import { StorageService } from '@app/common/storage/storage.service';
 import { ERROR_CODE, STORAGE_PATH } from '@app/common/constants';
 import { v1 as uuidv1 } from 'uuid';
 import * as ReviewErrors from '../errors/review.errors';
+import { UserProfileResponseDTO } from '../../../../auth/user/usecase/get_profile/get_profile.dto';
+import { SingleDestinationResponseDTO } from '../../../../destination/src/dtos/destination.response.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -45,10 +47,13 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
       // console.log(request.place_id)
 
       // kiểm tra xem user có tồn tại hay không
-      const userOrError = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId })); 
+      const userOrError : UserProfileResponseDTO = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId })); 
       // chưa handle trường hợp không có user
 
-      const destination = await firstValueFrom(this.destinationClient.send('get_destination_details', { place_id: request.place_id, language: 'vi' })); 
+      const destination: ResultRPC<SingleDestinationResponseDTO> = await firstValueFrom(this.destinationClient.send('get_destination_details', { place_id: request.place_id, language: 'vi' })); 
+      if (destination.value.isFailure) {
+        return left(new AppErrors.GoogleMapsError(destination.value.error));
+      }
 
       // nếu trong review có ảnh thì upload ảnh lên storage
       let successOnlyImageUrls = [];
@@ -57,7 +62,7 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
         const imageUrls = await Promise.all(payload.request.images.map(async (image) => {
           return await this.storageService.uploadFileToStorage(image, 
             STORAGE_PATH.UserReview,
-            `review-image-${userIdOrError.toString()}-${image.originalname}-${uuidv1()}`,
+            `review-image-${userIdOrError.toString()}-${encodeURIComponent(image.originalname.split(".")[0])}-${uuidv1()}`,
           );
         }));
 
