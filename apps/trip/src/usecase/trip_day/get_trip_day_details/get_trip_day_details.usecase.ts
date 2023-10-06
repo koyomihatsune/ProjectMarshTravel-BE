@@ -95,7 +95,7 @@ export class GetTripDayDetailsUseCase
           result.destinations.push({
             id: destination.tripDestinationId.getValue().toString(),
             place_id: destination.place_id,
-            name: destinationDetails.name,
+            name: "",
             position: destination.position,
             type: destination.type,
             isRegistered: false,
