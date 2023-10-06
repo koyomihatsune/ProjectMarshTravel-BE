@@ -28,7 +28,7 @@ type DeleteReviewDTOWithUserId = {
 }
 
 @Injectable()
-export class UpdateReviewUseCase implements UseCase<DeleteReviewDTOWithUserId, Promise<Response>>
+export class DeleteReviewUseCase implements UseCase<DeleteReviewDTOWithUserId, Promise<Response>>
 {
   constructor(
     private readonly reviewService: ReviewService,
@@ -44,8 +44,8 @@ export class UpdateReviewUseCase implements UseCase<DeleteReviewDTOWithUserId, P
 
       // kiểm tra xem user có tồn tại hay không
       const userOrError : UserProfileResponseDTO = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId })); 
-       // chưa handle trường hợp không có user      
-      
+
+      // chưa handle trường hợp không có user     
       const reviewIdOrError = ReviewId.create(new UniqueEntityID(request.reviewId));
       const reviewOrError = await this.reviewService.getReviewById(reviewIdOrError);
 

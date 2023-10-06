@@ -18,6 +18,7 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
 import { GetReviewDetailsUseCase } from './usecase/get_review_details/get_review_details.usecase';
 import { UpdateReviewUseCase } from './usecase/update_review/update_review.usecase';
 import { LikeCommitReviewUseCase } from './usecase/interactions/like_commit/like_commit.usecase';
+import { DeleteReviewUseCase } from './usecase/delete_review/delete_review.usecase';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { LikeCommitReviewUseCase } from './usecase/interactions/like_commit/like
     CreateReviewUseCase,
     GetReviewDetailsUseCase,
     UpdateReviewUseCase,
+    DeleteReviewUseCase,
     LikeCommitReviewUseCase,
     {
       provide: APP_GUARD,

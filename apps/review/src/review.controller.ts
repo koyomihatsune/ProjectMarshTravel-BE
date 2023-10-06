@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
@@ -25,6 +26,8 @@ import { UpdateReviewDTO } from './usecase/update_review/update_review.dto';
 import { UpdateReviewUseCase } from './usecase/update_review/update_review.usecase';
 import { LikeCommitReviewUseCase } from './usecase/interactions/like_commit/like_commit.usecase';
 import { LikeCommitReviewDTO } from './usecase/interactions/like_commit/like_commit.dto';
+import { DeleteReviewDTO } from './usecase/delete_review/delete_review.dto';
+import { DeleteReviewUseCase } from './usecase/delete_review/delete_review.usecase';
 
 const imageType = /jpeg|png|webp|jpg/;
 @Controller('review')
@@ -33,6 +36,7 @@ export class ReviewController {
     private readonly createReviewUseCase: CreateReviewUseCase,
     private readonly getReviewDetailsUseCase: GetReviewDetailsUseCase,
     private readonly updateReviewUseCase: UpdateReviewUseCase,
+    private readonly deleteReviewUseCase: DeleteReviewUseCase,
     private readonly likeCommitReviewUseCase: LikeCommitReviewUseCase,
   ) {}
 
@@ -120,6 +124,27 @@ export class ReviewController {
     @Body() body: LikeCommitReviewDTO,
   ) {
     const result = await this.likeCommitReviewUseCase.execute({
+      userId: req.user.sub,
+      request: body,
+    });
+    if (result.isRight()) {
+      return result.value.getValue();
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Delete('delete')
+  async deleteReview(
+    @Req() req: Request & { user: JWTPayload },
+    @Body() body: DeleteReviewDTO,
+  ) {
+    const result = await this.deleteReviewUseCase.execute({
       userId: req.user.sub,
       request: body,
     });
