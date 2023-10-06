@@ -13,6 +13,7 @@ export const ERROR_MESSAGE = {
   TooManyRequests: 'Too many requests',
   DateTimeNotValid: 'Datetime is not valid',
   ConnectStorageError: 'Some Error when connect to Storage',
+  GoogleMapsError: 'Google Maps Error. Destination not found.',
 };
 
 export const STR_COMMON = {

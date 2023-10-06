@@ -1,24 +1,5 @@
 import { IsIn, IsNotEmpty, IsOptional } from 'class-validator';
-import { LanguageEnumValue } from '../../constants/services';
-
-export class SingleDestinationResponseDTO {
-  //use placeId by Google Maps - but put in database as destinationId
-  destinationId: string;
-  name: string;
-  location: {
-    lat: number;
-    lng: number;
-  };
-  mapsSearchDetails?: any;
-  mapsFullDetails?: any;
-  reviews?: any[];
-  isRegistered: boolean;
-}
-
-export class MultipleDestinationResponseDTO {
-  destinations: SingleDestinationResponseDTO[];
-  nextPageToken?: string;
-}
+import { LanguageEnumValue } from '../constants/services';
 
 export class GetDestinationDetailsRequestDTO {
   @IsNotEmpty()
@@ -49,7 +30,6 @@ export class SearchDestinationsRequestDTO {
   //   @IsOptional()
   //   @IsIn(Object.values(DestinationTypeEnumValue))
   //   type?: string;
-
   @IsOptional()
   lat: number;
 

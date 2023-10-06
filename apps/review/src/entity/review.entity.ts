@@ -10,6 +10,11 @@ export interface ReviewProps {
   title: string;
   description: string;
   place_id: string;
+  tagging: {
+    province_code: string;
+    district_code?: string;
+    highlighted: boolean;
+  };
   rating: number;
   imageURLs: string[];
   likes: UserId[];
@@ -20,6 +25,7 @@ export interface ReviewProps {
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
+  isApproved: boolean;
 }
 
 export class Review extends AggregateRoot<ReviewProps> {
@@ -76,6 +82,18 @@ export class Review extends AggregateRoot<ReviewProps> {
 
   get isDeleted(): boolean {
     return this.props.isDeleted;
+  }
+
+  get isApproved(): boolean {
+    return this.props.isApproved;
+  }
+
+  get tagging(): {
+    province_code: string;
+    district_code?: string;
+    highlighted: boolean;
+  } {
+    return this.props.tagging;
   }
 
   // Factory method to create a new Review entity

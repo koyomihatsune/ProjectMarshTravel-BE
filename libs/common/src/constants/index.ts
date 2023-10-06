@@ -30,6 +30,7 @@ export const ERROR_CODE = {
   InvalidLength: 420004,
   CustomerIdExist: 440000,
   ConnectStorageError: 530000,
+  DestinationNotFound: 510404,
 };
 
 export const STORAGE_PATH = {

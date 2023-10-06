@@ -56,25 +56,25 @@ services:
       - auth
       - destination
 
-  # review:
-  #   build:
-  #     context: .
-  #     dockerfile: ./apps/review/Dockerfile
-  #     target: development
-  #   command: npm run start:dev review
-  #   environment:            
-  #     - TZ=Asia/Ho_Chi_Minh
-  #   env_file:
-  #     - ./apps/review/.env
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   ports:
-  #     - '3004:3004'
-  #   depends_on:
-  #     - rabbitmq
-  #     - auth
-  #     - destination
+  review:
+    build:
+      context: .
+      dockerfile: ./apps/review/Dockerfile
+      target: development
+    command: npm run start:dev review
+    environment:            
+      - TZ=Asia/Ho_Chi_Minh
+    env_file:
+      - ./apps/review/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3004:3004'
+    depends_on:
+      - rabbitmq
+      - auth
+      - destination
     
   rabbitmq:
     image: rabbitmq

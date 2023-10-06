@@ -5,10 +5,16 @@ import { AUTH_SERVICE, DESTINATION_SERVICE } from '@app/common/global/services';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { AuthModule } from 'apps/auth/src/auth.module';
-import Joi from 'joi';
+import { AuthModule } from '@app/common/auth/auth.module';
 import { ReviewController } from './review.controller';
 import { StorageModule } from '@app/common/storage/storage.module';
+import * as Joi from 'joi';
+import { CreateReviewUseCase } from './usecase/create_review/create_review.usecase';
+import { ReviewService } from './review.service';
+import { ReviewRepository } from './review.repo';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ReviewDAO, ReviewSchema } from './schemas/review.schema';
+import { NestjsFormDataModule } from 'nestjs-form-data';
 
 @Module({
   imports: [
@@ -20,19 +26,22 @@ import { StorageModule } from '@app/common/storage/storage.module';
         RABBIT_MQ_URI: Joi.string().required(),
         RABBIT_MQ_AUTH_QUEUE: Joi.string().required(),
         RABBIT_MQ_DESTINATION_QUEUE: Joi.string().required(),
+        RABBIT_MQ_TRIP_QUEUE: Joi.string().required(),
         GCLOUD_SA: Joi.string().required(),
+        GCLOUD_STORAGE_BUCKET_NAME: Joi.string().required(),
       }),
       ignoreEnvFile: true,
     }),
     DatabaseModule,
     AuthModule,
-    // MongooseModule.forFeature([
-    //   { name: TripDAO.name, schema: TripSchema },
-    //   { name: TripDayDAO.name, schema: TripDaySchema },
-    //   { name: TripDestinationDAO.name, schema: TripDestinationSchema },
-    //   // Other feature modules...
-    // ]),
     RmqModule,
+    NestjsFormDataModule,
+    MongooseModule.forFeature([
+      { name: ReviewDAO.name, schema: ReviewSchema },
+      // { name: TripDayDAO.name, schema: TripDaySchema },
+      // { name: TripDestinationDAO.name, schema: TripDestinationSchema },
+      // Other feature modules...
+    ]),
     RmqModule.register({
       name: AUTH_SERVICE,
     }),
@@ -43,6 +52,9 @@ import { StorageModule } from '@app/common/storage/storage.module';
   ],
   controllers: [ReviewController],
   providers: [
+    CreateReviewUseCase,
+    ReviewService,
+    ReviewRepository,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

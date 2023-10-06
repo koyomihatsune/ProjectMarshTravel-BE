@@ -12,11 +12,11 @@ import { TripService } from './trip.service';
 import { TripRepository } from './trip.repo';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TripDAO, TripSchema } from './schemas/trip.schema';
-import { TripDayDAO, TripDaySchema } from '../trip_day/schema/trip_day.schema';
-import {
-  TripDestinationDAO,
-  TripDestinationSchema,
-} from '../trip_destination/schema/trip_destination.schema';
+// import { TripDayDAO, TripDaySchema } from '../trip_day/schema/trip_day.schema';
+// import {
+//   TripDestinationDAO,
+//   TripDestinationSchema,
+// } from '../trip_destination/schema/trip_destination.schema';
 import { CreateTripUseCase } from './usecase/trip/create_trip/create_trip.usecase';
 import { UpdateTripUseCase } from './usecase/trip/update_trip/update_trip.usecase';
 import { CreateTripDayUseCase } from './usecase/trip_day/create_trip_day/create_trip_day.usecase';
@@ -47,8 +47,8 @@ import { DeleteTripDestinationUseCase } from './usecase/trip_destination/delete_
     AuthModule,
     MongooseModule.forFeature([
       { name: TripDAO.name, schema: TripSchema },
-      { name: TripDayDAO.name, schema: TripDaySchema },
-      { name: TripDestinationDAO.name, schema: TripDestinationSchema },
+      // { name: TripDayDAO.name, schema: TripDaySchema },
+      // { name: TripDestinationDAO.name, schema: TripDestinationSchema },
       // Other feature modules...
     ]),
     RmqModule,

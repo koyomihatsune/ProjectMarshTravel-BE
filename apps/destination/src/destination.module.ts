@@ -13,6 +13,8 @@ import { JwtAuthGuard } from '@app/common/auth/jwt-auth.guard';
 import { SearchDestinationsUseCase } from './usecase/search_destinations/search_destinations.usecase';
 import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/get_destination_details.usecase';
 import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_destination_details/get_multiple_destination_details.usecase';
+import { AdministrativeService } from '../administrative/administrative.service';
+import { AdministrativeModule } from '../administrative/administrative.module';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_des
         RABBIT_MQ_URI: Joi.string().required(),
         RABBIT_MQ_AUTH_QUEUE: Joi.string().required(),
         RABBIT_MQ_DESTINATION_QUEUE: Joi.string().required(),
-        FIREBASE_SA: Joi.string().required(),
+        // FIREBASE_SA: Joi.string().required(),
         GOOGLE_MAPS_API_KEY: Joi.string().required(),
       }),
       ignoreEnvFile: true,
@@ -33,10 +35,12 @@ import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_des
     AuthModule,
     RmqModule,
     GoogleMapsModule,
+    AdministrativeModule,
   ],
   controllers: [DestinationController],
   providers: [
     DestinationService,
+    AdministrativeService,
     SearchDestinationsUseCase,
     GetDestinationDetailsUseCase,
     GetMultipleDestinationDetailsUseCase,

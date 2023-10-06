@@ -6,8 +6,8 @@ import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
 import {
   MultipleDestinationResponseDTO,
   SingleDestinationResponseDTO,
-  GetMultipleDestinationDetailsRequestDTO,
-} from '../dtos/destination.dto';
+} from '../../dtos/destination.response.dto';
+import { GetMultipleDestinationDetailsRequestDTO } from '../../dtos/destinaiton.request.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -37,7 +37,7 @@ export class GetMultipleDestinationDetailsUseCase
           Logger.error(`Place ${place_id} not found`, 'GetMultipleDestinationDetailsUseCase');
         } else {
           const singleResponse: SingleDestinationResponseDTO = {
-            destinationId: subqueryResult.place_id,
+            place_id: subqueryResult.place_id,
             name: subqueryResult.name,
             location: {
                 lat: subqueryResult.geometry.location.lat,

@@ -7,8 +7,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
 import {
   MultipleDestinationResponseDTO,
-  SearchDestinationsRequestDTO,
-} from '../dtos/destination.dto';
+} from '../../dtos/destination.response.dto';
+import { SearchDestinationsRequestDTO } from '../../dtos/destinaiton.request.dto';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -47,7 +47,7 @@ export class SearchDestinationsUseCase
 
       queryResult.results.forEach((result) => {
         response.destinations.push({
-            destinationId: result.place_id,
+            place_id: result.place_id,
             name: result.name,
             location: {
                 lat: result.geometry.location.lat,

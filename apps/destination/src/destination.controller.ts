@@ -6,7 +6,7 @@ import {
   GetDestinationDetailsRequestDTO,
   GetMultipleDestinationDetailsRequestDTO,
   SearchDestinationsRequestDTO,
-} from './usecase/dtos/destination.dto';
+} from './dtos/destinaiton.request.dto';
 import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/get_destination_details.usecase';
 import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_destination_details/get_multiple_destination_details.usecase';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
@@ -69,12 +69,30 @@ export class DestinationController {
   }
 
   @MessagePattern('get_multiple_destinations')
+  @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
   async getMultipleDestinationsDetailsRPC(
     @Payload() data: GetMultipleDestinationDetailsRequestDTO,
   ) {
     const result = await this.getMultipleDestinationDetailsUseCase.execute(
       data,
     );
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      default:
+        throw new RpcException(new BadRequestException(error.getErrorValue()));
+    }
+  }
+
+  @MessagePattern('get_destination_details')
+  @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
+  async getDestinationDetailsRPC(
+    @Payload() data: GetDestinationDetailsRequestDTO,
+  ) {
+    const result = await this.getDestinationDetailsUseCase.execute(data);
     if (result.isRight()) {
       const dto = result.value.getValue();
       return dto;

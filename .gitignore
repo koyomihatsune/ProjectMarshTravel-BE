@@ -36,6 +36,8 @@ lerna-debug.log*
 .env
 .vscode/settings.json
 .metals/metals.lock.db
+.config
+/db_initializer/*.js
 
 
 #lock files

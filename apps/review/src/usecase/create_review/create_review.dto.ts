@@ -15,5 +15,5 @@ export class CreateReviewDTO {
   @IsNotEmpty()
   rating: number;
 
-  imageURLs: string[];
+  images?: Express.Multer.File[];
 }
