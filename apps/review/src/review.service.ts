@@ -65,7 +65,7 @@ export class ReviewService {
   ): Promise<Review[]> {
     const reviews = await this.reviewRepository.findAllReviewsPagination(
       {
-        userId: userId,
+        userId: userId.getValue().toMongoObjectID(),
       },
       page,
       pageSize,
