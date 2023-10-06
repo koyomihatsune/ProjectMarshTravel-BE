@@ -50,7 +50,7 @@ $ docker-compose up
 # No test yet
 ```
 
-## Author
+## Repository Author
 **Viet Anh, Nguyen**
 
 University Of Engineering and Technology
@@ -58,7 +58,7 @@ University Of Engineering and Technology
 With love to Hatsune Miku.
 
 
-## Author
+## Project Author
 
 This codebase and repository serves the MarshTravel mobile application developed by **Van Dat, Do** as back-end API services.
 

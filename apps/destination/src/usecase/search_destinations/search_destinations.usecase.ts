@@ -5,9 +5,7 @@ import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
-import {
-  MultipleDestinationResponseDTO,
-} from '../../dtos/destination.response.dto';
+import { MultipleDestinationResponseDTO } from '../../dtos/destination.response.dto';
 import { SearchDestinationsRequestDTO } from '../../dtos/destinaiton.request.dto';
 
 /* eslint-disable prettier/prettier */
@@ -49,6 +47,7 @@ export class SearchDestinationsUseCase
         response.destinations.push({
             place_id: result.place_id,
             name: result.name,
+            description: "",
             location: {
                 lat: result.geometry.location.lat,
                 lng: result.geometry.location.lng,

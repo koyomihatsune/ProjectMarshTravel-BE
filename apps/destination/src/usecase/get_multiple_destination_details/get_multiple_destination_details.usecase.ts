@@ -39,6 +39,7 @@ export class GetMultipleDestinationDetailsUseCase
           const singleResponse: SingleDestinationResponseDTO = {
             place_id: subqueryResult.place_id,
             name: subqueryResult.name,
+            description: "This is sample description",
             location: {
                 lat: subqueryResult.geometry.location.lat,
                 lng: subqueryResult.geometry.location.lng,

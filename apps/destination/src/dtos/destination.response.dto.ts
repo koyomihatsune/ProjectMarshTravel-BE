@@ -2,6 +2,7 @@ export class SingleDestinationResponseDTO {
   //use placeId by Google Maps - but put in database as destinationId
   place_id: string;
   name: string;
+  description: string;
   location: {
     lat: number;
     lng: number;
