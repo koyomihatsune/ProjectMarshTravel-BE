@@ -38,3 +38,10 @@ export const STORAGE_PATH = {
   UserAvatar: 'staging/user/avatar',
   UserReview: 'staging/user/review',
 };
+
+export const SORT_CONST = {
+  DATE_NEWEST: 'DATE_NEWEST',
+  DATE_OLDEST: 'DATE_OLDEST',
+  RATING_HIGHEST: 'RATING_HIGHEST',
+  RATING_LOWEST: 'RATING_LOWEST',
+};

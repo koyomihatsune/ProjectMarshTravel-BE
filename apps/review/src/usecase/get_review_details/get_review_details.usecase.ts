@@ -74,7 +74,7 @@ export class GetReviewDetailsUseCase
           avatar: userOrError.avatar,
         },
         destination: {
-            place_id: '',
+            place_id: reviewOrError.place_id,
             name: '',
             address: '',
             province_code: '',

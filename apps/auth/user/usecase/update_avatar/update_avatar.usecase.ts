@@ -55,7 +55,7 @@ export class UpdateUserAvatarUseCase
       return right(Result.ok<string>(handleUploadImage.value));
     } catch (err) {
       Logger.error(err, err.stack);
-      return left(new AppErrors.UnexpectedError(err));
+      return left(new AppErrors.UnexpectedError(err.message));
     }
   };
 }

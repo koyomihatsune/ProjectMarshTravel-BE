@@ -7,6 +7,7 @@ import { Trip } from './entity/trip.entity';
 import { TripMapper } from './mapper/trip.mapper';
 import { TripId } from './entity/trip_id';
 import { UserId } from 'apps/auth/user/domain/user_id';
+import { SORT_CONST } from '@app/common/constants';
 
 @Injectable()
 export class TripRepository extends AbstractRepository<TripDAO> {
@@ -57,6 +58,7 @@ export class TripRepository extends AbstractRepository<TripDAO> {
         },
         page,
         pageSize,
+        SORT_CONST.DATE_NEWEST,
       );
       const trips = result.map((trip) => {
         return TripMapper.toEntity(trip);

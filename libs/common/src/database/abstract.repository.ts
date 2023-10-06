@@ -8,6 +8,7 @@ import {
   Types,
 } from 'mongoose';
 import { AbstractDocument } from './abstract.schema';
+import { SORT_CONST } from '../constants';
 
 export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   protected abstract readonly logger: Logger;
@@ -73,13 +74,32 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return this.model.find(filterQuery, {}, { lean: true });
   }
 
+  async findAllByList(field: keyof TDocument, values: any[]) {
+    const filterQuery: FilterQuery<TDocument> = {
+      [field]: { $in: values },
+    } as FilterQuery<TDocument>;
+    return this.model.find(filterQuery, {}, { lean: true });
+  }
+
   async findPagination(
     filterQuery: FilterQuery<TDocument>,
     page: number,
     pageSize: number,
+    sortBy: string,
   ) {
     return this.model
       .find(filterQuery, {}, { lean: true })
+      .sort(
+        sortBy === SORT_CONST.DATE_NEWEST
+          ? { createdAt: 1 }
+          : sortBy === SORT_CONST.DATE_OLDEST
+          ? { createdAt: -1 }
+          : sortBy === SORT_CONST.RATING_HIGHEST
+          ? { rating: 1 }
+          : sortBy === SORT_CONST.RATING_LOWEST
+          ? { rating: -1 }
+          : {},
+      )
       .skip((page - 1) * pageSize) // page start from 1
       .limit(pageSize);
   }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Model, Connection } from 'mongoose';
+import { Model, Connection, Types } from 'mongoose';
 import { AbstractRepository } from '@app/common';
 import { UserId } from 'apps/auth/user/domain/user_id';
 import { ReviewDAO } from './schemas/review.schema';
@@ -102,25 +102,30 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
   // Có thể tìm review bằng UserId hoặc tìm bằng placeId
   async findAllReviewsPagination(
     params: {
-      userId?: UserId;
+      userId?: Types.ObjectId;
       place_id?: string;
     },
     page: number,
     pageSize: number,
+    sortBy: string,
   ): Promise<Review[] | undefined> {
     try {
       const result = await this.findPagination(
-        { ...params, isDeleted: false },
+        {
+          ...params,
+          isDeleted: false,
+        },
         page,
         pageSize,
+        sortBy,
       );
       const reviews = result.map((review) => {
         return ReviewMapper.toEntity(review);
       });
       // sort from newest to oldest
-      reviews.sort((a, b) => {
-        return b.createdAt.getTime() - a.createdAt.getTime();
-      });
+      // reviews.sort((a, b) => {
+      //   return b.createdAt.getTime() - a.createdAt.getTime();
+      // });
       return reviews;
     } catch (err) {
       Logger.error(err, err.stack);

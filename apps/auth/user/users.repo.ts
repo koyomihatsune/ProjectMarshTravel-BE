@@ -70,7 +70,7 @@ export class UsersRepository extends AbstractRepository<UserDAO> {
     }
   };
 
-  async getUserByEmail(email: UserEmail): Promise<User | undefined> {
+  async findUserByEmail(email: UserEmail): Promise<User | undefined> {
     try {
       const user = await this.findOne({ email: email.value });
       return UserMapper.toEntity(user);
@@ -79,7 +79,7 @@ export class UsersRepository extends AbstractRepository<UserDAO> {
     }
   }
 
-  async getUserByUsername(username: UserUsername): Promise<User | undefined> {
+  async findUserByUsername(username: UserUsername): Promise<User | undefined> {
     try {
       const user = await this.findOne({ username: username.value });
       return UserMapper.toEntity(user);
@@ -88,7 +88,7 @@ export class UsersRepository extends AbstractRepository<UserDAO> {
     }
   }
 
-  getUserByAccessToken = async (token: string): Promise<User | undefined> => {
+  findUserByAccessToken = async (token: string): Promise<User | undefined> => {
     try {
       const user = await this.findOne({ accessToken: token });
       return UserMapper.toEntity(user);
@@ -97,7 +97,7 @@ export class UsersRepository extends AbstractRepository<UserDAO> {
     }
   };
 
-  getUserByRefreshToken = async (token: string): Promise<User | undefined> => {
+  findUserByRefreshToken = async (token: string): Promise<User | undefined> => {
     try {
       const user = await this.findOne({ refreshToken: token });
       return UserMapper.toEntity(user);

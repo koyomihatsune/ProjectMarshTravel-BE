@@ -38,6 +38,7 @@ export class GetDestinationDetailsUseCase
       let response: SingleDestinationResponseDTO = {
           place_id: queryResult.place_id,
           name: queryResult.name,
+          description: "This is sample description",
           location: {
               lat: queryResult.geometry.location.lat,
               lng: queryResult.geometry.location.lng,
