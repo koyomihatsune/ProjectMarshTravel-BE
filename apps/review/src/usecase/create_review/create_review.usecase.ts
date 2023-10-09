@@ -64,7 +64,7 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
         const imageUrls = await Promise.all(payload.request.images.map(async (image) => {
           return await this.storageService.uploadFileToStorage(image, 
             STORAGE_PATH.UserReview,
-            `review-image-${userIdOrError.toString()}-${encodeURIComponent(image.originalname.split(".")[0])}-${uuidv1()}`,
+            `review-image-${userIdOrError.toString()}-${uuidv1()}`,
           );
         }));
 

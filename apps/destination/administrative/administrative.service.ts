@@ -22,11 +22,18 @@ export class AdministrativeService {
     }
   }
 
-  async getProvinceDetailsByCode(code: string): Promise<ProvinceDAO> {
-    const foundProvince = await this.provinceRepository.findOne({
-      code: code,
-    });
-    return foundProvince;
+  async getProvinceDetailsByCode(
+    code: string,
+  ): Promise<ProvinceDAO | undefined> {
+    try {
+      const foundProvince = await this.provinceRepository.findOne({
+        code: code,
+      });
+      return foundProvince;
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
   }
 
   async getProvinceList(): Promise<
