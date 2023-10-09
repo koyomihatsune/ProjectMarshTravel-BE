@@ -74,16 +74,22 @@ export class ReviewService {
     return reviews;
   }
 
-  // async getTripsByUserIdPagination(
-  //   userId: UserId,
-  //   page: number,
-  //   pageSize: number,
-  // ): Promise<Trip[]> {
-  //   const trip = await this.tripRepostiory.findTripsByUserIdPagination(
-  //     userId,
-  //     page,
-  //     pageSize,
-  //   );
-  //   return trip;
-  // }
+  async getReviewsByProvince(
+    province_code: string,
+    page: number,
+    pageSize: number,
+    sortBy: string,
+  ): Promise<Review[]> {
+    const reviews = await this.reviewRepository.findAllReviewsPagination(
+      {
+        tagging: {
+          province_code: province_code,
+        },
+      },
+      page,
+      pageSize,
+      sortBy,
+    );
+    return reviews;
+  }
 }

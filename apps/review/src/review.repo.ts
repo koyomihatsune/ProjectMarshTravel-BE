@@ -104,6 +104,10 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     params: {
       userId?: Types.ObjectId;
       place_id?: string;
+      tagging?: {
+        province_code?: string;
+        highlighted?: boolean;
+      };
     },
     page: number,
     pageSize: number,

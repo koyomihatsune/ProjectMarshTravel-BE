@@ -148,11 +148,11 @@ export class ReviewController {
   @Delete('delete')
   async deleteReview(
     @Req() req: Request & { user: JWTPayload },
-    @Body() body: DeleteReviewDTO,
+    @Query() query: DeleteReviewDTO,
   ) {
     const result = await this.deleteReviewUseCase.execute({
       userId: req.user.sub,
-      request: body,
+      request: query,
     });
     if (result.isRight()) {
       return result.value.getValue();
