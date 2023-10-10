@@ -13,6 +13,7 @@ import { USER_RESPONSE_MESSAGES } from '@app/common/core/infra/http/decorators/r
 import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
 import { JWTPayload } from 'apps/auth/src/types/type.declare';
 import { Result } from '@app/common/core/result';
+.test
 
 @Controller('template')
 export class UsersController {
