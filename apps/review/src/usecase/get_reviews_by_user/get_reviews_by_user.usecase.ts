@@ -87,7 +87,9 @@ export class GetReviewsByUserUseCase
               description: reviewOrError.description,
               rating: reviewOrError.rating,
               likes_count: reviewOrError.likes.length,
-              liked: reviewOrError.likes.includes(currentUserIdOrError),
+              liked: reviewOrError.likes.map((like) => {
+                return like.getValue().toString()
+              }).includes(currentUserIdOrError.getValue().toString()),
               comments_count: 0,
               // Làm phần này sau khi đã thêm comments
               highlighted_comments: [],

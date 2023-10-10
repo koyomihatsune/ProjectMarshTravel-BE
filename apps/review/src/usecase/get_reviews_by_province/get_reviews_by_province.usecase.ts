@@ -85,7 +85,9 @@ export class GetReviewsByProvinceUseCase
               description: reviewOrError.description,
               rating: reviewOrError.rating,
               likes_count: reviewOrError.likes.length,
-              liked: reviewOrError.likes.includes(userIdOrError),
+              liked: reviewOrError.likes.map((like) => {
+                return like.getValue().toString()
+              }).includes(userIdOrError.getValue().toString()),
               comments_count: 0,
               // Làm phần này sau khi đã thêm comments
               highlighted_comments: [],
