@@ -11,6 +11,7 @@ import { CommentId } from './entity/comment_id';
 import { Result } from '@app/common/core/result';
 import { ReviewId } from '../src/entity/review_id';
 import { Pagination } from '@app/common/core/pagination/pagination.type';
+import { SORT_CONST } from '@app/common/constants';
 
 @Injectable()
 export class CommentRepository extends AbstractRepository<CommentDAO> {
@@ -118,7 +119,7 @@ export class CommentRepository extends AbstractRepository<CommentDAO> {
         },
         page,
         pageSize,
-        'DATE_NEWEST',
+        SORT_CONST.DATE_NEWEST,
       );
       // sort from newest to oldest
       // reviews.sort((a, b) => {
@@ -135,5 +136,21 @@ export class CommentRepository extends AbstractRepository<CommentDAO> {
       Logger.error(err, err.stack);
       return undefined;
     }
+  }
+
+  async findFirstCommentByReview(
+    reviewId: ReviewId,
+  ): Promise<Comment | undefined> {
+    const result = await this.findPagination(
+      {
+        reviewId: reviewId.getValue().toMongoObjectID(),
+      },
+      1,
+      1,
+      SORT_CONST.DATE_NEWEST,
+    );
+    return result.results.length > 0
+      ? CommentMapper.toEntity(result.results[0])
+      : undefined;
   }
 }

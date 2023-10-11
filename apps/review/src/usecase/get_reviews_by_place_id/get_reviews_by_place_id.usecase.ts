@@ -24,6 +24,8 @@ import {
   MultiplePublicUserProfileResponseDTO,
   SinglePublicUserProfileResponseDTO,
 } from '../../../../auth/user/usecase/get_public_profiles/get_public_profiles.dto';
+import { CommentService } from 'apps/review/comment/comment.service';
+import { ReviewId } from '../../entity/review_id';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -44,6 +46,7 @@ export class GetReviewsByPlaceIdUseCase
     @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
     @Inject(DESTINATION_SERVICE) private readonly destinationClient: ClientProxy,
     private readonly reviewService: ReviewService,
+    private readonly commentService: CommentService
   ) {}
 
   execute = async (dto: GetReviewByPlaceIdWithUserIDDTO): Promise<Response> => {
@@ -56,11 +59,13 @@ export class GetReviewsByPlaceIdUseCase
             
       // const placeIds : string[] = [];
       const userIds : string[] = [];
+      const reviewIds : ReviewId[] = [];
       
       const result: MultipleReviewResponseDTO = {
         list: queryResult.result.map((reviewOrError) => {
           // placeIds.push(reviewOrError.place_id);
           userIds.push(reviewOrError.userId.getValue().toString());
+          reviewIds.push(reviewOrError.reviewId);
           const singleResult: SingleReviewResponseDTO = {
               id: reviewOrError.reviewId.getValue().toString(),
               user: {
@@ -144,6 +149,9 @@ export class GetReviewsByPlaceIdUseCase
           }
         }
       });
+
+      // const reviewCount = await this.commentService.getCommentAmountByReviewIds(reviewIds);
+      // console.log(reviewCount);
 
       return right(Result.ok<MultipleReviewResponseDTO>(result));
     } catch (err) {

@@ -9,6 +9,7 @@ import { ReviewMapper } from './mapper/review.mapper';
 import { Review } from './entity/review.entity';
 import { ReviewId } from './entity/review_id';
 import { Result } from '@app/common/core/result';
+import { Pagination } from '@app/common/core/pagination/pagination.type';
 @Injectable()
 export class ReviewRepository extends AbstractRepository<ReviewDAO> {
   protected readonly logger = new Logger(ReviewRepository.name);
@@ -112,9 +113,7 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     page: number,
     pageSize: number,
     sortBy: string,
-  ): Promise<
-    { result: Review[]; page: number; totalPage: number } | undefined
-  > {
+  ): Promise<Pagination<Review> | undefined> {
     try {
       Logger.log(page);
       Logger.log(pageSize);

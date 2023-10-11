@@ -28,7 +28,7 @@ export type SingleReviewResponseDTO = {
       avatar: string;
     };
     content: string;
-    imageUrl: string;
+    imageUrl?: string;
   }[];
   isApproved: boolean;
   isDeleted: boolean;

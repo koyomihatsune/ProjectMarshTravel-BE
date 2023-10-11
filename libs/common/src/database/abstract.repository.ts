@@ -81,6 +81,22 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return this.model.find(filterQuery, {}, { lean: true });
   }
 
+  async count(filterQuery: FilterQuery<TDocument>) {
+    return this.model.countDocuments(filterQuery);
+  }
+
+  // group count by field
+  async countByField(field: keyof TDocument) {
+    return this.model.aggregate([
+      {
+        $group: {
+          _id: `${field.toString()}`,
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+  }
+
   async findPagination(
     filterQuery: FilterQuery<TDocument>,
     page: number,

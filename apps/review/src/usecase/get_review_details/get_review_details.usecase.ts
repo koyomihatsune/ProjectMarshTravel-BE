@@ -19,6 +19,7 @@ import { ReviewId } from '../../entity/review_id';
 import { ReviewService } from '../../review.service';
 import { UserProfileResponseDTO } from 'apps/auth/user/usecase/get_profile/get_profile.dto';
 import { UserId } from 'apps/auth/user/domain/user_id';
+import { CommentService } from 'apps/review/comment/comment.service';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -39,6 +40,7 @@ export class GetReviewDetailsUseCase
     @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
     @Inject(DESTINATION_SERVICE) private readonly destinationClient: ClientProxy,
     private readonly reviewService: ReviewService,
+    private readonly commentService: CommentService,
   ) {}
 
   execute = async (dto: GetReviewDetailsWithUserIDDTO): Promise<Response> => {
@@ -51,12 +53,16 @@ export class GetReviewDetailsUseCase
       
       const reviewIdOrError = ReviewId.create(new UniqueEntityID(request.reviewId));
 
-      // Kiểm tra trip có tồn tại hay không
+      // Kiểm tra review có tồn tại hay không
       const reviewOrError = await this.reviewService.getReviewById(reviewIdOrError);
 
       if (reviewOrError === undefined) {
         return left(new AppErrors.EntityNotFoundError('Review'));
       }
+
+      // const highlightCommentOrError = await this.commentService.getFirstCommentByReviewId(reviewIdOrError);
+
+      const commentCountOrError = await this.commentService.getCommentAmountByReviewId(reviewIdOrError);
 
       // Lấy thông tin user của Review
       const userOrError : UserProfileResponseDTO = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId})); 
@@ -88,7 +94,7 @@ export class GetReviewDetailsUseCase
           return like.getValue().toString()
         }).includes(userIdOrError.getValue().toString()),
         saved: false,
-        comments_count: 0,
+        comments_count: commentCountOrError,
         // Làm phần này sau khi đã thêm comments
         highlighted_comments: [],
         imageURLs: reviewOrError.imageURLs,

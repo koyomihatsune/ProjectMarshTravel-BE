@@ -9,6 +9,7 @@ import { ReviewId } from '../src/entity/review_id';
 import { Pagination } from '@app/common/core/pagination/pagination.type';
 import { UserId } from 'apps/auth/user/domain/user_id';
 import { Result } from '@app/common/core/result';
+import { SORT_CONST } from '@app/common/constants';
 
 @Injectable()
 export class CommentService {
@@ -73,5 +74,26 @@ export class CommentService {
 
   async unlike(commentId: CommentId, userId: UserId): Promise<Result<void>> {
     return await this.commentRepository.unlikeComment(commentId, userId);
+  }
+
+  async getCommentAmountByReviewId(reviewId: ReviewId): Promise<number> {
+    const result = await this.commentRepository.count({
+      reviewId: reviewId.getValue().toMongoObjectID(),
+    });
+    return result;
+  }
+
+  // get comment amount by multiple review id
+  async getCommentAmountByReviewIds(reviewIds: ReviewId[]): Promise<number[]> {
+    const result = await this.commentRepository.countByField('reviewId');
+    // console.log(result);
+    return result;
+  }
+
+  async getFirstCommentByReviewId(reviewId: ReviewId): Promise<Comment> {
+    const result = await this.commentRepository.findFirstCommentByReview(
+      reviewId,
+    );
+    return result;
   }
 }
