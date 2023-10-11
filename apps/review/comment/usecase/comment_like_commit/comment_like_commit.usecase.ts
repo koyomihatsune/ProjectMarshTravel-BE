@@ -3,18 +3,14 @@ import * as AppErrors from '@app/common/core/app.error';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
 import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { AUTH_SERVICE, DESTINATION_SERVICE } from '@app/common/global/services';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { AUTH_SERVICE } from '@app/common/global/services';
 import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
-import { StorageService } from '@app/common/storage/storage.service';
-import { ERROR_CODE, STORAGE_PATH } from '@app/common/constants';
 import { UserId } from 'apps/auth/user/domain/user_id';
-import { LikeCommitReviewDTO } from './like_commit.dto';
-import { ReviewService } from 'apps/review/src/review.service';
-import { UserProfileResponseDTO } from 'apps/auth/user/usecase/get_profile/get_profile.dto';
+import { LikeCommitCommentDTO } from './comment_like_commit.dto';
 import { ReviewId } from 'apps/review/src/entity/review_id';
-import * as ReviewErrors from '../../errors/review.errors';
+import { CommentService } from '../../comment.service';
+import { CommentId } from '../../entity/comment_id';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -22,28 +18,28 @@ type Response = Either<
   Result<void>
 >;
 
-type LikeCommitReviewDTOWithUserId = {
+type LikeCommitCommentDTOWithUserId = {
     userId: string;
-    request: LikeCommitReviewDTO;
+    request: LikeCommitCommentDTO;
 }
 
 @Injectable()
-export class LikeCommitReviewUseCase implements UseCase<LikeCommitReviewDTOWithUserId, Promise<Response>>
+export class LikeCommitCommentUseCase implements UseCase<LikeCommitCommentDTOWithUserId, Promise<Response>>
 {
   constructor(
-    private readonly reviewService: ReviewService,
+    private readonly commentService: CommentService,
     @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
   ) {}
 
-  execute = async (payload: LikeCommitReviewDTOWithUserId): Promise<Response> => {
+  execute = async (payload: LikeCommitCommentDTOWithUserId): Promise<Response> => {
     try {
       const { userId, request } = payload;
       const userIdOrError = UserId.create(new UniqueEntityID(userId));
       
-      const reviewIdOrError = ReviewId.create(new UniqueEntityID(request.reviewId));
+      const commentIdOrError = CommentId.create(new UniqueEntityID(request.commentId));
 
-      const result = request.like === true ? await this.reviewService.like(reviewIdOrError, userIdOrError)
-        : request.like === false ? await this.reviewService.unlike(reviewIdOrError, userIdOrError) 
+      const result = request.like === true ? await this.commentService.like(commentIdOrError, userIdOrError)
+        : request.like === false ? await this.commentService.unlike(commentIdOrError, userIdOrError) 
         : Result.fail<void>("Invalid payload");
 
       if (result.isSuccess) {

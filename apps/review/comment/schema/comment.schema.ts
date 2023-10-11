@@ -11,10 +11,13 @@ export class CommentDAO extends AbstractDocument {
   reviewId: Types.ObjectId;
 
   @Prop()
+  parentCommentId: Types.ObjectId | undefined;
+
+  @Prop()
   content: string;
 
   @Prop()
-  imageURL: string[];
+  imageURL: string;
 
   @Prop()
   likes: Types.ObjectId[];

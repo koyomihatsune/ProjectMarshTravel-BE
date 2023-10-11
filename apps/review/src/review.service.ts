@@ -9,8 +9,8 @@ import { STORAGE_PATH } from '@app/common/constants';
 import { Review } from './entity/review.entity';
 import { ReviewId } from './entity/review_id';
 import { ReviewMapper } from './mapper/review.mapper';
+import { Pagination } from '@app/common/core/pagination/pagination.type';
 
-type ReviewPagination = { result: Review[]; page: number; totalPage: number };
 @Injectable()
 export class ReviewService {
   constructor(
@@ -46,7 +46,7 @@ export class ReviewService {
     page: number,
     pageSize: number,
     sortBy: string,
-  ): Promise<ReviewPagination> {
+  ): Promise<Pagination<Review>> {
     const result = await this.reviewRepository.findAllReviewsPagination(
       {
         place_id: place_id,
@@ -67,7 +67,7 @@ export class ReviewService {
     page: number,
     pageSize: number,
     sortBy: string,
-  ): Promise<ReviewPagination> {
+  ): Promise<Pagination<Review>> {
     const result = await this.reviewRepository.findAllReviewsPagination(
       {
         userId: userId.getValue().toMongoObjectID(),
@@ -89,7 +89,7 @@ export class ReviewService {
     page: number,
     pageSize: number,
     sortBy: string,
-  ): Promise<ReviewPagination> {
+  ): Promise<Pagination<Review>> {
     const result = await this.reviewRepository.findAllReviewsPagination(
       {
         tagging: {

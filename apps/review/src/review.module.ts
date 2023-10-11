@@ -17,10 +17,18 @@ import { ReviewDAO, ReviewSchema } from './schemas/review.schema';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { GetReviewDetailsUseCase } from './usecase/get_review_details/get_review_details.usecase';
 import { UpdateReviewUseCase } from './usecase/update_review/update_review.usecase';
-import { LikeCommitReviewUseCase } from './usecase/interactions/like_commit/like_commit.usecase';
+import { LikeCommitReviewUseCase } from './usecase/interactions/review_like_commit/review_like_commit.usecase';
 import { DeleteReviewUseCase } from './usecase/delete_review/delete_review.usecase';
 import { GetReviewsByPlaceIdUseCase } from './usecase/get_reviews_by_place_id/get_reviews_by_place_id.usecase';
 import { GetReviewsByUserUseCase } from './usecase/get_reviews_by_user/get_reviews_by_user.usecase';
+import { CommentDAO, CommentSchema } from '../comment/schema/comment.schema';
+import { CreateCommentUseCase } from '../comment/usecase/create_comment/create_comment.usecase';
+import { GetCommentsByReviewUseCase } from '../comment/usecase/get_comments_by_review/get_comments_by_review.usecase';
+import { UpdateCommentUseCase } from '../comment/usecase/update_comment/update_comment.usecase';
+import { DeleteCommentUseCase } from '../comment/usecase/delete_comment/delete_comment.usecase';
+import { CommentService } from '../comment/comment.service';
+import { CommentRepository } from '../comment/comment.repo';
+import { LikeCommitCommentUseCase } from '../comment/usecase/comment_like_commit/comment_like_commit.usecase';
 
 @Module({
   imports: [
@@ -42,11 +50,9 @@ import { GetReviewsByUserUseCase } from './usecase/get_reviews_by_user/get_revie
     AuthModule,
     RmqModule,
     NestjsFormDataModule,
+    MongooseModule.forFeature([{ name: ReviewDAO.name, schema: ReviewSchema }]),
     MongooseModule.forFeature([
-      { name: ReviewDAO.name, schema: ReviewSchema },
-      // { name: TripDayDAO.name, schema: TripDaySchema },
-      // { name: TripDestinationDAO.name, schema: TripDestinationSchema },
-      // Other feature modules...
+      { name: CommentDAO.name, schema: CommentSchema },
     ]),
     RmqModule.register({
       name: AUTH_SERVICE,
@@ -58,6 +64,7 @@ import { GetReviewsByUserUseCase } from './usecase/get_reviews_by_user/get_revie
   ],
   controllers: [ReviewController],
   providers: [
+    // Review providers
     ReviewService,
     ReviewRepository,
     CreateReviewUseCase,
@@ -67,6 +74,14 @@ import { GetReviewsByUserUseCase } from './usecase/get_reviews_by_user/get_revie
     LikeCommitReviewUseCase,
     GetReviewsByPlaceIdUseCase,
     GetReviewsByUserUseCase,
+    // Comment providers
+    CommentService,
+    CommentRepository,
+    CreateCommentUseCase,
+    GetCommentsByReviewUseCase,
+    UpdateCommentUseCase,
+    DeleteCommentUseCase,
+    LikeCommitCommentUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

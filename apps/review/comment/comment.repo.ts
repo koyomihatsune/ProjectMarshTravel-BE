@@ -4,61 +4,66 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model, Connection, Types } from 'mongoose';
 import { AbstractRepository } from '@app/common';
 import { UserId } from 'apps/auth/user/domain/user_id';
-import { ReviewDAO } from './schemas/review.schema';
-import { ReviewMapper } from './mapper/review.mapper';
-import { Review } from './entity/review.entity';
-import { ReviewId } from './entity/review_id';
+import { CommentDAO } from './schema/comment.schema';
+import { CommentMapper } from './mapper/comment.mapper';
+import { Comment } from './entity/comment.entity';
+import { CommentId } from './entity/comment_id';
 import { Result } from '@app/common/core/result';
+import { ReviewId } from '../src/entity/review_id';
 import { Pagination } from '@app/common/core/pagination/pagination.type';
+import { SORT_CONST } from '@app/common/constants';
+
 @Injectable()
-export class ReviewRepository extends AbstractRepository<ReviewDAO> {
-  protected readonly logger = new Logger(ReviewRepository.name);
+export class CommentRepository extends AbstractRepository<CommentDAO> {
+  protected readonly logger = new Logger(CommentRepository.name);
 
   constructor(
-    @InjectModel(ReviewDAO.name) reviewModel: Model<ReviewDAO>,
+    @InjectModel(CommentDAO.name) commentModel: Model<CommentDAO>,
     @InjectConnection() connection: Connection,
   ) {
-    super(reviewModel, connection);
+    super(commentModel, connection);
   }
 
-  async createReview(review: Review): Promise<Review | undefined> {
+  async createComment(comment: Comment): Promise<Comment | undefined> {
     try {
-      const reviewDAO = ReviewMapper.toDAO(review);
+      const commentDAO = CommentMapper.toDAO(comment);
       await this.create({
-        ...reviewDAO,
+        ...commentDAO,
       });
-      return review;
+      return comment;
     } catch (err) {
       Logger.error(err, err.stack);
       return undefined;
     }
   }
 
-  async updateReview(reviewInput: Review): Promise<Review | undefined> {
+  async updateComment(comment: Comment): Promise<Comment | undefined> {
     try {
-      const reviewDAO = ReviewMapper.toDAO(reviewInput);
+      const commentDAO = CommentMapper.toDAO(comment);
       const result = await this.findOneAndUpdate(
         {
-          _id: reviewInput.reviewId.getValue().toMongoObjectID(),
+          _id: comment.commentId.getValue().toMongoObjectID(),
         },
         {
-          ...reviewDAO,
+          ...commentDAO,
         },
       );
 
-      const review = ReviewMapper.toEntity(result);
-      return review;
+      return CommentMapper.toEntity(result);
     } catch (err) {
       Logger.error(err, err.stack);
       return undefined;
     }
   }
 
-  async likeReview(reviewId: ReviewId, userId: UserId): Promise<Result<void>> {
+  async likeComment(
+    commentId: CommentId,
+    userId: UserId,
+  ): Promise<Result<void>> {
     try {
       const result = await this.likeDocument(
         {
-          _id: reviewId.getValue().toMongoObjectID(),
+          _id: commentId.getValue().toMongoObjectID(),
         },
         userId.getValue().toMongoObjectID(),
       );
@@ -69,14 +74,14 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     }
   }
 
-  async unlikeReview(
-    reviewId: ReviewId,
+  async unlikeComment(
+    commentId: CommentId,
     userId: UserId,
   ): Promise<Result<void>> {
     try {
       const result = await this.unlikeDocument(
         {
-          _id: reviewId.getValue().toMongoObjectID(),
+          _id: commentId.getValue().toMongoObjectID(),
         },
         userId.getValue().toMongoObjectID(),
       );
@@ -87,12 +92,12 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     }
   }
 
-  async findReviewById(reviewId: ReviewId): Promise<Review | undefined> {
+  async findCommentById(commentId: CommentId): Promise<Comment | undefined> {
     try {
       const result = await this.findOne({
-        _id: reviewId.getValue().toMongoObjectID(),
+        _id: commentId.getValue().toMongoObjectID(),
       });
-      const review = ReviewMapper.toEntity(result);
+      const review = CommentMapper.toEntity(result);
       return review;
     } catch (err) {
       Logger.error(err, err.stack);
@@ -100,40 +105,29 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     }
   }
 
-  // Có thể tìm review bằng UserId hoặc tìm bằng placeId
-  async findAllReviewsPagination(
-    params: {
-      userId?: Types.ObjectId;
-      place_id?: string;
-      tagging?: {
-        province_code?: string;
-        highlighted?: boolean;
-      };
-    },
+  // Có thể tìm comment bằng ReviewId
+  async findAllCommentsPagination(
+    filterQuery: { reviewId?: Types.ObjectId; userId?: Types.ObjectId },
     page: number,
     pageSize: number,
-    sortBy: string,
-  ): Promise<Pagination<Review> | undefined> {
+  ): Promise<Pagination<Comment> | undefined> {
     try {
-      Logger.log(page);
-      Logger.log(pageSize);
-      Logger.log('findAllReviewsPagination');
       const result = await this.findPagination(
         {
-          ...params,
+          ...filterQuery,
           isDeleted: false,
         },
         page,
         pageSize,
-        sortBy,
+        SORT_CONST.DATE_NEWEST,
       );
       // sort from newest to oldest
       // reviews.sort((a, b) => {
       //   return b.createdAt.getTime() - a.createdAt.getTime();
       // });
       return {
-        result: result.results.map((review) => {
-          return ReviewMapper.toEntity(review);
+        result: result.results.map((comment) => {
+          return CommentMapper.toEntity(comment);
         }),
         page: result.page,
         totalPage: result.totalPages,
@@ -142,5 +136,21 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
       Logger.error(err, err.stack);
       return undefined;
     }
+  }
+
+  async findFirstCommentByReview(
+    reviewId: ReviewId,
+  ): Promise<Comment | undefined> {
+    const result = await this.findPagination(
+      {
+        reviewId: reviewId.getValue().toMongoObjectID(),
+      },
+      1,
+      1,
+      SORT_CONST.DATE_NEWEST,
+    );
+    return result.results.length > 0
+      ? CommentMapper.toEntity(result.results[0])
+      : undefined;
   }
 }
