@@ -19,6 +19,7 @@ export type SingleReviewResponseDTO = {
   imageURLs: string[];
   likes_count: number;
   liked: boolean;
+  saved: boolean;
   comments_count: number;
   highlighted_comments: {
     user: {
@@ -36,11 +37,13 @@ export type SingleReviewResponseDTO = {
 };
 
 export type MultipleReviewResponseDTO = {
-  reviews: SingleReviewResponseDTO[];
+  list: SingleReviewResponseDTO[];
+  page: number;
+  totalPage: number;
 };
 
 export type MultipleCommentResponseDTO = {
-  comments: {
+  list: {
     id: string;
     user: {
       id: string;

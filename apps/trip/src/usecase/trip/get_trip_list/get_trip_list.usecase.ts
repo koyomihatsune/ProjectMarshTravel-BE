@@ -45,11 +45,13 @@ export class GetTripListPaginationUseCase
       const queryResult = await this.tripService.getTripsByUserIdPagination(userIdOrError, page, limit);
 
       const result: MultipleTripResponseWithoutDaysDTO = {
-        trips: [],
+        list: [],
+        page: queryResult.page,
+        totalPage: queryResult.totalPage
       };
 
-      queryResult.forEach((trip) => {
-        result.trips.push({ 
+      queryResult.result.forEach((trip) => {
+        result.list.push({ 
           id: trip.tripId.getValue().toString(),
           userId: trip.userId.toString(),
           name: trip.name,
@@ -62,7 +64,7 @@ export class GetTripListPaginationUseCase
         })
       })
       
-      result.trips.sort((a, b) => (a.startAt > b.startAt) ? -1 : 1);
+      result.list.sort((a, b) => (a.startAt > b.startAt) ? -1 : 1);
 
       return right(Result.ok<MultipleTripResponseWithoutDaysDTO>(result));
     } catch (err) {

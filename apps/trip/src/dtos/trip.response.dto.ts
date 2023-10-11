@@ -72,5 +72,7 @@ export class SingleTripDayResponseWithoutDestinationsDTO {
 }
 
 export class MultipleTripResponseWithoutDaysDTO {
-  trips: SingleTripResponseWithoutDaysDTO[];
+  list: SingleTripResponseWithoutDaysDTO[];
+  page: number;
+  totalPage: number;
 }

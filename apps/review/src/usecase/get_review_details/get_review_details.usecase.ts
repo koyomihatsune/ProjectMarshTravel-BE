@@ -87,6 +87,7 @@ export class GetReviewDetailsUseCase
         liked: reviewOrError.likes.map((like) => {
           return like.getValue().toString()
         }).includes(userIdOrError.getValue().toString()),
+        saved: false,
         comments_count: 0,
         // Làm phần này sau khi đã thêm comments
         highlighted_comments: [],

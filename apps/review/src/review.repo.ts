@@ -112,8 +112,13 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     page: number,
     pageSize: number,
     sortBy: string,
-  ): Promise<Review[] | undefined> {
+  ): Promise<
+    { result: Review[]; page: number; totalPage: number } | undefined
+  > {
     try {
+      Logger.log(page);
+      Logger.log(pageSize);
+      Logger.log('findAllReviewsPagination');
       const result = await this.findPagination(
         {
           ...params,
@@ -123,14 +128,17 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
         pageSize,
         sortBy,
       );
-      const reviews = result.map((review) => {
-        return ReviewMapper.toEntity(review);
-      });
       // sort from newest to oldest
       // reviews.sort((a, b) => {
       //   return b.createdAt.getTime() - a.createdAt.getTime();
       // });
-      return reviews;
+      return {
+        result: result.results.map((review) => {
+          return ReviewMapper.toEntity(review);
+        }),
+        page: result.page,
+        totalPage: result.totalPages,
+      };
     } catch (err) {
       Logger.error(err, err.stack);
       return undefined;

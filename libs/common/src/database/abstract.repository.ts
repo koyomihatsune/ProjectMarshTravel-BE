@@ -87,7 +87,18 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     pageSize: number,
     sortBy: string,
   ) {
-    return this.model
+    const totalCount = await this.model.countDocuments(filterQuery); // Count the total number of documents
+
+    const totalPages = Math.ceil(totalCount / pageSize); // Calculate the total number of pages
+
+    // Một lỗi khá dị của page là nó có thể là string hoặc number
+    page = parseInt(page.toString());
+
+    // if (page > totalPages) {
+    //   page = totalPages; // Adjust the page number if it exceeds the total number of pages
+    // }
+
+    const results = await this.model
       .find(filterQuery, {}, { lean: true })
       .sort(
         sortBy === SORT_CONST.DATE_NEWEST
@@ -100,8 +111,10 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
           ? { rating: -1 }
           : {},
       )
-      .skip((page - 1) * pageSize) // page start from 1
+      .skip((page - 1) * pageSize) // page starts from 1
       .limit(pageSize);
+
+    return { page, totalPages, results };
   }
 
   async likeDocument(

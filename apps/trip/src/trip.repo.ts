@@ -50,7 +50,7 @@ export class TripRepository extends AbstractRepository<TripDAO> {
     userId: UserId,
     page: number,
     pageSize: number,
-  ): Promise<Trip[] | undefined> {
+  ): Promise<{ result: Trip[]; page: number; totalPage: number } | undefined> {
     try {
       const result = await this.findPagination(
         {
@@ -60,10 +60,13 @@ export class TripRepository extends AbstractRepository<TripDAO> {
         pageSize,
         SORT_CONST.DATE_NEWEST,
       );
-      const trips = result.map((trip) => {
-        return TripMapper.toEntity(trip);
-      });
-      return trips;
+      return {
+        result: result.results.map((trip) => {
+          return TripMapper.toEntity(trip);
+        }),
+        page: result.page,
+        totalPage: result.totalPages,
+      };
     } catch (err) {
       Logger.error(err, err.stack);
       return undefined;

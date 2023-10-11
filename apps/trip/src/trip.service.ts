@@ -4,6 +4,7 @@ import { Trip } from './entity/trip.entity';
 import { TripId } from './entity/trip_id';
 import { UserId } from 'apps/auth/user/domain/user_id';
 
+type TripPagination = { result: Trip[]; page: number; totalPage: number };
 @Injectable()
 export class TripService {
   constructor(private readonly tripRepostiory: TripRepository) {}
@@ -27,12 +28,16 @@ export class TripService {
     userId: UserId,
     page: number,
     pageSize: number,
-  ): Promise<Trip[]> {
-    const trip = await this.tripRepostiory.findTripsByUserIdPagination(
+  ): Promise<TripPagination> {
+    const result = await this.tripRepostiory.findTripsByUserIdPagination(
       userId,
       page,
       pageSize,
     );
-    return trip;
+    return {
+      result: result.result,
+      page: result.page,
+      totalPage: result.totalPage,
+    };
   }
 }

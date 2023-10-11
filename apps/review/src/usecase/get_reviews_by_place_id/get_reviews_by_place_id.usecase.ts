@@ -58,7 +58,7 @@ export class GetReviewsByPlaceIdUseCase
       const userIds : string[] = [];
       
       const result: MultipleReviewResponseDTO = {
-        reviews: queryResult.map((reviewOrError) => {
+        list: queryResult.result.map((reviewOrError) => {
           // placeIds.push(reviewOrError.place_id);
           userIds.push(reviewOrError.userId.getValue().toString());
           const singleResult: SingleReviewResponseDTO = {
@@ -83,6 +83,7 @@ export class GetReviewsByPlaceIdUseCase
               liked: reviewOrError.likes.map((like) => {
                 return like.getValue().toString()
               }).includes(userIdOrError.getValue().toString()),
+              saved: false,
               comments_count: 0,
               // Làm phần này sau khi đã thêm comments
               highlighted_comments: [],
@@ -93,7 +94,9 @@ export class GetReviewsByPlaceIdUseCase
               isApproved: reviewOrError.isApproved,
             };
           return singleResult;
-        })
+        }),
+        page: queryResult.page,
+        totalPage: queryResult.totalPage,
       };
 
       // Map các destination và user với review qua query tới 2 service tương ứng
@@ -110,7 +113,7 @@ export class GetReviewsByPlaceIdUseCase
       // Kiểm tra destination có tồn tại không. Nếu có thì thêm thông tin về place vào.
       // Chưa handle các trường hợp lỗi
 
-      result.reviews.forEach((review) => {
+      result.list.forEach((review) => {
         // const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => {
         //   return destinationDetails.place_id === review.destination.place_id;
         // });

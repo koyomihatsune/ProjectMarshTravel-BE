@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ReviewRepository } from './review.repo';
 import { StorageService } from '@app/common/storage/storage.service';
 import { UserId } from 'apps/auth/user/domain/user_id';
@@ -10,6 +10,7 @@ import { Review } from './entity/review.entity';
 import { ReviewId } from './entity/review_id';
 import { ReviewMapper } from './mapper/review.mapper';
 
+type ReviewPagination = { result: Review[]; page: number; totalPage: number };
 @Injectable()
 export class ReviewService {
   constructor(
@@ -45,8 +46,8 @@ export class ReviewService {
     page: number,
     pageSize: number,
     sortBy: string,
-  ): Promise<Review[]> {
-    const reviews = await this.reviewRepository.findAllReviewsPagination(
+  ): Promise<ReviewPagination> {
+    const result = await this.reviewRepository.findAllReviewsPagination(
       {
         place_id: place_id,
       },
@@ -54,7 +55,11 @@ export class ReviewService {
       pageSize,
       sortBy,
     );
-    return reviews;
+    return {
+      result: result.result,
+      page: result.page,
+      totalPage: result.totalPage,
+    };
   }
 
   async getReviewsByUserId(
@@ -62,8 +67,8 @@ export class ReviewService {
     page: number,
     pageSize: number,
     sortBy: string,
-  ): Promise<Review[]> {
-    const reviews = await this.reviewRepository.findAllReviewsPagination(
+  ): Promise<ReviewPagination> {
+    const result = await this.reviewRepository.findAllReviewsPagination(
       {
         userId: userId.getValue().toMongoObjectID(),
       },
@@ -71,7 +76,12 @@ export class ReviewService {
       pageSize,
       sortBy,
     );
-    return reviews;
+
+    return {
+      result: result.result,
+      page: result.page,
+      totalPage: result.totalPage,
+    };
   }
 
   async getReviewsByProvince(
@@ -79,8 +89,8 @@ export class ReviewService {
     page: number,
     pageSize: number,
     sortBy: string,
-  ): Promise<Review[]> {
-    const reviews = await this.reviewRepository.findAllReviewsPagination(
+  ): Promise<ReviewPagination> {
+    const result = await this.reviewRepository.findAllReviewsPagination(
       {
         tagging: {
           province_code: province_code,
@@ -90,6 +100,10 @@ export class ReviewService {
       pageSize,
       sortBy,
     );
-    return reviews;
+    return {
+      result: result.result,
+      page: result.page,
+      totalPage: result.totalPage,
+    };
   }
 }
