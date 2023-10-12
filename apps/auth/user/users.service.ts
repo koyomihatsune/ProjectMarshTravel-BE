@@ -92,7 +92,7 @@ export class UsersService {
     const imageUrl = await this.storageService.uploadFileToStorage(
       userPayload.avatar,
       STORAGE_PATH.UserAvatar,
-      `user-avatar-${userId.getValue().toString()}-${uuidv1()}}`,
+      `user-avatar-${userId.getValue().toString()}-${uuidv1()}`,
     );
     if (imageUrl.isLeft()) {
       return left(imageUrl.value);
