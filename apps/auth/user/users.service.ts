@@ -12,6 +12,7 @@ import { Either, left, right } from '@app/common/core/result';
 import * as AppErrors from '@app/common/core/app.error';
 import { StorageService } from '@app/common/storage/storage.service';
 import { STORAGE_PATH } from '@app/common/constants';
+import { v1 as uuidv1 } from 'uuid';
 export interface TokenPayload {
   accessToken: string;
 }
@@ -91,7 +92,7 @@ export class UsersService {
     const imageUrl = await this.storageService.uploadFileToStorage(
       userPayload.avatar,
       STORAGE_PATH.UserAvatar,
-      `user-avatar-${userId.getValue().toString()}`,
+      `user-avatar-${userId.getValue().toString()}-${uuidv1()}}`,
     );
     if (imageUrl.isLeft()) {
       return left(imageUrl.value);
