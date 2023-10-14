@@ -15,8 +15,8 @@ export class StorageService {
   private storage: Storage;
   private bucketName: string;
   constructor(bucketName: string, keyString: string | undefined) {
-    Logger.log('Initializing Google Cloud Storage with key:');
-    Logger.log(JSON.parse(keyString));
+    // Logger.log('Initializing Google Cloud Storage with key:');
+    // Logger.log(JSON.parse(keyString));
     this.storage = new Storage({
       projectId: 'marshtravel',
       credentials: JSON.parse(keyString),

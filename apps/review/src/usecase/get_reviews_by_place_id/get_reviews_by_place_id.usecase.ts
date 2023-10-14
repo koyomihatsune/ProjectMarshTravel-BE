@@ -26,6 +26,7 @@ import {
 } from '../../../../auth/user/usecase/get_public_profiles/get_public_profiles.dto';
 import { CommentService } from 'apps/review/comment/comment.service';
 import { ReviewId } from '../../entity/review_id';
+import { SavedReviewService } from '../../../saved_review/saved_review.service';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -46,6 +47,7 @@ export class GetReviewsByPlaceIdUseCase
     @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
     @Inject(DESTINATION_SERVICE) private readonly destinationClient: ClientProxy,
     private readonly reviewService: ReviewService,
+    private readonly savedReviewService: SavedReviewService,
     private readonly commentService: CommentService
   ) {}
 
@@ -115,6 +117,10 @@ export class GetReviewsByPlaceIdUseCase
 
       const userQueryResult : ResultRPC<MultiplePublicUserProfileResponseDTO> = await firstValueFrom(this.authClient.send('get_user_profiles', { userIds: userIds }));
 
+      const savedReviewQueryResult = (await this.savedReviewService.getSavedReviewIdsByUserIdNonPagination(userIdOrError)).map((savedReview) => {
+        return savedReview.getValue().toString();
+      });
+
       // Kiểm tra destination có tồn tại không. Nếu có thì thêm thông tin về place vào.
       // Chưa handle các trường hợp lỗi
 
@@ -122,6 +128,7 @@ export class GetReviewsByPlaceIdUseCase
         // const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => {
         //   return destinationDetails.place_id === review.destination.place_id;
         // });
+        if (savedReviewQueryResult.includes(review.id)) review.saved = true;
 
         if (destinationDetails === undefined) {
           Logger.log(`Place ${review.destination.place_id} not found in query result. Left out of array`, 'GetTripDetailsUseCase');

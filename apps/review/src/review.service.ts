@@ -41,6 +41,11 @@ export class ReviewService {
     return await this.reviewRepository.unlikeReview(reviewId, userId);
   }
 
+  async getReviewsByIds(reviewIds: ReviewId[]): Promise<Review[]> {
+    const result = await this.reviewRepository.findReviewByIds(reviewIds);
+    return result;
+  }
+
   async getReviewsByPlaceId(
     place_id: string,
     page: number,

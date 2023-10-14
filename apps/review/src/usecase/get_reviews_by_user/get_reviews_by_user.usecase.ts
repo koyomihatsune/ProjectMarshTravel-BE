@@ -24,6 +24,7 @@ import {
 } from 'apps/destination/src/dtos/destination.response.dto';
 import { firstValueFrom } from 'rxjs';
 import { MultiplePublicUserProfileResponseDTO } from '../../../../auth/user/usecase/get_public_profiles/get_public_profiles.dto';
+import { SavedReviewService } from '../../../saved_review/saved_review.service';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -44,6 +45,7 @@ export class GetReviewsByUserUseCase
     @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
     @Inject(DESTINATION_SERVICE) private readonly destinationClient: ClientProxy,
     private readonly reviewService: ReviewService,
+    private readonly savedReviewService: SavedReviewService,
   ) {}
 
   execute = async (dto: GetReviewByUserWithUserIDDTO): Promise<Response> => {
@@ -111,11 +113,14 @@ export class GetReviewsByUserUseCase
       // Vì đây là get review by place id nên chỉ cần 1 placeId duy nhất
       const destinationQueryResult : MultipleDestinationResponseDTO = await firstValueFrom(this.destinationClient.send('get_multiple_destinations', { place_ids: placeIds, language: 'vi'}));     
 
-      // Kiểm tra destination có tồn tại không. Nếu có thì thêm thông tin về place vào.
-      // Chưa handle các trường hợp lỗi
+      const savedReviewQueryResult = (await this.savedReviewService.getSavedReviewIdsByUserIdNonPagination(currentUserIdOrError)).map((savedReview) => {
+        return savedReview.getValue().toString();
+      });
 
-      // console.log(result.reviews);
       result.list.forEach((review) => {
+
+        if (savedReviewQueryResult.includes(review.id)) review.saved = true;
+      
         const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => {
           return destinationDetails.place_id === review.destination.place_id;
         });

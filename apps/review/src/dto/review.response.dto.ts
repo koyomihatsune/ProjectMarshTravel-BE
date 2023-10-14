@@ -42,6 +42,24 @@ export type MultipleReviewResponseDTO = {
   totalPage: number;
 };
 
+// Phần này dành cho lấy list saved reviews
+export type SingleReviewPreviewResponseDTO = {
+  id: string;
+  title: string;
+  rating: number;
+  firstImageURL: string;
+  destination: {
+    place_id: string;
+    name: string;
+  };
+};
+
+export type MultipleReviewPreviewResponseDTO = {
+  list: SingleReviewPreviewResponseDTO[];
+  page: number;
+  totalPage: number;
+};
+
 export type MultipleCommentResponseDTO = {
   list: {
     id: string;

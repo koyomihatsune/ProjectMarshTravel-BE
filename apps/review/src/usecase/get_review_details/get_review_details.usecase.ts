@@ -20,6 +20,7 @@ import { ReviewService } from '../../review.service';
 import { UserProfileResponseDTO } from 'apps/auth/user/usecase/get_profile/get_profile.dto';
 import { UserId } from 'apps/auth/user/domain/user_id';
 import { CommentService } from 'apps/review/comment/comment.service';
+import { SavedReviewService } from 'apps/review/saved_review/saved_review.service';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -41,6 +42,7 @@ export class GetReviewDetailsUseCase
     @Inject(DESTINATION_SERVICE) private readonly destinationClient: ClientProxy,
     private readonly reviewService: ReviewService,
     private readonly commentService: CommentService,
+    private readonly savedReviewService: SavedReviewService,
   ) {}
 
   execute = async (dto: GetReviewDetailsWithUserIDDTO): Promise<Response> => {
@@ -118,6 +120,14 @@ export class GetReviewDetailsUseCase
             province_code: destinationOrError.administrative.province.code ?? '',
             province_name: destinationOrError.administrative.province.name ?? '',
           },
+        }
+      }
+
+      const savedReviewOrError = await this.savedReviewService.getSavedReview(userIdOrError, reviewIdOrError);
+      if (savedReviewOrError) {
+        result = {
+          ...result,
+          saved: true,
         }
       }
 

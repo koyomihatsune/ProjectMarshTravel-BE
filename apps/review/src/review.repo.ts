@@ -100,6 +100,23 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     }
   }
 
+  async findReviewByIds(reviewIds: ReviewId[]): Promise<Review[] | undefined> {
+    try {
+      const result = await this.find({
+        _id: {
+          $in: reviewIds.map((reviewId) =>
+            reviewId.getValue().toMongoObjectID(),
+          ),
+        },
+      });
+      const reviews = result.map((review) => ReviewMapper.toEntity(review));
+      return reviews;
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
+  }
+
   // Có thể tìm review bằng UserId hoặc tìm bằng placeId
   async findAllReviewsPagination(
     params: {

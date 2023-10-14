@@ -27,6 +27,7 @@ import {
   MultiplePublicUserProfileResponseDTO,
   SinglePublicUserProfileResponseDTO,
 } from '../../../../auth/user/usecase/get_public_profiles/get_public_profiles.dto';
+import { SavedReviewService } from 'apps/review/saved_review/saved_review.service';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -47,6 +48,7 @@ export class GetReviewsByProvinceUseCase
     @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
     @Inject(DESTINATION_SERVICE) private readonly destinationClient: ClientProxy,
     private readonly reviewService: ReviewService,
+    private readonly savedReviewService: SavedReviewService,
   ) {}
 
   execute = async (dto: GetReviewByProvinceWithUserIDDTO): Promise<Response> => {
@@ -110,10 +112,19 @@ export class GetReviewsByProvinceUseCase
 
       const userQueryResult : ResultRPC<MultiplePublicUserProfileResponseDTO> = await firstValueFrom(this.authClient.send('get_user_profiles', { userIds: userIds }));
 
+      const savedReviewQueryResult = (await this.savedReviewService.getSavedReviewIdsByUserIdNonPagination(userIdOrError)).map((savedReview) => {
+        return savedReview.getValue().toString();
+      });
+
       // Kiểm tra destination có tồn tại không. Nếu có thì thêm thông tin về place vào.
       // Chưa handle các trường hợp lỗi
 
       result.list.forEach((review) => {
+
+        if (savedReviewQueryResult.includes(review.id)) {
+          review.saved = true;
+        }
+        
         const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => {
           return destinationDetails.place_id === review.destination.place_id;
         });
