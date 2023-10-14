@@ -3,6 +3,7 @@ import { ProvinceDAO, ProvinceSchema } from './schemas/province.schema';
 import { Module } from '@nestjs/common';
 import { AdministrativeService } from './administrative.service';
 import { ProvinceRepository } from './province.repo';
+import { AdministrativeController } from './administrative.controller';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { ProvinceRepository } from './province.repo';
       { name: ProvinceDAO.name, schema: ProvinceSchema },
     ]),
   ],
-  controllers: [],
+  controllers: [AdministrativeController],
   providers: [AdministrativeService, ProvinceRepository],
   exports: [AdministrativeService, ProvinceRepository],
 })

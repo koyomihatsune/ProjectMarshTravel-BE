@@ -15,6 +15,7 @@ import { GetDestinationDetailsUseCase } from './usecase/get_destination_details/
 import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_destination_details/get_multiple_destination_details.usecase';
 import { AdministrativeService } from '../administrative/administrative.service';
 import { AdministrativeModule } from '../administrative/administrative.module';
+import { AdministrativeController } from '../administrative/administrative.controller';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { AdministrativeModule } from '../administrative/administrative.module';
     GoogleMapsModule,
     AdministrativeModule,
   ],
-  controllers: [DestinationController],
+  controllers: [DestinationController, AdministrativeController],
   providers: [
     DestinationService,
     AdministrativeService,
