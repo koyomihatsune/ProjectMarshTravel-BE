@@ -29,6 +29,14 @@ import { DeleteCommentUseCase } from '../comment/usecase/delete_comment/delete_c
 import { CommentService } from '../comment/comment.service';
 import { CommentRepository } from '../comment/comment.repo';
 import { LikeCommitCommentUseCase } from '../comment/usecase/comment_like_commit/comment_like_commit.usecase';
+import {
+  SavedReviewDAO,
+  SavedReviewSchema,
+} from '../saved_review/schema/saved_review.schema';
+import { SavedReviewRepository } from '../saved_review/saved_review.repo';
+import { SavedReviewService } from '../saved_review/saved_review.service';
+import { SaveCommitReviewUseCase } from '../saved_review/usecase/review_save_commit/review_save_commit.usecase';
+import { GetSavedReviewsUseCase } from '../saved_review/usecase/get_saved_reviews/get_saved_reviews.usecase';
 
 @Module({
   imports: [
@@ -53,6 +61,9 @@ import { LikeCommitCommentUseCase } from '../comment/usecase/comment_like_commit
     MongooseModule.forFeature([{ name: ReviewDAO.name, schema: ReviewSchema }]),
     MongooseModule.forFeature([
       { name: CommentDAO.name, schema: CommentSchema },
+    ]),
+    MongooseModule.forFeature([
+      { name: SavedReviewDAO.name, schema: SavedReviewSchema },
     ]),
     RmqModule.register({
       name: AUTH_SERVICE,
@@ -82,6 +93,11 @@ import { LikeCommitCommentUseCase } from '../comment/usecase/comment_like_commit
     UpdateCommentUseCase,
     DeleteCommentUseCase,
     LikeCommitCommentUseCase,
+    // Saved review provider
+    SavedReviewRepository,
+    SavedReviewService,
+    SaveCommitReviewUseCase,
+    GetSavedReviewsUseCase,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

@@ -43,6 +43,10 @@ import { UpdateCommentDTO } from '../comment/usecase/update_comment/update_comme
 import { LikeCommitCommentDTO } from '../comment/usecase/comment_like_commit/comment_like_commit.dto';
 import { LikeCommitCommentUseCase } from '../comment/usecase/comment_like_commit/comment_like_commit.usecase';
 import { DeleteCommentDTO } from '../comment/usecase/delete_comment/delete_comment.dto';
+import { SaveCommitReviewDTO } from '../saved_review/usecase/review_save_commit/review_save_commit.dto';
+import { SaveCommitReviewUseCase } from '../saved_review/usecase/review_save_commit/review_save_commit.usecase';
+import { GetSavedReviewsUseCase } from '../saved_review/usecase/get_saved_reviews/get_saved_reviews.usecase';
+import { GetSavedReviewsDTO } from '../saved_review/usecase/get_saved_reviews/get_saved_reviews.dto';
 
 const imageType = /jpeg|png|webp|jpg/;
 @Controller('review')
@@ -61,6 +65,9 @@ export class ReviewController {
     private readonly updateCommentUseCase: UpdateCommentUseCase,
     private readonly likeCommitCommentUseCase: LikeCommitCommentUseCase,
     private readonly deleteCommentUseCase: DeleteCommentUseCase,
+    // Review save service
+    private readonly saveCommitReviewUseCase: SaveCommitReviewUseCase,
+    private readonly getSavedReviewsUseCase: GetSavedReviewsUseCase,
   ) {}
 
   @Post('create')
@@ -358,6 +365,48 @@ export class ReviewController {
     @Query() query: DeleteCommentDTO,
   ) {
     const result = await this.deleteCommentUseCase.execute({
+      userId: req.user.sub,
+      request: query,
+    });
+    if (result.isRight()) {
+      return result.value.getValue();
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Post('save')
+  async saveCommitReview(
+    @Req() req: Request & { user: JWTPayload },
+    @Body() body: SaveCommitReviewDTO,
+  ) {
+    const result = await this.saveCommitReviewUseCase.execute({
+      userId: req.user.sub,
+      request: body,
+    });
+    if (result.isRight()) {
+      return result.value.getValue();
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Get('saved')
+  async savedReviewsPagination(
+    @Req() req: Request & { user: JWTPayload },
+    @Query() query: GetSavedReviewsDTO,
+  ) {
+    const result = await this.getSavedReviewsUseCase.execute({
       userId: req.user.sub,
       request: query,
     });
