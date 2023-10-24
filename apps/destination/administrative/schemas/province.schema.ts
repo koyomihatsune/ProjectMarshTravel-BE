@@ -33,6 +33,9 @@ export class ProvinceDAO extends AbstractDocument {
 
   @Prop()
   administrative_region_id: number;
+
+  @Prop()
+  explore_tags: string[];
 }
 
 export const ProvinceSchema = SchemaFactory.createForClass(ProvinceDAO);

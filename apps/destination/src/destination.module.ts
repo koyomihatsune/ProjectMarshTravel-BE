@@ -16,6 +16,8 @@ import { GetMultipleDestinationDetailsUseCase } from './usecase/get_multiple_des
 import { AdministrativeService } from '../administrative/administrative.service';
 import { AdministrativeModule } from '../administrative/administrative.module';
 import { AdministrativeController } from '../administrative/administrative.controller';
+import { SuggestionsController } from '../suggestions/suggestions.controller';
+import { SuggestionsModule } from '../suggestions/suggestions.module';
 
 @Module({
   imports: [
@@ -37,8 +39,13 @@ import { AdministrativeController } from '../administrative/administrative.contr
     RmqModule,
     GoogleMapsModule,
     AdministrativeModule,
+    SuggestionsModule,
   ],
-  controllers: [DestinationController, AdministrativeController],
+  controllers: [
+    DestinationController,
+    AdministrativeController,
+    SuggestionsController,
+  ],
   providers: [
     DestinationService,
     AdministrativeService,

@@ -52,6 +52,7 @@ const provinceSchema = new mongoose.Schema({
   code_name: String,
   administrative_unit_id: Number,
   administrative_region_id: Number,
+  explore_tags: [String],
 });
 
 // Create a model for the provinces collection
@@ -67,6 +68,7 @@ const p1 = [
     code_name: 'ha_noi',
     administrative_unit_id: 1,
     administrative_region_id: 3,
+    explore_tags: ['pagoda_temple', 'landscape', 'old_quarter', 'cityscape'],
   },
   {
     code: '26',
@@ -77,6 +79,7 @@ const p1 = [
     code_name: 'vinh_phuc',
     administrative_unit_id: 2,
     administrative_region_id: 3,
+    explore_tags: ['mountain', 'lake'],
   },
   {
     code: '27',
@@ -456,6 +459,7 @@ const p4 = [
     code_name: 'da_nang',
     administrative_unit_id: 1,
     administrative_region_id: 5,
+    explore_tags: ['beach', 'temple', 'amusement', 'old_town'],
   },
   {
     code: '49',

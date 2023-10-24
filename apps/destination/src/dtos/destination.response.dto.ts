@@ -17,6 +17,7 @@ export class SingleDestinationResponseDTO {
     };
   };
   reviews?: any[];
+  distanceFromLastDestination?: number;
   isRegistered: boolean;
 }
 

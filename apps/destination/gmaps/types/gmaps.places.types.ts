@@ -17,7 +17,7 @@ export type GetMultiplePlacesFromTextDTO = {
 };
 
 export type GetMultiplePlacesFromPageTokenDTO = {
-  pageToken: string;
+  nextPageToken: string;
 };
 
 export type GetPlaceDetailsDTO = {
