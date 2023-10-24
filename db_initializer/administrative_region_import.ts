@@ -53,6 +53,7 @@ const provinceSchema = new mongoose.Schema({
   administrative_unit_id: Number,
   administrative_region_id: Number,
   explore_tags: [String],
+  imageURL: String,
 });
 
 // Create a model for the provinces collection
@@ -69,6 +70,8 @@ const p1 = [
     administrative_unit_id: 1,
     administrative_region_id: 3,
     explore_tags: ['pagoda_temple', 'landscape', 'old_quarter', 'cityscape'],
+    imageURL:
+      'https://owa.bestprice.vn/images/destinations/uploads/trung-tam-thanh-pho-ha-noi-603da1f235b38.jpg',
   },
   {
     code: '26',
@@ -80,6 +83,7 @@ const p1 = [
     administrative_unit_id: 2,
     administrative_region_id: 3,
     explore_tags: ['mountain', 'lake'],
+    imageURL: 'https://songhongresort.com/img_duhoc/images/2_326.jpg',
   },
   {
     code: '27',
@@ -90,6 +94,9 @@ const p1 = [
     code_name: 'bac_ninh',
     administrative_unit_id: 2,
     administrative_region_id: 3,
+    explore_tags: ['pagoda_temple', 'landscape'],
+    imageURL:
+      'https://dulichvn.org.vn/nhaptin/uploads/images/2020/Thang8/dancaquanhobacninh.jpg',
   },
   {
     code: '30',
@@ -100,6 +107,8 @@ const p1 = [
     code_name: 'hai_duong',
     administrative_unit_id: 2,
     administrative_region_id: 3,
+    imageURL:
+      'https://media.baodautu.vn/Images/quynhnga/2023/04/04/Quy_Hoach_Hai_Duong_2040.jpg',
   },
   {
     code: '31',
@@ -110,6 +119,8 @@ const p1 = [
     code_name: 'hai_phong',
     administrative_unit_id: 1,
     administrative_region_id: 3,
+    imageURL:
+      'https://xdcs.cdnchinhphu.vn/446259493575335936/2023/9/8/haiphong-16941453185961261457986.jpg',
   },
   {
     code: '33',
@@ -120,6 +131,8 @@ const p1 = [
     code_name: 'hung_yen',
     administrative_unit_id: 2,
     administrative_region_id: 3,
+    imageURL:
+      'https://bandovietnam.com.vn/media/article/ban-do-tinh-hung-yen-bandovietnam.jpg',
   },
   {
     code: '34',
@@ -130,6 +143,8 @@ const p1 = [
     code_name: 'thai_binh',
     administrative_unit_id: 2,
     administrative_region_id: 3,
+    imageURL:
+      'https://baolangson.vn/uploads/2020/10/24/thap1-1603437883717.jpg',
   },
   {
     code: '35',
@@ -140,6 +155,8 @@ const p1 = [
     code_name: 'ha_nam',
     administrative_unit_id: 2,
     administrative_region_id: 3,
+    imageURL:
+      'https://file1.dangcongsan.vn/data/0/images/2022/03/25/hungnm/ecaf15aea8ba141873ece18ca986f865.jpg',
   },
   {
     code: '96',
@@ -150,6 +167,8 @@ const p1 = [
     code_name: 'ca_mau',
     administrative_unit_id: 2,
     administrative_region_id: 8,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Tuongdaimuicamau.jpg/1200px-Tuongdaimuicamau.jpg',
   },
   {
     code: '02',
@@ -160,6 +179,8 @@ const p1 = [
     code_name: 'ha_giang',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL:
+      'https://ik.imagekit.io/tvlk/blog/2022/11/kinh-nghiem-du-lich-ha-giang-7-1024x684.jpg?tr=dpr-2,w-675',
   },
 ];
 
@@ -173,6 +194,8 @@ const p2 = [
     code_name: 'cao_bang',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Ban_Gioc_-_Detian_Falls2.jpg/800px-Ban_Gioc_-_Detian_Falls2.jpg',
   },
   {
     code: '06',
@@ -183,6 +206,7 @@ const p2 = [
     code_name: 'bac_kan',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL: 'https://media.truyenhinhdulich.vn/upload/news/59_bac_kan.jpg',
   },
   {
     code: '08',
@@ -193,6 +217,7 @@ const p2 = [
     code_name: 'tuyen_quang',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL: 'https://tuyenquang.dcs.vn/Image/Large/2021813105723_47959.jpg',
   },
   {
     code: '19',
@@ -203,6 +228,8 @@ const p2 = [
     code_name: 'thai_nguyen',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL:
+      'https://cdn.tgdd.vn/Files/2023/04/26/1527479/du-lich-dong-hy-thai-nguyen-5-dia-diem-du-lich-nen-kham-pha-202304260848095809.jpg',
   },
   {
     code: '20',
@@ -213,6 +240,8 @@ const p2 = [
     code_name: 'lang_son',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL:
+      'https://scontent.iocvnpt.com/resources/portal/Images/LSN/linhnk.lsn/langson_694464698.jpg',
   },
   {
     code: '22',
@@ -223,6 +252,8 @@ const p2 = [
     code_name: 'quang_ninh',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/d/d3/A_view_of_Ha_Long_Bay_from_the_high_point_of_Sun_Sot_cave_%2831520203451%29.jpg',
   },
   {
     code: '24',
@@ -233,6 +264,8 @@ const p2 = [
     code_name: 'bac_giang',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL:
+      'https://ik.imagekit.io/tvlk/blog/2022/09/dia-diem-check-in-o-bac-giang-1.jpg?tr=dpr-2,w-675',
   },
   {
     code: '25',
@@ -243,6 +276,8 @@ const p2 = [
     code_name: 'phu_tho',
     administrative_unit_id: 2,
     administrative_region_id: 1,
+    imageURL:
+      'https://afamilycdn.com/zoom/700_438/150157425591193600/2023/4/27/photo2023-04-2708-31-54-16825596378382054335799-98-0-517-800-crop-16825714988841343707957.jpg',
   },
   {
     code: '10',
@@ -253,6 +288,8 @@ const p2 = [
     code_name: 'lao_cai',
     administrative_unit_id: 2,
     administrative_region_id: 2,
+    imageURL:
+      'https://media.baodautu.vn/Images/phuongthanh02/2022/08/25/14-Du%20l%E1%BB%8Bch%20l%C3%A0o%20Cai%204.jpg',
   },
   {
     code: '11',
@@ -263,6 +300,9 @@ const p2 = [
     code_name: 'dien_bien',
     administrative_unit_id: 2,
     administrative_region_id: 2,
+    explore_tags: ['visage'],
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/d/d2/The_Victory_Monument_of_Dien_Bien_Phu_%28front%29_v2.jpg',
   },
 ];
 
@@ -276,6 +316,8 @@ const p3 = [
     code_name: 'lai_chau',
     administrative_unit_id: 2,
     administrative_region_id: 2,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png',
   },
   {
     code: '14',
@@ -286,6 +328,8 @@ const p3 = [
     code_name: 'son_la',
     administrative_unit_id: 2,
     administrative_region_id: 2,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png',
   },
   {
     code: '15',
@@ -296,6 +340,8 @@ const p3 = [
     code_name: 'yen_bai',
     administrative_unit_id: 2,
     administrative_region_id: 2,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png',
   },
   {
     code: '17',
@@ -306,6 +352,8 @@ const p3 = [
     code_name: 'hoa_binh',
     administrative_unit_id: 2,
     administrative_region_id: 2,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png',
   },
   {
     code: '70',
@@ -316,6 +364,8 @@ const p3 = [
     code_name: 'binh_phuoc',
     administrative_unit_id: 2,
     administrative_region_id: 7,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png',
   },
   {
     code: '72',
@@ -326,6 +376,8 @@ const p3 = [
     code_name: 'tay_ninh',
     administrative_unit_id: 2,
     administrative_region_id: 7,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png',
   },
   {
     code: '74',
@@ -336,7 +388,10 @@ const p3 = [
     code_name: 'binh_duong',
     administrative_unit_id: 2,
     administrative_region_id: 7,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png',
   },
+
   {
     code: '75',
     name: 'Đồng Nai',
@@ -346,6 +401,8 @@ const p3 = [
     code_name: 'dong_nai',
     administrative_unit_id: 2,
     administrative_region_id: 7,
+    imageURL:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1200px-Flag_of_Vietnam.svg.png',
   },
   {
     code: '79',
@@ -356,6 +413,8 @@ const p3 = [
     code_name: 'ho_chi_minh',
     administrative_unit_id: 1,
     administrative_region_id: 7,
+    imageURL:
+      'https://img.itinari.com/pages/images/original/f725925d-3b5a-4086-b3d2-5fa16224e468-istock-1182864019.jpg?ch=DPR&dpr=2.625&w=1600&s=fa9fac3064d1c3bc6b204c50c21d618f',
   },
   {
     code: '77',
@@ -366,6 +425,8 @@ const p3 = [
     code_name: 'ba_ria_vung_tau',
     administrative_unit_id: 2,
     administrative_region_id: 7,
+    imageURL:
+      'https://vtv1.mediacdn.vn/zoom/640_400/2022/11/30/b22-16697994119911201542911-crop-1669799574167932517806.jpeg',
   },
 ];
 
@@ -379,6 +440,8 @@ const p4 = [
     code_name: 'nam_dinh',
     administrative_unit_id: 2,
     administrative_region_id: 3,
+    imageURL:
+      'https://vcdn1-dulich.vnecdn.net/2022/05/19/namdinh-1652930657-8629-1652930664.jpg?w=0&h=0&q=100&dpr=2&fit=crop&s=8MehPIYcj_-RiT5YFmBErg',
   },
   {
     code: '37',
@@ -389,6 +452,8 @@ const p4 = [
     code_name: 'ninh_binh',
     administrative_unit_id: 2,
     administrative_region_id: 3,
+    imageURL:
+      'https://ik.imagekit.io/tvlk/blog/2022/12/du-lich-ninh-binh-1.jpg?tr=dpr-2,w-675',
   },
   {
     code: '38',
@@ -409,6 +474,7 @@ const p4 = [
     code_name: 'nghe_an',
     administrative_unit_id: 2,
     administrative_region_id: 4,
+    imageURL: 'https://statics.vinpearl.com/thoi-tiet-nghe-an-3_1642728132.png',
   },
   {
     code: '42',
@@ -449,6 +515,9 @@ const p4 = [
     code_name: 'thua_thien_hue',
     administrative_unit_id: 2,
     administrative_region_id: 4,
+    explore_tags: ['pagoda_temple'],
+    imageURL:
+      'https://file1.dangcongsan.vn/data/0/images/2021/11/05/halthts/thua-thien-hue.jpg',
   },
   {
     code: '48',
@@ -459,7 +528,9 @@ const p4 = [
     code_name: 'da_nang',
     administrative_unit_id: 1,
     administrative_region_id: 5,
-    explore_tags: ['beach', 'temple', 'amusement', 'old_town'],
+    explore_tags: ['beach', 'pagoda_temple', 'amusement', 'old_town'],
+    imageURL:
+      'https://photo-cms-tinnhanhchungkhoan.epicdn.me/w660/Uploaded/2023/bpikpjik/2023_06_14/da-nang-5-8014.jpg',
   },
   {
     code: '49',
@@ -470,6 +541,7 @@ const p4 = [
     code_name: 'quang_nam',
     administrative_unit_id: 2,
     administrative_region_id: 5,
+    imageURL: 'https://toplist.vn/images/800px/pho-co-hoi-an-532793.jpg',
   },
 ];
 
@@ -483,6 +555,8 @@ const p5 = [
     code_name: 'lam_dong',
     administrative_unit_id: 2,
     administrative_region_id: 6,
+    imageURL:
+      'https://static.vinwonders.com/production/gioi-thieu-ve-da-lat-1.jpg',
   },
   {
     code: '80',

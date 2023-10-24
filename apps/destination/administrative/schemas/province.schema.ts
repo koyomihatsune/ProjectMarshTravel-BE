@@ -36,6 +36,9 @@ export class ProvinceDAO extends AbstractDocument {
 
   @Prop()
   explore_tags: string[];
+
+  @Prop()
+  imageURL: string;
 }
 
 export const ProvinceSchema = SchemaFactory.createForClass(ProvinceDAO);
