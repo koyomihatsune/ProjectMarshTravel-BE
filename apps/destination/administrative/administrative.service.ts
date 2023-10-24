@@ -8,13 +8,17 @@ export class AdministrativeService {
 
   async getProvinceDetailsByName(
     name: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     language?: string,
   ): Promise<ProvinceDAO | undefined> {
     try {
-      const foundProvince = await this.provinceRepository.findOne({
-        name: language === 'vi' ? name : undefined,
-        // name_en: language !== 'vi' ? name : undefined,
-      });
+      const query = { name: name };
+      // language === 'vi'
+      //   ? {
+      //       name: name,
+      //     }
+      //   : { name_en: name };
+      const foundProvince = await this.provinceRepository.findOne(query);
       return foundProvince;
     } catch (err) {
       Logger.error(err, err.stack);
@@ -45,6 +49,7 @@ export class AdministrativeService {
         code: province.code,
         name: province.name,
         name_en: province.name_en,
+        explore_tags: province.explore_tags ?? [],
       };
     });
   }

@@ -51,6 +51,27 @@ export class GoogleMapsService {
     return new AppErrors.UnexpectedError(response.data.error_message);
   }
 
+  public async getProvinceNameFromLatLon(
+    lat: number,
+    lon: number,
+    language: string,
+  ): Promise<string> {
+    const result = await this.fetchFromGoogleMapsAPI(
+      GOOGLE_MAPS_API.ROUTES.GEOCODE,
+      new URLSearchParams({
+        latlng: `${lat},${lon}`,
+        language: language === 'vi' ? 'vi' : 'en',
+      }),
+    );
+    // console.log(result.results[0].address_components);
+    const provinceName =
+      result.results[0].address_components?.find((item) =>
+        item.types.includes('administrative_area_level_1'),
+      )?.long_name ?? '';
+    // console.log(provinceName);
+    return provinceName;
+  }
+
   public async getOnePlaceFromText(dto: GetOnePlaceFromTextDTO): Promise<any> {
     const queryParams = new URLSearchParams({
       input: dto.input,
@@ -118,7 +139,7 @@ export class GoogleMapsService {
     const result = await this.fetchFromGoogleMapsAPI(
       GOOGLE_MAPS_API.ROUTES.PLACE.TEXT_SEARCH,
       new URLSearchParams({
-        pagetoken: dto.pageToken,
+        pagetoken: dto.nextPageToken,
       }),
     );
     /* Trả về cấu trúc sau: 
