@@ -29,10 +29,17 @@ export class GetMultipleDestinationDetailsUseCase
 
       const queryResult = [];
 
+      const distanceMapResult = await this.googleMapsService.getDistanceMatrixList({
+        origins: place_ids,
+        destinations: place_ids,
+        language: language,
+      });
+
       // hình như foreach không dùng được với async, cần điều tra lại
       await Promise.all(place_ids.map( async (place_id) => {
         // Gọi service của google, trả về query Result. Tạm thời chưa có type nào
         const subqueryResult = await this.googleMapsService.getPlaceByID({placeId: place_id, language : language});
+        
         if (subqueryResult === undefined) {
           Logger.error(`Place ${place_id} not found`, 'GetMultipleDestinationDetailsUseCase');
         } else {
@@ -50,11 +57,13 @@ export class GetMultipleDestinationDetailsUseCase
           };
           queryResult.push(singleResponse);
         }
+
         // đã handle trường hợp lỗi, nếu lỗi sẽ thay thế bằng error response và cả bên trip cũng vậy
       }));
 
       const result: MultipleDestinationResponseDTO = {
         destinations: queryResult,
+        distanceMatrixList: distanceMapResult,
       };
 
       /* TO DO:

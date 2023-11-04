@@ -70,6 +70,7 @@ export class GetTripDayDetailsUseCase
       }
 
 
+
       const result: SingleTripDayResponseDTO = {
         id: tripDay.tripDayId.getValue().toString(),
         position: tripDay.position,
@@ -87,8 +88,12 @@ export class GetTripDayDetailsUseCase
       const destinationQueryResult : MultipleDestinationResponseDTO = await firstValueFrom(this.destinationClient.send('get_multiple_destinations', { place_ids: placeIds, language: request.language ?? 'vi'}));
          
       // push lần lượt vào từng destination của day bằng cách pick placeid tương ứng
-      tripDay.destinations.forEach((destination) => {
+      
+      tripDay.destinations.forEach((destination, index) => {
         const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => destinationDetails.place_id === destination.place_id);
+
+        const distanceFromLastDestination = index > 0 ? 
+            destinationQueryResult.distanceMatrixList?.find(place => place.origin_place_id === tripDay.destinations[index-1].place_id && place.destination_place_id === destination.place_id) : undefined;
 
         if (destinationDetails === undefined) {
           Logger.log(`Place ${destination.place_id} not found in query result. Left out of array`, 'GetTripDetailsUseCase');
@@ -113,6 +118,8 @@ export class GetTripDayDetailsUseCase
             type: destination.type,
             location: destinationDetails.location,
             mapsFullDetails: destinationDetails.mapsFullDetails,
+            distanceFromLastDestination: distanceFromLastDestination?.distance ?? undefined,
+            timeFromLastDestination: distanceFromLastDestination?.duration ?? undefined,
             image_urls: [],
             isRegistered: false,
             // sửa lại sau khi đã làm cache ở Destination service

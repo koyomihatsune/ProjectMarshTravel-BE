@@ -1,3 +1,5 @@
+import { GetMultiplePlaceDistanceResponseDTO } from 'apps/destination/gmaps/types/gmaps.places.types';
+
 export class SingleDestinationResponseDTO {
   //use placeId by Google Maps - but put in database as destinationId
   place_id: string;
@@ -17,11 +19,11 @@ export class SingleDestinationResponseDTO {
     };
   };
   reviews?: any[];
-  distanceFromLastDestination?: number;
   isRegistered: boolean;
 }
 
 export class MultipleDestinationResponseDTO {
   destinations: SingleDestinationResponseDTO[];
+  distanceMatrixList?: GetMultiplePlaceDistanceResponseDTO;
   nextPageToken?: string;
 }
