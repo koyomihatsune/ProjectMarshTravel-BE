@@ -35,6 +35,8 @@ import { DeleteTripDayDTO } from './usecase/trip_day/delete_trip_day/delete_trip
 import { DeleteTripDayUseCase } from './usecase/trip_day/delete_trip_day/delete_trip_day.usecase';
 import { DeleteTripDestinationUseCase } from './usecase/trip_destination/delete_trip_destination/delete_trip_destination.usecase';
 import { DeleteTripDestinationDTO } from './usecase/trip_destination/delete_trip_destination/delete_trip_destination.dto';
+import { GetOptimizedTripDayRecommendationUseCase } from './usecase/trip_day/get_optimized_trip_day_recommendation/get_optimized_trip_day_recommendation.usecase';
+import { GetOptimizedTripDayRecommendationDTO } from './usecase/trip_day/get_optimized_trip_day_recommendation/get_optimized_trip_day_recommendation.dto';
 
 @Controller('trip')
 export class TripController {
@@ -42,6 +44,7 @@ export class TripController {
     private readonly getTripListPaginationUseCase: GetTripListPaginationUseCase,
     private readonly getTripDetailsUseCase: GetTripDetailsUseCase,
     private readonly getTripDayDetailsUseCase: GetTripDayDetailsUseCase,
+    private readonly getOptimizedTripDayRecommendationUseCase: GetOptimizedTripDayRecommendationUseCase,
     private readonly createTripUseCase: CreateTripUseCase,
     private readonly updateTripUseCase: UpdateTripUseCase,
     private readonly createTripDayUseCase: CreateTripDayUseCase,
@@ -151,6 +154,29 @@ export class TripController {
     const result = await this.getTripDayDetailsUseCase.execute({
       userId: req.user.sub,
       request: query,
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Post('day/optimize')
+  async getOptimizedTripDayDetailsWithId(
+    @Req() req: Request & { user: JWTPayload },
+    @Body()
+    body: GetOptimizedTripDayRecommendationDTO,
+  ) {
+    const result = await this.getOptimizedTripDayRecommendationUseCase.execute({
+      userId: req.user.sub,
+      request: body,
     });
     if (result.isRight()) {
       const dto = result.value.getValue();
