@@ -38,6 +38,15 @@ export class PositionSequenceInvalidError extends Result<UseCaseError> {
   }
 }
 
+export class FixedPlaceSequenceInvalidError extends Result<UseCaseError> {
+  constructor() {
+    super(false, {
+      message: `Invalid fixed place sequence. It should has the same length as the destination amount of the Trip day`,
+      code: ERROR_CODE.InvalidLength,
+    });
+  }
+}
+
 export default {
   TripDoesNotBelongToUser,
   TripDayPositionInvalidError,

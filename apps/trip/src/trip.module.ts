@@ -30,6 +30,7 @@ import { GetTripDetailsUseCase } from './usecase/trip/get_trip_details/get_trip_
 import { GetTripDayDetailsUseCase } from './usecase/trip_day/g\u001Det_trip_day_details/get_trip_day_details.usecase';
 import { DeleteTripDayUseCase } from './usecase/trip_day/delete_trip_day/delete_trip_day.usecase';
 import { DeleteTripDestinationUseCase } from './usecase/trip_destination/delete_trip_destination/delete_trip_destination.usecase';
+import { GetOptimizedTripDayRecommendationUseCase } from './usecase/trip_day/get_optimized_trip_day_recommendation/get_optimized_trip_day_recommendation.usecase';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -66,6 +67,7 @@ import { DeleteTripDestinationUseCase } from './usecase/trip_destination/delete_
     GetTripListPaginationUseCase,
     GetTripDetailsUseCase,
     GetTripDayDetailsUseCase,
+    GetOptimizedTripDayRecommendationUseCase,
     CreateTripUseCase,
     UpdateTripUseCase,
     CreateTripDayUseCase,
