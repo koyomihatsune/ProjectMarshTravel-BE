@@ -7,6 +7,8 @@ import {
   GetMultiplePlacesFromPageTokenDTO,
   GetPlaceDetailsDTO,
   GetPlaceAutocompleteDTO,
+  GetMultiplePlaceDistanceDTO,
+  GetMultiplePlaceDistanceResponseDTO,
 } from './types/gmaps.places.types';
 import axios, { AxiosResponse } from 'axios';
 import AppErrors from '@app/common/core/app.error';
@@ -205,5 +207,48 @@ export class GoogleMapsService {
       }),
     );
     return result.predictions;
+  }
+
+  public async getDistanceMatrixList(
+    dto: GetMultiplePlaceDistanceDTO,
+  ): Promise<GetMultiplePlaceDistanceResponseDTO> {
+    const origins = dto.origins.map((origin) => 'place_id:' + origin);
+    const destinations = dto.destinations.map(
+      (destination) => 'place_id:' + destination,
+    );
+
+    const result = await this.fetchFromGoogleMapsAPI(
+      GOOGLE_MAPS_API.ROUTES.DISTANCE_MATRIX,
+      new URLSearchParams({
+        origins: origins.join('|'),
+        destinations: destinations.join('|'),
+        language: dto.language,
+        region: this.isVietnamOnly ? 'VN' : '',
+      }),
+    );
+    const response: GetMultiplePlaceDistanceResponseDTO = [];
+
+    for (let i = 0; i < origins.length; i++) {
+      for (let j = 0; j < destinations.length; j++) {
+        const origin = origins[i].replace('place_id:', '');
+        const destination = destinations[j].replace('place_id:', '');
+        const element = result.rows[i].elements[j];
+
+        const distance = element.distance ? element.distance.value : undefined;
+        const duration = element.duration ? element.duration.value : undefined;
+
+        const status = element.status;
+
+        response.push({
+          origin_place_id: origin,
+          destination_place_id: destination,
+          distance,
+          duration,
+          status,
+        });
+      }
+    }
+
+    return response;
   }
 }

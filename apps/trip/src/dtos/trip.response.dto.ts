@@ -48,6 +48,10 @@ export class SingleTripDestinationResponseDTO {
   image_urls?: string[];
   mapsFullDetails?: any;
   reviews?: any[];
+  // use distance matrix result
+  distanceFromLastDestination?: number;
+  timeFromLastDestination?: number;
+  //
   isRegistered: boolean;
   isError: boolean;
   errorDetails?: string;

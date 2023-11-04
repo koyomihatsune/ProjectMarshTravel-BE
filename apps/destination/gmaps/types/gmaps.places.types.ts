@@ -47,3 +47,17 @@ export type GetPlaceAutocompleteDTO = {
 //   error_message?: string;
 //   info_messages?: string[];
 // };
+
+export type GetMultiplePlaceDistanceDTO = {
+  origins: string[];
+  destinations: string[];
+  language: string;
+};
+
+export type GetMultiplePlaceDistanceResponseDTO = {
+  origin_place_id: string;
+  destination_place_id: string;
+  distance?: number; // meters
+  duration?: number; // seconds
+  status: string;
+}[];
