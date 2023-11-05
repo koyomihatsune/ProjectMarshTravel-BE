@@ -6,7 +6,5 @@ export class GetOptimizedTripDayRecommendationDTO {
 
   tripDayId: string;
 
-  fixedDestinationList: boolean[];
-
   language: string;
 }

@@ -168,15 +168,15 @@ export class TripController {
     }
   }
 
-  @Post('day/optimize')
+  @Get('day/optimize')
   async getOptimizedTripDayDetailsWithId(
     @Req() req: Request & { user: JWTPayload },
-    @Body()
-    body: GetOptimizedTripDayRecommendationDTO,
+    @Query()
+    query: GetOptimizedTripDayRecommendationDTO,
   ) {
     const result = await this.getOptimizedTripDayRecommendationUseCase.execute({
       userId: req.user.sub,
-      request: body,
+      request: query,
     });
     if (result.isRight()) {
       const dto = result.value.getValue();
