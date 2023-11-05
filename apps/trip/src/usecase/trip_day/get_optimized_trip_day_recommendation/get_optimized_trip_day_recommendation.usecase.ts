@@ -93,7 +93,7 @@ export class GetOptimizedTripDayRecommendationUseCase
 
       // Tìm trong matrix khoảng cách của địa điểm A và B
       const distanceEntry = distanceMatrixList.find(
-        entry =>
+        (entry) =>
           entry.origin_place_id === origin &&
           entry.destination_place_id === destination
       );
@@ -181,9 +181,10 @@ export class GetOptimizedTripDayRecommendationUseCase
 
       if (tripDay === undefined) return left(new AppErrors.EntityNotFoundError('TripDay'));
 
-      if (request.fixedDestinationList.length !== tripDay.destinations.length) {
-        return left(new TripErrors.FixedPlaceSequenceInvalidError())
-      }
+      // if (request.fixedDestinationList.length !== tripDay.destinations.length) {
+      //   return left(new TripErrors.FixedPlaceSequenceInvalidError())
+      // }
+
 
       const result: SingleTripDayResponseDTO = {
         id: tripDay.tripDayId.getValue().toString(),
@@ -204,7 +205,7 @@ export class GetOptimizedTripDayRecommendationUseCase
       // console.log(destinationQueryResult.distanceMatrixList);
 
       // // dùng thuật toán để tìm sắp xếp địa điểm tối ưu
-      const arrangedPlaceIDs = this.getOptimizedTripDestinationArrangement(tripDay.destinations, request.fixedDestinationList, destinationQueryResult.distanceMatrixList); 
+      const arrangedPlaceIDs = this.getOptimizedTripDestinationArrangement(tripDay.destinations, tripDay.destinations.map(() => false), destinationQueryResult.distanceMatrixList); 
 
       tripDay.destinations = this.sortTripDestinationsByArrangement(tripDay.destinations, arrangedPlaceIDs);
 
