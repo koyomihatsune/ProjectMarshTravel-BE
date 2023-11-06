@@ -6,11 +6,13 @@ import { Guard } from '@app/common/core/guard';
 
 export interface DestinationProps {
   place_id: string;
+  name: string | undefined;
+  description: string | undefined;
   image_url?: string;
   mapsSearchDetails?: any;
   mapsFullDetails?: any;
-  reviewIds: UniqueEntityID[];
   isRegistered: boolean;
+  isCached: boolean;
 }
 
 export class Destination extends AggregateRoot<DestinationProps> {
@@ -20,6 +22,14 @@ export class Destination extends AggregateRoot<DestinationProps> {
 
   get destinationId(): DestinationId {
     return DestinationId.create(this._id);
+  }
+
+  get name(): string | undefined {
+    return this.props.name;
+  }
+
+  get description(): string | undefined {
+    return this.props.description;
   }
 
   get place_id(): string {
@@ -34,16 +44,24 @@ export class Destination extends AggregateRoot<DestinationProps> {
     return this.props.mapsSearchDetails;
   }
 
+  set mapsSearchDetails(mapsSearchDetails: any | undefined) {
+    this.props.mapsSearchDetails = mapsSearchDetails;
+  }
+
   get mapsFullDetails(): any | undefined {
     return this.props.mapsFullDetails;
+  }
+
+  set mapsFullDetails(mapsFullDetails: any | undefined) {
+    this.props.mapsFullDetails = mapsFullDetails;
   }
 
   get isRegistered(): boolean {
     return this.props.isRegistered;
   }
 
-  get reviewIds(): UniqueEntityID[] {
-    return this.props.reviewIds;
+  get isCached(): boolean {
+    return this.props.isCached;
   }
 
   // Factory method to create a new Destination entity

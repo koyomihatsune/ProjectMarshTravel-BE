@@ -2,11 +2,11 @@ import * as AppErrors from '@app/common/core/app.error';
 import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Injectable } from '@nestjs/common';
-import { GoogleMapsService } from 'apps/destination/gmaps/gmaps.service';
 import { SingleDestinationResponseDTO } from '../../dtos/destination.response.dto';
 import { GetDestinationDetailsRequestDTO } from '../../dtos/destinaiton.request.dto';
 import { AdministrativeService } from 'apps/destination/administrative/administrative.service';
 import * as DestinationErrors from '../errors/destination.errors';
+import { DestinationService } from '../../destination.service';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -19,7 +19,7 @@ export class GetDestinationDetailsUseCase
   implements UseCase<GetDestinationDetailsRequestDTO, Promise<Response>>
 {
   constructor(
-    private readonly googleMapsService: GoogleMapsService,
+    private readonly destinationService: DestinationService,
     private readonly administrativeService: AdministrativeService,
   ) {}
 
@@ -28,29 +28,29 @@ export class GetDestinationDetailsUseCase
       const { place_id, language } = dto;
 
       // Gọi service của google, trả về query Result. Tạm thời chưa có type nào
-      const queryResult = await this.googleMapsService.getPlaceByID({placeId: place_id, language : language});
+      const destinationOrError = await this.destinationService.getDestinationByID(place_id, language);
 
-      if (queryResult === undefined) {
+      if (destinationOrError === undefined) {
         return left(new DestinationErrors.DestinationNotFound());
       }
 
-  
       let response: SingleDestinationResponseDTO = {
-          place_id: queryResult.place_id,
-          name: queryResult.name,
-          description: "This is sample description",
+          place_id: destinationOrError.place_id,
+          name: destinationOrError.name,
+          description: destinationOrError.description,
           location: {
-              lat: queryResult.geometry.location.lat,
-              lng: queryResult.geometry.location.lng,
+              lat: destinationOrError.mapsFullDetails.geometry.location.lat,
+              lng: destinationOrError.mapsFullDetails.geometry.location.lng,
           },
-          mapsFullDetails: queryResult,
+          mapsFullDetails: destinationOrError.mapsFullDetails,
           reviews: [],
-          isRegistered: false,
+          isRegistered: destinationOrError.isRegistered,
+          isCached: destinationOrError.isCached,
         };
       
 
-      if (queryResult.address_components) {
-        const provinceName = queryResult.address_components?.find(item => item.types.includes('administrative_area_level_1'))?.long_name;
+      if (destinationOrError.mapsFullDetails.address_components) {
+        const provinceName = destinationOrError.mapsFullDetails.address_components?.find(item => item.types.includes('administrative_area_level_1'))?.long_name;
         
         const provinceResult = await this.administrativeService.getProvinceDetailsByName(provinceName, language);
 

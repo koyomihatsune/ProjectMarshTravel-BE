@@ -18,6 +18,17 @@ import { AdministrativeModule } from '../administrative/administrative.module';
 import { AdministrativeController } from '../administrative/administrative.controller';
 import { SuggestionsController } from '../suggestions/suggestions.controller';
 import { SuggestionsModule } from '../suggestions/suggestions.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  DestinationCacheDAO,
+  DestinationCacheSchema,
+} from './schemas/destination_cache.schema';
+import { DestinationCacheRepository } from './destination_cache.repo';
+import { DestinationRepository } from './destination.repo';
+import {
+  DestinationDAO,
+  DestinationSchema,
+} from './schemas/destination.schema';
 
 @Module({
   imports: [
@@ -34,6 +45,10 @@ import { SuggestionsModule } from '../suggestions/suggestions.module';
       }),
       ignoreEnvFile: true,
     }),
+    MongooseModule.forFeature([
+      { name: DestinationCacheDAO.name, schema: DestinationCacheSchema },
+      { name: DestinationDAO.name, schema: DestinationSchema },
+    ]),
     DatabaseModule,
     AuthModule,
     RmqModule,
@@ -48,6 +63,8 @@ import { SuggestionsModule } from '../suggestions/suggestions.module';
   ],
   providers: [
     DestinationService,
+    DestinationCacheRepository,
+    DestinationRepository,
     AdministrativeService,
     SearchDestinationsUseCase,
     GetDestinationDetailsUseCase,

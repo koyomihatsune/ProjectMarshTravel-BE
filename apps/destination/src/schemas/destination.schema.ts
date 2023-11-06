@@ -7,10 +7,13 @@ export class DestinationDAO extends AbstractDocument {
   place_id: string;
 
   @Prop()
-  image_url?: string;
+  name: string;
 
   @Prop()
-  reviewIds: string[];
+  description: string;
+
+  @Prop()
+  image_url: string;
 }
 
 export const DestinationSchema = SchemaFactory.createForClass(DestinationDAO);

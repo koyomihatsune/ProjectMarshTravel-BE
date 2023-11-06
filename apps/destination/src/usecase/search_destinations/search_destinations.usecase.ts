@@ -55,6 +55,7 @@ export class SearchDestinationsUseCase
             mapsSearchDetails: result,
             reviews: [],
             isRegistered: false,
+            isCached: false,
         });
       });
 

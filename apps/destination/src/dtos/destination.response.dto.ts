@@ -20,6 +20,7 @@ export class SingleDestinationResponseDTO {
   };
   reviews?: any[];
   isRegistered: boolean;
+  isCached: boolean;
 }
 
 export class MultipleDestinationResponseDTO {

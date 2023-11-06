@@ -15,8 +15,9 @@ export class DestinationMapper {
     return {
       _id: new Types.ObjectId(destination.id.toString()),
       place_id: destination.place_id,
+      name: destination.name,
+      description: destination.description,
       image_url: destination.image_url ? destination.image_url : undefined,
-      reviewIds: destination.reviewIds.map((id) => id.toString()),
     };
   }
 
@@ -26,9 +27,11 @@ export class DestinationMapper {
     const destinationOrError = Destination.create(
       {
         place_id: dao.place_id,
+        name: dao.name,
+        description: dao.description,
         image_url: dao.image_url,
-        reviewIds: dao.reviewIds.map((id) => new UniqueEntityID(id)),
         isRegistered: true,
+        isCached: false,
       },
       new UniqueEntityID(destinationIdString),
     );
@@ -52,6 +55,7 @@ export class DestinationMapper {
       mapsSearchDetails: result,
       reviews: [],
       isRegistered: false,
+      isCached: false,
     };
   }
 }

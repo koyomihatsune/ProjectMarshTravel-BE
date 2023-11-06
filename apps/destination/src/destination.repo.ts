@@ -19,11 +19,16 @@ export class DestinationRepository extends AbstractRepository<DestinationDAO> {
 
   async createDestination(request: {
     place_id: string;
+    name?: string;
+    description?: string;
+    image_url?: string;
   }): Promise<Destination | undefined> {
     try {
       const destination = await this.create({
         place_id: request.place_id,
-        reviewIds: [],
+        name: request.name,
+        description: request.description,
+        image_url: request.image_url,
       });
       return DestinationMapper.toEntity(destination);
     } catch (err) {
@@ -31,23 +36,6 @@ export class DestinationRepository extends AbstractRepository<DestinationDAO> {
       return undefined;
     }
   }
-
-  // Untested
-  addReviews = async (place_id: string, reviewIds: string[]) => {
-    try {
-      await this.findOneAndUpdate(
-        {
-          place_id: place_id,
-        },
-        { $push: { reviewIds: reviewIds } },
-      );
-      return true;
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      Logger.error(err, err.stack);
-      return false;
-    }
-  };
 
   async getDestinationByPlaceId(
     placeId: string,
