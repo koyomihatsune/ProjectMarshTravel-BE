@@ -29,14 +29,18 @@ export class GetMultipleDestinationDetailsUseCase
 
       const queryResult = [];
 
-      const distanceMapResult = await this.googleMapsService.getDistanceMatrixList({
+      
+      
+      const distanceMapResult = (Array.isArray(place_ids) && place_ids.length > 1) ? await this.googleMapsService.getDistanceMatrixList({
         origins: place_ids,
         destinations: place_ids,
         language: language,
-      });
+      }) : undefined;
+      
+      const placeIdsStandardized : string[] = Array.isArray(place_ids) ? dto.place_ids : [dto.place_ids as unknown as string]
 
       // hình như foreach không dùng được với async, cần điều tra lại
-      await Promise.all(place_ids.map( async (place_id) => {
+      await Promise.all(placeIdsStandardized.map( async (place_id) => {
         // Gọi service của google, trả về query Result. Tạm thời chưa có type nào
         const subqueryResult = await this.googleMapsService.getPlaceByID({placeId: place_id, language : language});
         
@@ -46,7 +50,7 @@ export class GetMultipleDestinationDetailsUseCase
           const singleResponse: SingleDestinationResponseDTO = {
             place_id: subqueryResult.place_id,
             name: subqueryResult.name,
-            description: "This is sample description",
+            description: "Địa điểm văn hoá nổi bật của thành phố",
             location: {
                 lat: subqueryResult.geometry.location.lat,
                 lng: subqueryResult.geometry.location.lng,
@@ -54,6 +58,7 @@ export class GetMultipleDestinationDetailsUseCase
             mapsFullDetails: subqueryResult,
             reviews: [],
             isRegistered: false,
+            isCached: false,
           };
           queryResult.push(singleResponse);
         }

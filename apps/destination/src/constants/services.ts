@@ -37,3 +37,5 @@ export const LanguageEnumValue = {
   ENGLISH: 'en',
   VIETNAMESE: 'vi',
 } as const;
+
+export const DESTINATION_CACHE_EXPIRATION_DAYS = 3;
