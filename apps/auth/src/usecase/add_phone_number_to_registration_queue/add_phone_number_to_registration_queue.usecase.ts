@@ -44,53 +44,42 @@ export class AddPhoneNumberToRegistrationQueueUseCase
 
       const userPhoneNumber = userPhoneNumberOrError.getValue();
 
-      // Kiểm tra email có tồn tại
-      const foundUser = await this.userService.getUserByPhoneNumber(
-        userPhoneNumber,
+      const registration = await this.authService.getRegistrationByPhoneNumber(
+        userPhoneNumber.value,
       );
-      if (foundUser)
-        return left(
-          new LoginUseCaseErrors.PhoneNumberAlreadyExists(payload.phoneNumber),
-        );
-      else {
-        const registration =
-          await this.authService.getRegistrationByPhoneNumber(
-            userPhoneNumber.value,
+      if (registration) {
+        if (
+          new Date().getTime() - registration.lastUpdated.getTime() <
+          PHONE_OTP_LIMIT.SoftLimit
+        ) {
+          return left(
+            new AuthUseCaseErrors.OTPSoftLimitNotPassed(
+              60 -
+                (new Date().getTime() - registration.lastUpdated.getTime()) /
+                  1000,
+            ),
           );
-        if (registration) {
-          if (
-            new Date().getTime() - registration.lastUpdated.getTime() <
-            PHONE_OTP_LIMIT.SoftLimit
-          ) {
-            return left(
-              new AuthUseCaseErrors.OTPSoftLimitNotPassed(
-                60 -
-                  (new Date().getTime() - registration.lastUpdated.getTime()) /
-                    1000,
-              ),
-            );
-          } else if (
-            registration.tries > 3 &&
-            new Date().getTime() - registration.lastUpdated.getTime() <
-              PHONE_OTP_LIMIT.HardLimit
-          ) {
-            return left(new AuthUseCaseErrors.OTPHardLimitNotPassed());
-          } else {
-            await this.authService.deleteRegistration(userPhoneNumber);
-          }
-        }
-        const sendOTPresult = await this.twilioService.sendVerifyOTP(
-          userPhoneNumber.value,
-        );
-        if (sendOTPresult.isLeft()) {
-          return left(new AppErrors.UnexpectedError(sendOTPresult.value));
+        } else if (
+          registration.tries > 3 &&
+          new Date().getTime() - registration.lastUpdated.getTime() <
+            PHONE_OTP_LIMIT.HardLimit
+        ) {
+          return left(new AuthUseCaseErrors.OTPHardLimitNotPassed());
         } else {
-          this.authService.upsertRegistration(
-            userPhoneNumberOrError.getValue(),
-            registration ? registration.tries + 1 : 1,
-          );
-          return right(Result.ok<void>());
+          await this.authService.deleteRegistration(userPhoneNumber);
         }
+      }
+      const sendOTPresult = await this.twilioService.sendVerifyOTP(
+        userPhoneNumber.value,
+      );
+      if (sendOTPresult.isLeft()) {
+        return left(new AppErrors.UnexpectedError(sendOTPresult.value));
+      } else {
+        this.authService.upsertRegistration(
+          userPhoneNumberOrError.getValue(),
+          registration ? registration.tries + 1 : 1,
+        );
+        return right(Result.ok<void>());
       }
     } catch (err) {
       Logger.log(err, err.stack);
