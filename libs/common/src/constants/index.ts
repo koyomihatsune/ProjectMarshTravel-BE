@@ -49,3 +49,12 @@ export const SORT_CONST = {
   LIKE_HIGHEST: 'LIKE_HIGHEST',
   LIKE_LOWEST: 'LIKE_LOWEST',
 };
+
+export const DOMAIN_MESSAGE = {
+  EmailNotValid: 'Email address is not valid',
+  InvalidPasswordLength: (length: number) =>
+    `Password doesnt meet criteria [${length} chars min].`,
+  InvalidUUIDValue: (userId: string) =>
+    `Invalid database uuid id value: ${userId}`,
+  UrlNotValid: 'Url is not valid',
+};

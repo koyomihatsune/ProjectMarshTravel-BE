@@ -1,7 +1,7 @@
 import { LoginTicket } from 'google-auth-library';
 
 export interface LoginWithProviderDTO {
-  email: string;
+  emailOrPhoneNumber: string;
   provider: string;
   googleDecodedToken?: LoginTicket;
 }

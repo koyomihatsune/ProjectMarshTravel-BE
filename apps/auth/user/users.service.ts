@@ -13,6 +13,7 @@ import * as AppErrors from '@app/common/core/app.error';
 import { StorageService } from '@app/common/storage/storage.service';
 import { STORAGE_PATH } from '@app/common/constants';
 import { v1 as uuidv1 } from 'uuid';
+import { UserPhoneNumber } from './domain/user_phonenumber';
 export interface TokenPayload {
   accessToken: string;
 }
@@ -59,6 +60,11 @@ export class UsersService {
 
   async getUserByUsername(username: UserUsername): Promise<User> {
     const user = await this.usersRepository.findUserByUsername(username);
+    return user;
+  }
+
+  async getUserByPhoneNumber(phoneNumber: UserPhoneNumber): Promise<User> {
+    const user = await this.usersRepository.findUserByNumber(phoneNumber);
     return user;
   }
 

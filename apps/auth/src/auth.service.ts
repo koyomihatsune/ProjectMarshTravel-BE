@@ -5,6 +5,8 @@ import { UsersService } from '../user/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { JWT_CONSTANTS, OAUTH2_CONSTANTS } from './constants';
 import { User } from '../user/domain/user.entity';
+import { UserPhoneNumber } from '../user/domain/user_phonenumber';
+import { RegistrationQueueRepository } from './registration_queue.repo';
 
 export interface firebaseAuthPayload {
   token: string;
@@ -16,6 +18,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly registrationQueueRepository: RegistrationQueueRepository,
   ) {}
 
   // Authenticate bằng Firebase
@@ -43,7 +46,7 @@ export class AuthService {
   async generateAccessToken(user: User) {
     const jwtPayload = {
       sub: user.userId.getValue().toString(),
-      username: user.email.value,
+      username: user.email?.value ?? user.phoneNumber?.value,
       //username key here should be email
     };
 
@@ -72,5 +75,24 @@ export class AuthService {
         : await this.usersService.getUserByRefreshToken(token);
 
     return foundUser !== undefined;
+  }
+
+  async upsertRegistration(phoneNumber: UserPhoneNumber, tries: number) {
+    return await this.registrationQueueRepository.upsertRegistration({
+      phoneNumber: phoneNumber.value,
+      tries: tries,
+    });
+  }
+
+  async deleteRegistration(phoneNumber: UserPhoneNumber) {
+    return await this.registrationQueueRepository.deleteRegistration(
+      phoneNumber.value,
+    );
+  }
+
+  async getRegistrationByPhoneNumber(phoneNumber: string) {
+    return await this.registrationQueueRepository.findRegistrationByEmail(
+      phoneNumber,
+    );
   }
 }

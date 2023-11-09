@@ -1,6 +1,5 @@
 import { AggregateRoot } from '@app/common/core/domain/aggregate_root';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
-import { Guard } from '@app/common/core/guard';
 import { Result } from '@app/common/core/result';
 import { UserUsername } from './user_username';
 import { UserName } from './user_name';
@@ -12,10 +11,10 @@ import { UserId } from './user_id';
 import { UserDOB } from './user_dob';
 
 export interface UserProps {
-  username?: UserUsername;
+  username: UserUsername;
   name: UserName;
   provider: UserProvider;
-  email: UserEmail;
+  email?: UserEmail;
   dob?: UserDOB;
   avatarUrl: string;
   phoneNumber?: UserPhoneNumber;
@@ -49,7 +48,7 @@ export class User extends AggregateRoot<UserProps> {
     return this.props.dob;
   }
 
-  get email(): UserEmail {
+  get email(): UserEmail | undefined {
     return this.props.email;
   }
 
@@ -75,13 +74,13 @@ export class User extends AggregateRoot<UserProps> {
 
   // Factory method to create a new User entity
   public static create(props: UserProps, id?: UniqueEntityID): Result<User> {
-    const guardResult = Guard.againstNullOrUndefinedBulk([
-      { argument: props.email, argumentName: 'email' },
-    ]);
+    // const guardResult = Guard.againstNullOrUndefinedBulk([
+    //   { argument: props.email, argumentName: 'email' },
+    // ]);
 
-    if (guardResult.isFailure) {
-      return Result.fail<User>(guardResult.getErrorValue());
-    }
+    // if (guardResult.isFailure) {
+    //   return Result.fail<User>(guardResult.getErrorValue());
+    // }
 
     const user = new User(
       {

@@ -4,6 +4,7 @@ import { Result } from '@app/common/core/result';
 
 export const UserProviderTypeValue = {
   GOOGLE: 'google.com',
+  PHONE_NUMBER: 'phone',
 } as const;
 
 export type UserProviderType =
@@ -21,7 +22,7 @@ export class UserProvider extends ValueObject<UserProviderProps> {
   public static create(provider: string): Result<UserProvider> {
     const propsResult = Guard.isOneOf(
       provider,
-      [UserProviderTypeValue.GOOGLE],
+      [UserProviderTypeValue.GOOGLE, UserProviderTypeValue.PHONE_NUMBER],
       'provider',
     );
 
@@ -30,7 +31,7 @@ export class UserProvider extends ValueObject<UserProviderProps> {
     }
 
     return Result.ok<UserProvider>(
-      new UserProvider({ value: provider as UserProviderType }), // Because we do a guard above, so we safe to cast here
+      new UserProvider({ value: provider as UserProviderType }),
     );
   }
 }
