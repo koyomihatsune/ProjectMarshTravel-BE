@@ -31,3 +31,14 @@ export const OAUTH2_CONSTANTS = {
   iOSClientID: 'OAUTH2_CLIENT_ID_IOS',
   WebClientID: 'OAUTH2_CLIENT_ID_WEB',
 };
+
+export const TWILIO_CONSTANTS = {
+  accountSid: 'TWILIO_ACCOUNTSID',
+  authToken: 'TWILIO_AUTHTOKEN',
+  verifySid: 'TWILIO_VERIFYSID',
+};
+
+export const PHONE_OTP_LIMIT = {
+  SoftLimit: 60 * 1000, // 1 minute
+  HardLimit: 24 * 60 * 60 * 1000, // 1 day
+};

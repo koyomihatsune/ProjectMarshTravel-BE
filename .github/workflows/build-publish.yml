@@ -160,6 +160,9 @@ jobs:
           GCLOUD_SA: ${{secrets.GCP_CREDENTIALS}}
           GCLOUD_STORAGE_BUCKET_NAME: ${{ secrets.GCLOUD_STORAGE_BUCKET_NAME }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          TWILIO_ACCOUNTSID: ${{ secrets.TWILIO_ACCOUNTSID }}
+          TWILIO_AUTHTOKEN: ${{ secrets.TWILIO_AUTHTOKEN }}
+          TWILIO_VERIFYSID: ${{ secrets.TWILIO_VERIFYSID }}
         run: |
           ls
           cd marshtravel-cd
@@ -180,6 +183,9 @@ jobs:
           yq eval-all -i 'select(fileIndex == 0) | select(.googleMapsAPIKey) | .googleMapsAPIKey = env(GOOGLE_MAPS_API_KEY)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.gcloud.serviceAccount) | .gcloud.serviceAccount = env(GCLOUD_SA)' values.yaml values.yaml.example
           yq eval-all -i 'select(fileIndex == 0) | select(.gcloud.storageBucketName) | .gcloud.storageBucketName = env(GCLOUD_STORAGE_BUCKET_NAME)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.twilio.accountSid) | .twilio.accountSid = env(TWILIO_ACCOUNTSID)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.twilio.authToken) | .twilio.authToken = env(TWILIO_AUTHTOKEN)' values.yaml values.yaml.example
+          yq eval-all -i 'select(fileIndex == 0) | select(.twilio.verifySid) | .twilio.verifySid = env(TWILIO_VERIFYSID)' values.yaml values.yaml.example
           echo "End writing secrets"
           cat values.yaml
       

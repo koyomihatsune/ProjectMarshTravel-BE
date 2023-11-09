@@ -1,19 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UseCase } from '@app/common/core/usecase';
 import { LoginWithProviderDTO } from './login_with_provider.dto';
 import { AuthService } from 'apps/auth/src/auth.service';
 import { UsersService } from '../../users.service';
 import { UserEmail } from '../../domain/user_email';
-import { User } from '../../domain/user.entity';
 import { CreateUserRequest } from '../../dtos/service_dto/create-user.request';
-import { LoginResponseDTO } from 'apps/auth/src/usecase/login/login.dto';
+import { LoginResponseDTO } from 'apps/auth/src/usecase/dtos/login.dto';
 import { Either, Result, left, right } from '@app/common/core/result';
-import * as LoginWithProviderUseCaseErrors from './login.errors';
-import { UserProvider } from '../../domain/user_provider';
+import * as LoginWithProviderUseCaseErrors from '../errors/login.errors';
+import {
+  UserProvider,
+  UserProviderTypeValue,
+} from '../../domain/user_provider';
 import { UserName } from '../../domain/user_name';
 import * as AppErrors from '@app/common/core/app.error';
 import { UserUsername } from '../../domain/user_username';
 import { TokenPayload } from 'google-auth-library';
+import { UserPhoneNumber } from '../../domain/user_phonenumber';
+import { v1 as uuidv1 } from 'uuid';
 
 type Response = Either<
   | AppErrors.EntityNotFoundError
@@ -36,67 +40,121 @@ export class LoginWithProviderUseCase
 
   execute = async (payload: LoginWithProviderDTO): Promise<Response> => {
     try {
-      const userEmailOrError = UserEmail.create({ value: payload.email });
-      if (userEmailOrError.isFailure) {
-        throw new Error('Email không hợp lệ');
+      let foundUser = undefined;
+      let initialUserEmailOrError = undefined;
+      let initialUserPhoneNumberOrError = undefined;
+      if (payload.provider !== UserProviderTypeValue.PHONE_NUMBER) {
+        initialUserEmailOrError = UserEmail.create({
+          value: payload.emailOrPhoneNumber,
+        });
+        if (initialUserEmailOrError.isFailure) {
+          return left(new LoginWithProviderUseCaseErrors.EmailInvalid());
+        }
+        foundUser = await this.usersService.getUserByEmail(
+          initialUserEmailOrError.getValue(),
+        );
+        if (foundUser?.provider?.value === UserProviderTypeValue.PHONE_NUMBER) {
+          return left(new LoginWithProviderUseCaseErrors.ProviderInvalid());
+        }
+      } else {
+        initialUserPhoneNumberOrError = UserPhoneNumber.create({
+          value: payload.emailOrPhoneNumber,
+        });
+        if (initialUserPhoneNumberOrError.isFailure) {
+          throw new LoginWithProviderUseCaseErrors.PhoneNumberInvalid();
+        }
+        foundUser = await this.usersService.getUserByPhoneNumber(
+          initialUserPhoneNumberOrError.getValue(),
+        );
+
+        if (foundUser) {
+          if (foundUser.provider.value !== UserProviderTypeValue.PHONE_NUMBER) {
+            return left(new LoginWithProviderUseCaseErrors.ProviderInvalid());
+          }
+        }
       }
-      // Kiểm tra email có tồn tại hay không, nếu không thì tạo user mới luôn, rồi tạo JWT.
-      let user: User = await this.usersService.getUserByEmail(
-        userEmailOrError.getValue(),
-      );
+
       let initUser = false;
 
       // User chưa tồn tại, tạo user mới
-      if (!user) {
+      if (!foundUser) {
         let decodedToken: TokenPayload | null;
-        if (payload.provider === 'firebase_google') {
+        let userEmailOrError: Result<UserEmail>;
+        let userProviderOrError: Result<UserProvider>;
+        let userPhoneNumberOrError: Result<UserPhoneNumber>;
+        let userUsernameOrError: Result<UserUsername>;
+        let userNameOrError: Result<UserName>;
+        if (payload.provider === UserProviderTypeValue.GOOGLE) {
           decodedToken = payload.googleDecodedToken.getPayload();
-
-          const userEmailOrError = UserEmail.create({
+          userProviderOrError = UserProvider.create(
+            UserProviderTypeValue.GOOGLE,
+          );
+          userEmailOrError = UserEmail.create({
             value: decodedToken.email,
           });
           if (userEmailOrError.isFailure) {
             return left(new LoginWithProviderUseCaseErrors.EmailInvalid());
           }
-
-          const userProviderOrError = UserProvider.create('google.com');
+          userNameOrError = UserName.create({ value: decodedToken.given_name });
+          if (userNameOrError.isFailure) {
+            UserName.create({ value: 'Untitled' });
+          }
+        } else if (payload.provider === UserProviderTypeValue.PHONE_NUMBER) {
+          userProviderOrError = UserProvider.create(
+            UserProviderTypeValue.PHONE_NUMBER,
+          );
           if (userProviderOrError.isFailure) {
             return left(new LoginWithProviderUseCaseErrors.ProviderInvalid());
           }
-          const userUsernameOrError = UserUsername.create({
-            value: decodedToken.sub.toString(),
+          userPhoneNumberOrError = UserPhoneNumber.create({
+            value: payload.emailOrPhoneNumber,
           });
-          if (userUsernameOrError.isFailure) {
-            return left(new LoginWithProviderUseCaseErrors.UsernameInvalid());
+          if (userPhoneNumberOrError.isFailure) {
+            return left(
+              new LoginWithProviderUseCaseErrors.PhoneNumberInvalid(),
+            );
           }
-          const userNameOrError = UserName.create({ value: decodedToken.name });
-          if (userNameOrError.isFailure) {
-            return left(new LoginWithProviderUseCaseErrors.NameInvalid());
-          }
-
-          const createUserRequestDTO: CreateUserRequest = {
-            email: userEmailOrError.getValue(),
-            provider: userProviderOrError.getValue(),
-            name: userNameOrError.getValue(),
-            username: userUsernameOrError.getValue(),
-          };
-          user = await this.usersService.createUser(createUserRequestDTO);
-          initUser = true;
+          userNameOrError = UserName.create({ value: 'Untitled' });
         }
+
+        // eslint-disable-next-line prefer-const
+        userUsernameOrError = UserUsername.create({
+          value: 'id' + uuidv1().slice(0, 8),
+        });
+        if (userUsernameOrError.isFailure) {
+          return left(new LoginWithProviderUseCaseErrors.UsernameInvalid());
+        }
+
+        const createUserRequestDTO: CreateUserRequest =
+          payload.provider !== UserProviderTypeValue.PHONE_NUMBER
+            ? {
+                email: userEmailOrError.getValue(),
+                provider: userProviderOrError.getValue(),
+                name: userNameOrError.getValue(),
+                username: userUsernameOrError.getValue(),
+              }
+            : {
+                phoneNumber: userPhoneNumberOrError.getValue(),
+                provider: userProviderOrError.getValue(),
+                name: userNameOrError.getValue(),
+                username: userUsernameOrError.getValue(),
+              };
+        foundUser = await this.usersService.createUser(createUserRequestDTO);
+        initUser = true;
       }
 
-      if (!user) {
+      if (!foundUser) {
         return left(new LoginWithProviderUseCaseErrors.UserFailedToCreate());
       }
 
-      const token = await this.authService.generateAccessToken(user);
+      const token = await this.authService.generateAccessToken(foundUser);
       // Trong trường hợp token không dùng được
       // const token = {
       //   accessToken: 'a',
       //   refreshToken: 'b',
       // };
 
-      await this.usersService.updateUserToken(user.userId, {
+      await this.usersService.updateUserToken(foundUser.userId, {
         accessToken: token.accessToken,
         refreshToken: token.refreshToken,
       });
@@ -109,6 +167,7 @@ export class LoginWithProviderUseCase
         }),
       );
     } catch (err) {
+      Logger.log(err, err.stack);
       return left(new AppErrors.UnexpectedError(err.toString()));
     }
   };

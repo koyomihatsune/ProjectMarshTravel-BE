@@ -118,9 +118,9 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
       .find(filterQuery, {}, { lean: true })
       .sort(
         sortBy === SORT_CONST.DATE_NEWEST
-          ? { createdAt: 1 }
-          : sortBy === SORT_CONST.DATE_OLDEST
           ? { createdAt: -1 }
+          : sortBy === SORT_CONST.DATE_OLDEST
+          ? { createdAt: 1 }
           : sortBy === SORT_CONST.RATING_HIGHEST
           ? { rating: 1 }
           : sortBy === SORT_CONST.RATING_LOWEST

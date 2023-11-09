@@ -11,6 +11,7 @@ import { UserEmail } from './domain/user_email';
 import { UserUsername } from './domain/user_username';
 import { UserName } from './domain/user_name';
 import { UserDOB } from './domain/user_dob';
+import { UserPhoneNumber } from './domain/user_phonenumber';
 
 @Injectable()
 export class UsersRepository extends AbstractRepository<UserDAO> {
@@ -25,9 +26,9 @@ export class UsersRepository extends AbstractRepository<UserDAO> {
 
   async createUser(request: CreateUserRequest): Promise<User | undefined> {
     try {
-      const user = await this.create({
+      let finalDao;
+      const dao = {
         name: request.name.value,
-        email: request.email.value,
         provider: request.provider.value,
         username: request.username.value,
         avatarUrl:
@@ -35,9 +36,25 @@ export class UsersRepository extends AbstractRepository<UserDAO> {
         accessToken: '',
         refreshToken: '',
         createdAt: new Date(),
-      });
-      return UserMapper.toEntity(user);
+      };
+      if (request.email) {
+        finalDao = {
+          ...dao,
+          email: request.email.value,
+        };
+      }
+      if (request.phoneNumber) {
+        finalDao = {
+          ...dao,
+          phoneNumber: request.phoneNumber.value,
+        };
+      }
+      let user = undefined;
+      user = await this.create(finalDao);
+
+      return user ? UserMapper.toEntity(user) : undefined;
     } catch (err) {
+      Logger.error(err, err.stack);
       return undefined;
     }
   }
@@ -82,6 +99,17 @@ export class UsersRepository extends AbstractRepository<UserDAO> {
   async findUserByUsername(username: UserUsername): Promise<User | undefined> {
     try {
       const user = await this.findOne({ username: username.value });
+      return UserMapper.toEntity(user);
+    } catch (err) {
+      return undefined;
+    }
+  }
+
+  async findUserByNumber(
+    userPhone: UserPhoneNumber,
+  ): Promise<User | undefined> {
+    try {
+      const user = await this.findOne({ phoneNumber: userPhone.value });
       return UserMapper.toEntity(user);
     } catch (err) {
       return undefined;

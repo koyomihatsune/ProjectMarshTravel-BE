@@ -7,12 +7,15 @@ export class UserDAO extends AbstractDocument {
   username: string;
 
   @Prop()
+  password?: string;
+
+  @Prop()
   name: string;
 
   @Prop()
   provider: string;
 
-  @Prop({ unique: true })
+  @Prop()
   email: string;
 
   @Prop()

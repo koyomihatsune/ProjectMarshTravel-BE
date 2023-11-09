@@ -17,7 +17,7 @@ export class UserMapper {
       username: user.username.value,
       name: user.name.value,
       provider: user.provider.value,
-      email: user.email.value,
+      email: user.email?.value,
       dob: user.dob?.value,
       phoneNumber: user.phoneNumber?.value,
       avatarUrl: user.avatarUrl,
@@ -30,10 +30,17 @@ export class UserMapper {
 
   // Convert User Schema DTO to User Entity
   public static toEntity(dao: UserDAO): User | undefined {
-    const userEmailOrError = UserEmail.create({ value: dao.email });
     const userNameOrError = UserName.create({ value: dao.name });
     const userProviderOrError = UserProvider.create(dao.provider);
     const userUsernameOrError = UserUsername.create({ value: dao.username });
+
+    let userEmailOrError;
+    if (dao.email) {
+      userEmailOrError = UserEmail.create({
+        value: dao.email,
+      });
+    }
+
     let userPhoneNumberOrError;
     if (dao.phoneNumber) {
       userPhoneNumberOrError = UserPhoneNumber.create({
@@ -48,7 +55,6 @@ export class UserMapper {
     }
 
     const payloadResult = Result.combine([
-      userEmailOrError,
       userNameOrError,
       userProviderOrError,
       userUsernameOrError,
@@ -62,7 +68,7 @@ export class UserMapper {
 
     const userOrError = User.create(
       {
-        email: userEmailOrError.getValue(),
+        email: dao.email ? userEmailOrError.getValue() : undefined,
         username: userUsernameOrError.getValue(),
         name: userNameOrError.getValue(),
         provider: userProviderOrError.getValue(),
@@ -75,7 +81,6 @@ export class UserMapper {
       },
       new UniqueEntityID(userIdString),
     );
-
     return userOrError.isSuccess ? userOrError.getValue() : undefined;
   }
 }

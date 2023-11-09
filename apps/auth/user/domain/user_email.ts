@@ -15,6 +15,7 @@ export class UserEmail extends ValueObject<UserEmailProps> {
     super(props);
   }
   private static isValidEmail(email: string) {
+    // return true;
     return COMMON_CONSTANTS.EmailRegex.test(email);
   }
 

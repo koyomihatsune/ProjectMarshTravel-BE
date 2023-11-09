@@ -25,7 +25,7 @@ export class GetUserProfileUseCase
       const response: UserProfileResponseDTO = {
         id: user.userId.getValue().toString(),
         name: user.name.value,
-        email: user.email.value,
+        email: user.email ? user.email.value : '',
         avatar: user.avatarUrl,
         provider: user.provider.value,
         username: user.username ? user.username.value : '',

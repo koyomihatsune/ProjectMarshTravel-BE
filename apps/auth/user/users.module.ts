@@ -3,10 +3,9 @@ import { UsersRepository } from './users.repo';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserDAO } from './schemas/user.schema';
+import { UserDAO, UserSchema } from './schemas/user.schema';
 import { AuthModule } from '../src/auth.module';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from '../src/auth.service';
 import { LoginWithProviderUseCase } from './usecase/login_with_provider/login_with_provider.usecase';
 import { UpdateUserProfileUseCase } from './usecase/update_profile/update_profile.usecase';
 import { GetUserProfileUseCase } from './usecase/get_profile/get_profile.usecase';
@@ -16,7 +15,7 @@ import { GetPublicUserProfilesUseCase } from './usecase/get_public_profiles/get_
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: UserDAO.name, schema: UserDAO }]),
+    MongooseModule.forFeature([{ name: UserDAO.name, schema: UserSchema }]),
     forwardRef(() => AuthModule),
     StorageModule,
   ],
@@ -24,7 +23,6 @@ import { GetPublicUserProfilesUseCase } from './usecase/get_public_profiles/get_
   providers: [
     UsersService,
     UsersRepository,
-    AuthService,
     JwtService,
     LoginWithProviderUseCase,
     UpdateUserProfileUseCase,
