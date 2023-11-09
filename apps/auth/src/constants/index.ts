@@ -39,6 +39,6 @@ export const TWILIO_CONSTANTS = {
 };
 
 export const PHONE_OTP_LIMIT = {
-  SoftLimit: 60 * 1000, // 1 minute
+  SoftLimit: 2 * 60 * 1000, // 2 minute
   HardLimit: 24 * 60 * 60 * 1000, // 1 day
 };
