@@ -1,4 +1,4 @@
-import { firebaseAdmin } from '@app/common';
+import { firebaseAdmin as googleOAuthClient } from '@app/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../user/users.service';
@@ -22,21 +22,17 @@ export class AuthService {
   ) {}
 
   // Authenticate bằng Firebase
-  async firebaseAuthenticateWithToken(request: firebaseAuthPayload) {
+  async googleAuthenticateWithToken(request: firebaseAuthPayload) {
     try {
-      // eslint-disable-next-line no-console
-      Logger.log(request);
-      const decodedIdToken = await firebaseAdmin.verifyIdToken({
+      const decodedIdToken = await googleOAuthClient.verifyIdToken({
         idToken: request.token,
         audience: [
           this.configService.get<string>(OAUTH2_CONSTANTS.WebClientID),
           this.configService.get<string>(OAUTH2_CONSTANTS.AndroidClientID),
         ],
       });
-      Logger.log(decodedIdToken.getPayload());
       return decodedIdToken;
     } catch (err) {
-      // eslint-disable-next-line no-console
       Logger.error(err, err.stack);
       return null;
     }

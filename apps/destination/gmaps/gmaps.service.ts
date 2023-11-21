@@ -37,8 +37,6 @@ export class GoogleMapsService {
   ): Promise<any> {
     const url = `${GOOGLE_MAPS_API.BASE_URL}${route}`;
     params.append('key', this.getApiKey());
-    // console.log(url);
-    // console.log(params);
     const response: AxiosResponse = await axios.get(url, {
       params: params,
     });

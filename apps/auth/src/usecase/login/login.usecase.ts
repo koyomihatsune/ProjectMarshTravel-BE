@@ -22,7 +22,7 @@ export class LoginUseCase
   ) {}
 
   execute = async (payload: LoginGoogleTokenDTO): Promise<Response> => {
-    const decodedToken = await this.authService.firebaseAuthenticateWithToken({
+    const decodedToken = await this.authService.googleAuthenticateWithToken({
       token: payload.token,
     });
 
