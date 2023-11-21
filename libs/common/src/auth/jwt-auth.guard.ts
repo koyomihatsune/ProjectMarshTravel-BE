@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   CanActivate,
   ExecutionContext,
@@ -14,29 +15,17 @@ import { IS_PUBLIC_KEY } from 'apps/auth/src/decorators/auth.decorator';
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
-    @Inject(AUTH_SERVICE) private authClient: ClientProxy,
-    private reflector: Reflector,
-  ) {}
+    @Inject(AUTH_SERVICE) private authClient: ClientProxy, private reflector: Reflector) {}
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const isPublic = this.reflector.get<boolean>(
-      IS_PUBLIC_KEY,
-      context.getHandler(),
-    );
-    if (isPublic) {
-      // Allow access to public routes
-      return true;
-    }
+    const isPublic = this.reflector.get<boolean>(IS_PUBLIC_KEY, context.getHandler());
+    if (isPublic) return true;
     const authentication = this.getAuthentication(context);
     return this.authClient
-      .send('validate_user', {
-        Authentication: authentication,
-      })
-      .pipe(
-        tap((res) => {
-          // eslint-disable-next-line no-console
+      .send('validate_user', { Authentication: authentication })
+      .pipe( tap((res) => {
           this.addUser(res, context);
         }),
         catchError(() => {
@@ -73,6 +62,7 @@ export class JwtAuthGuard implements CanActivate {
     }
     return authentication;
   }
+  
 
   private addUser(user: any, context: ExecutionContext) {
     if (context.getType() === 'rpc') {

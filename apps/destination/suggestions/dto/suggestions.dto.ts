@@ -7,6 +7,8 @@ export type CategoryDestinationsList = {
 };
 export type SuggestionsResponseDTO = {
   name: string;
+  code?: string;
+  followed?: boolean;
   listRating: SingleDestinationResponseDTO[];
   categories: CategoryDestinationsList[];
 };

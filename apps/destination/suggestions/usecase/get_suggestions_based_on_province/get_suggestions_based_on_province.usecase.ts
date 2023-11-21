@@ -16,6 +16,9 @@ import {
 } from '../../constants/explore_tags';
 import { SingleDestinationResponseDTO } from '../../../src/dtos/destination.response.dto';
 import { DestinationMapper } from 'apps/destination/src/mapper/destination.mapper';
+import { FollowedAdministrativeService } from 'apps/destination/followed_administrative/followed_administrative.service';
+import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
+import { UserId } from 'apps/auth/user/domain/user_id';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -23,23 +26,34 @@ type Response = Either<
   Result<SuggestionsResponseDTO>
 >;
 
+type GetSuggestionsBasedOnProvinceDTOWithUserId = {
+  request: GetSuggestionsBasedOnProvinceDTO,
+  userId: string,
+}
 @Injectable()
 export class GetSuggestionsBasedOnProvinceUseCase
-  implements UseCase<GetSuggestionsBasedOnProvinceDTO, Promise<Response>>
+  implements UseCase<GetSuggestionsBasedOnProvinceDTOWithUserId, Promise<Response>>
 {
   constructor(
     private readonly googleMapsService: GoogleMapsService,
     private readonly administrativeService: AdministrativeService,
+    private readonly followedAdministrativeService: FollowedAdministrativeService,
   ) {}
 
-  execute = async (dto: GetSuggestionsBasedOnProvinceDTO): Promise<Response> => {
+  execute = async (dto: GetSuggestionsBasedOnProvinceDTOWithUserId): Promise<Response> => {
     try {
-      const { code, language } = dto;
+      const { code, language } = dto.request;
+
 
       const foundProvince = await this.administrativeService.getProvinceDetailsByCode(code);
+    
       if (foundProvince === undefined) {
         return left(new AppErrors.InvalidPayloadError('Province code is invalid'));
       }
+      
+      const userIdOrError = UserId.create(new UniqueEntityID(dto.userId));
+
+      const provinceFollowRecord = await this.followedAdministrativeService.getFollowedAdministrative(userIdOrError, code, 'province');
 
       const bestPlacesQueryResult = await this.googleMapsService.getMultiplePlacesFromText({
         input: `best attractions to visit near ${foundProvince.name}`,
@@ -97,6 +111,8 @@ export class GetSuggestionsBasedOnProvinceUseCase
       
       return right(Result.ok<SuggestionsResponseDTO>({
         name: foundProvince.name,
+        code: foundProvince.code,
+        followed: provinceFollowRecord !== undefined,
         listRating: bestPlacesQueryResult,
         categories: placesQueryByCategoryResult,
       }));
