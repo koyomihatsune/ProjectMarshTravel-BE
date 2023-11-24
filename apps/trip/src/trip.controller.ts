@@ -81,10 +81,11 @@ export class TripController {
   @Get('all')
   async getTripList(
     @Req() req: Request & { user: JWTPayload },
-    @Query() query: { page: number; limit: number },
+    @Query() query: { isArchived?: boolean; page: number; limit: number },
   ) {
     const result = await this.getTripListPaginationUseCase.execute({
       userId: req.user.sub,
+      isArchived: query.isArchived ?? false,
       page: query.page,
       limit: query.limit,
     });
@@ -132,6 +133,87 @@ export class TripController {
     const result = await this.updateTripUseCase.execute({
       userId: req.user.sub,
       request: body,
+    });
+    if (result.isRight()) {
+      return;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Put('archive')
+  async archiveTrip(
+    @Req() req: Request & { user: JWTPayload },
+    @Query()
+    query: {
+      tripId: string;
+    },
+  ) {
+    const result = await this.updateTripUseCase.execute({
+      userId: req.user.sub,
+      request: {
+        tripId: query.tripId,
+        isArchived: true,
+      },
+    });
+    if (result.isRight()) {
+      return;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Put('unarchive')
+  async unarchiveTrip(
+    @Req() req: Request & { user: JWTPayload },
+    @Query()
+    query: {
+      tripId: string;
+    },
+  ) {
+    const result = await this.updateTripUseCase.execute({
+      userId: req.user.sub,
+      request: {
+        tripId: query.tripId,
+        isArchived: false,
+      },
+    });
+    if (result.isRight()) {
+      return;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Delete('delete')
+  async deleteTrip(
+    @Req() req: Request & { user: JWTPayload },
+    @Query()
+    query: {
+      tripId: string;
+    },
+  ) {
+    const result = await this.updateTripUseCase.execute({
+      userId: req.user.sub,
+      request: {
+        tripId: query.tripId,
+        isDeleted: true,
+      },
     });
     if (result.isRight()) {
       return;

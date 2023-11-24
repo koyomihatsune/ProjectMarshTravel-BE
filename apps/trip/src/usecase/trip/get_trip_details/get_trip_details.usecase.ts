@@ -67,6 +67,7 @@ export class GetTripDetailsUseCase
         createdAt: trip.createdAt,
         updatedAt: trip.updatedAt,
         isArchived: trip.isArchived,
+        isDeleted: trip.isDeleted,
         days: trip.days.map((day) => {
           return ({
             id: day.tripDayId.getValue().toString(),

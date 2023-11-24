@@ -10,6 +10,7 @@ export interface TripProps {
   userId: UniqueEntityID;
   description: string;
   isArchived: boolean;
+  isDeleted: boolean;
   startAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -51,6 +52,14 @@ export class Trip extends AggregateRoot<TripProps> {
 
   set isArchived(isArchived: boolean) {
     this.props.isArchived = isArchived;
+  }
+
+  get isDeleted(): boolean {
+    return this.props.isDeleted;
+  }
+
+  set isDeleted(isDeleted: boolean) {
+    this.props.isDeleted = isDeleted;
   }
 
   get startAt(): Date {

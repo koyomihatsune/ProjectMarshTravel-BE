@@ -14,13 +14,13 @@ export class TripMapper {
   ) {}
 
   public static toDAO(trip: Trip): TripDAO {
-    Logger.log(trip.days);
     return {
       _id: trip.tripId.getValue().toMongoObjectID(),
       name: trip.name,
       userId: trip.userId.toMongoObjectID(),
       description: trip.description ?? '',
       isArchived: trip.isArchived,
+      isDeleted: trip.isDeleted,
       startAt: trip.startAt,
       createdAt: trip.createdAt,
       updatedAt: trip.updatedAt,
@@ -61,6 +61,7 @@ export class TripMapper {
         userId: new UniqueEntityID(userIdToString),
         description: dao.description,
         isArchived: dao.isArchived,
+        isDeleted: dao.isDeleted,
         startAt: dao.startAt,
         createdAt: dao.createdAt,
         updatedAt: dao.updatedAt,

@@ -11,4 +11,6 @@ export class UpdateTripDTO {
   startAt?: Date;
 
   isArchived?: boolean;
+
+  isDeleted?: boolean;
 }

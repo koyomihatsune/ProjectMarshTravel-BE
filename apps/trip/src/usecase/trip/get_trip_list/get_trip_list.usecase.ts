@@ -18,6 +18,7 @@ type Response = Either<
 
 type GetTripListPaginationWithUserIdDTO = {
     userId: string;
+    isArchived: boolean;
     page: number;
     limit: number;
 }
@@ -34,7 +35,7 @@ export class GetTripListPaginationUseCase
 
   execute = async (dto: GetTripListPaginationWithUserIdDTO): Promise<Response> => {
     try {
-      const { userId, page, limit } = dto;
+      const { userId, isArchived, page, limit } = dto;
 
       const userOrError = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId})); 
 
@@ -42,7 +43,7 @@ export class GetTripListPaginationUseCase
 
       // chưa handle trường hợp không có user
       
-      const queryResult = await this.tripService.getTripsByUserIdPagination(userIdOrError, page, limit);
+      const queryResult = await this.tripService.getTripsByUserIdPagination(userIdOrError, isArchived, page, limit);
 
       const result: MultipleTripResponseWithoutDaysDTO = {
         list: [],
@@ -60,6 +61,7 @@ export class GetTripListPaginationUseCase
           createdAt: trip.createdAt,
           updatedAt: trip.updatedAt,
           isArchived: trip.isArchived,
+          isDeleted: trip.isDeleted,
           daysLength: trip.days.length,
         })
       })

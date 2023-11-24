@@ -26,11 +26,13 @@ export class TripService {
 
   async getTripsByUserIdPagination(
     userId: UserId,
+    isArchived: boolean,
     page: number,
     pageSize: number,
   ): Promise<TripPagination> {
     const result = await this.tripRepostiory.findTripsByUserIdPagination(
       userId,
+      isArchived,
       page,
       pageSize,
     );

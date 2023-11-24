@@ -5,6 +5,7 @@ export class SingleTripResponseDTO {
   description: string;
   startAt: Date;
   isArchived: boolean;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
   days: SingleTripDayWithoutDestinationDetailsResponseDTO[];
@@ -64,6 +65,7 @@ export class SingleTripResponseWithoutDaysDTO {
   description: string;
   startAt: Date;
   isArchived: boolean;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
   daysLength: number;
