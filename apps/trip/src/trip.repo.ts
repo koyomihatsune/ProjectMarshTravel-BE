@@ -37,6 +37,7 @@ export class TripRepository extends AbstractRepository<TripDAO> {
     try {
       const result = await this.findOne({
         _id: tripId.getValue().toMongoObjectID(),
+        isDeleted: false,
       });
       const trip = TripMapper.toEntity(result);
       return trip;
@@ -48,6 +49,7 @@ export class TripRepository extends AbstractRepository<TripDAO> {
 
   async findTripsByUserIdPagination(
     userId: UserId,
+    isArchived: boolean,
     page: number,
     pageSize: number,
   ): Promise<{ result: Trip[]; page: number; totalPage: number } | undefined> {
@@ -55,6 +57,8 @@ export class TripRepository extends AbstractRepository<TripDAO> {
       const result = await this.findPagination(
         {
           userId: userId.getValue().toMongoObjectID(),
+          isArchived: isArchived,
+          isDeleted: false,
         },
         page,
         pageSize,
@@ -79,6 +83,7 @@ export class TripRepository extends AbstractRepository<TripDAO> {
       const result = await this.findOneAndUpdate(
         {
           _id: tripInput.tripId.getValue().toMongoObjectID(),
+          isDeleted: false,
         },
         {
           ...tripDAO,

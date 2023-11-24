@@ -46,6 +46,7 @@ export class CreateTripUseCase implements UseCase<CreateTripDTOWithUserId, Promi
         userId: new UniqueEntityID(userOrError.id),
         description: request.description,
         isArchived: false,
+        isDeleted: false,
         startAt: request.startAt,
         createdAt: new Date(),
         updatedAt: new Date(),

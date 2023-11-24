@@ -60,7 +60,8 @@ export class UpdateTripUseCase implements UseCase<UpdateTripDTOWithUserId, Promi
       if (request.name) trip.name = request.name;
       if (request.description) trip.description = request.description;
       if (request.startAt) trip.startAt = request.startAt;
-      if (request.isArchived) trip.isArchived = request.isArchived;
+      if (request.isArchived === false) trip.isArchived = false; else if (request.isArchived === true) trip.isArchived = true;
+      if (request.isDeleted) trip.isDeleted = request.isDeleted;
       // update trip
 
       const result = await this.tripService.updateTrip(trip);

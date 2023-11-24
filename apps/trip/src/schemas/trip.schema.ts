@@ -21,6 +21,9 @@ export class TripDAO extends AbstractDocument {
   isArchived: boolean;
 
   @Prop()
+  isDeleted: boolean;
+
+  @Prop()
   startAt: Date;
 
   @Prop()
