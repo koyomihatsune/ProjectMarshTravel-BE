@@ -10,6 +10,7 @@ import { Review } from './entity/review.entity';
 import { ReviewId } from './entity/review_id';
 import { Result } from '@app/common/core/result';
 import { Pagination } from '@app/common/core/pagination/pagination.type';
+import { SORT_CONST } from '@app/common/constants';
 @Injectable()
 export class ReviewRepository extends AbstractRepository<ReviewDAO> {
   protected readonly logger = new Logger(ReviewRepository.name);
@@ -132,9 +133,6 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     sortBy: string,
   ): Promise<Pagination<Review> | undefined> {
     try {
-      Logger.log(page);
-      Logger.log(pageSize);
-      Logger.log('findAllReviewsPagination');
       const result = await this.findPagination(
         {
           ...params,
@@ -155,6 +153,38 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
         page: result.page,
         totalPage: result.totalPages,
       };
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
+  }
+
+  async findAllReviewsNonPagination(
+    params: {
+      userId?: Types.ObjectId;
+      place_id?: string;
+      tagging?: {
+        province_code?: string;
+        highlighted?: boolean;
+      };
+    },
+    sortBy: string,
+  ): Promise<Review[] | undefined> {
+    try {
+      const result = await this.model
+        .find(params, {}, { lean: true })
+        .sort(
+          sortBy === SORT_CONST.DATE_NEWEST
+            ? { createdAt: -1 }
+            : sortBy === SORT_CONST.DATE_OLDEST
+            ? { createdAt: 1 }
+            : sortBy === SORT_CONST.RATING_HIGHEST
+            ? { rating: 1 }
+            : sortBy === SORT_CONST.RATING_LOWEST
+            ? { rating: -1 }
+            : {},
+        );
+      return result.map((review) => ReviewMapper.toEntity(review));
     } catch (err) {
       Logger.error(err, err.stack);
       return undefined;

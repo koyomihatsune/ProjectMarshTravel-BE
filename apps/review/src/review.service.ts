@@ -3,13 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ReviewRepository } from './review.repo';
 import { StorageService } from '@app/common/storage/storage.service';
 import { UserId } from 'apps/auth/user/domain/user_id';
-import { Either, Result, left } from '@app/common/core/result';
-import * as AppErrors from '@app/common/core/app.error';
-import { STORAGE_PATH } from '@app/common/constants';
+import { Result } from '@app/common/core/result';
 import { Review } from './entity/review.entity';
 import { ReviewId } from './entity/review_id';
-import { ReviewMapper } from './mapper/review.mapper';
 import { Pagination } from '@app/common/core/pagination/pagination.type';
+import { SORT_CONST } from '@app/common/constants';
 
 @Injectable()
 export class ReviewService {
@@ -65,6 +63,23 @@ export class ReviewService {
       page: result.page,
       totalPage: result.totalPage,
     };
+  }
+
+  async getAverageReviewStarByPlaceId(place_id: string): Promise<number> {
+    const result = await this.reviewRepository.findAllReviewsNonPagination(
+      {
+        place_id: place_id,
+      },
+      SORT_CONST.DATE_NEWEST,
+    );
+    if (result.length === 0) {
+      return 0;
+    }
+    let totalStar = 0;
+    result.forEach((review) => {
+      totalStar += review.rating;
+    });
+    return totalStar / result.length;
   }
 
   async getReviewsByUserId(
