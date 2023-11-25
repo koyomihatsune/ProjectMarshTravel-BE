@@ -40,6 +40,7 @@ export type MultipleReviewResponseDTO = {
   list: SingleReviewResponseDTO[];
   page: number;
   totalPage: number;
+  averageRating?: number;
 };
 
 // Phần này dành cho lấy list saved reviews

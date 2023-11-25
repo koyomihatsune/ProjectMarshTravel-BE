@@ -62,6 +62,9 @@ export class GetReviewsByPlaceIdUseCase
       // const placeIds : string[] = [];
       const userIds : string[] = [];
       const reviewIds : ReviewId[] = [];
+
+      
+      const averageRating = await this.reviewService.getAverageReviewStarByPlaceId(dto.request.place_id);
       
       const result: MultipleReviewResponseDTO = {
         list: queryResult.result.map((reviewOrError) => {
@@ -104,6 +107,7 @@ export class GetReviewsByPlaceIdUseCase
         }),
         page: queryResult.page,
         totalPage: queryResult.totalPage,
+        averageRating: averageRating ? ((averageRating <= 5  && averageRating >=0) ? averageRating : 0) : 0,
       };
 
       // Map các destination và user với review qua query tới 2 service tương ứng
