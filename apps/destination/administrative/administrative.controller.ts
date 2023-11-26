@@ -13,6 +13,9 @@ import { ProvinceFollowCommitDTO } from '../followed_administrative/usecase/prov
 import { ProvinceFollowCommitUseCase } from '../followed_administrative/usecase/province_follow_commit/province_follow_commit.usecase';
 import AppErrors from '@app/common/core/app.error';
 import { GetSuggestedProvincesByUserUseCase } from '../followed_administrative/usecase/get_suggested_provinces_by_user/get_suggested_provinces_by_user.usecase';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { ResponseMessage } from '@app/common/core/infra/http/decorators/response.decorator';
+import { RESULT_RESPONSE_MESSAGE } from '@app/common/core/infra/http/decorators/response.constants';
 
 @Controller('adm')
 export class AdministrativeController {
@@ -66,5 +69,15 @@ export class AdministrativeController {
       default:
         throw new BadRequestException(error);
     }
+  }
+
+  @MessagePattern('get_followed_provinces')
+  @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
+  async getFollowedProvincesRPC(@Payload() body: { userId: string }) {
+    const result = await this.administrativeService.getProvinceList(
+      body.userId,
+    );
+    const filteredResult = result.filter((province) => province.followed);
+    return filteredResult;
   }
 }

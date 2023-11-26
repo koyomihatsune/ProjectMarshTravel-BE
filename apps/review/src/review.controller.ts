@@ -47,6 +47,8 @@ import { SaveCommitReviewDTO } from '../saved_review/usecase/review_save_commit/
 import { SaveCommitReviewUseCase } from '../saved_review/usecase/review_save_commit/review_save_commit.usecase';
 import { GetSavedReviewsUseCase } from '../saved_review/usecase/get_saved_reviews/get_saved_reviews.usecase';
 import { GetSavedReviewsDTO } from '../saved_review/usecase/get_saved_reviews/get_saved_reviews.dto';
+import { GetReviewsFeedDTO } from './usecase/get_review_feed/get_review_feed.dto';
+import { GetReviewsFeedUseCase } from './usecase/get_review_feed/get_review_feed.usecase';
 
 const imageType = /jpeg|png|webp|jpg/;
 @Controller('review')
@@ -59,6 +61,7 @@ export class ReviewController {
     private readonly likeCommitReviewUseCase: LikeCommitReviewUseCase,
     private readonly getReviewsByPlaceIdUseCase: GetReviewsByPlaceIdUseCase,
     private readonly getReviewsByUserUseCase: GetReviewsByUserUseCase,
+    private readonly getReviewsFeedUseCase: GetReviewsFeedUseCase,
     // Comment Service
     private readonly createCommentUseCase: CreateCommentUseCase,
     private readonly getCommentsByReviewUseCase: GetCommentsByReviewUseCase,
@@ -218,6 +221,28 @@ export class ReviewController {
     @Query() query: GetReviewsByUserDTO,
   ) {
     const result = await this.getReviewsByUserUseCase.execute({
+      userId: req.user.sub,
+      request: query,
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Get('multiple/f')
+  async getReviewsFeed(
+    @Req() req: Request & { user: JWTPayload },
+    @Query() query: GetReviewsFeedDTO,
+  ) {
+    const result = await this.getReviewsFeedUseCase.execute({
       userId: req.user.sub,
       request: query,
     });

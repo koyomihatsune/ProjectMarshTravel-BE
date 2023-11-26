@@ -126,4 +126,24 @@ export class ReviewService {
       totalPage: result.totalPage,
     };
   }
+
+  async getReviewsByProvinces(
+    province_codes: string[],
+    page: number,
+    pageSize: number,
+    sortBy: string,
+  ): Promise<Pagination<Review>> {
+    const result =
+      await this.reviewRepository.findAllReviewsByProvinceCodesPagination(
+        province_codes,
+        page,
+        pageSize,
+        sortBy,
+      );
+    return {
+      result: result.result,
+      page: result.page,
+      totalPage: result.totalPage,
+    };
+  }
 }

@@ -37,6 +37,7 @@ import { SavedReviewRepository } from '../saved_review/saved_review.repo';
 import { SavedReviewService } from '../saved_review/saved_review.service';
 import { SaveCommitReviewUseCase } from '../saved_review/usecase/review_save_commit/review_save_commit.usecase';
 import { GetSavedReviewsUseCase } from '../saved_review/usecase/get_saved_reviews/get_saved_reviews.usecase';
+import { GetReviewsFeedUseCase } from './usecase/get_review_feed/get_review_feed.usecase';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { GetSavedReviewsUseCase } from '../saved_review/usecase/get_saved_review
     LikeCommitReviewUseCase,
     GetReviewsByPlaceIdUseCase,
     GetReviewsByUserUseCase,
+    GetReviewsFeedUseCase,
     // Comment providers
     CommentService,
     CommentRepository,

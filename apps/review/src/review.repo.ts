@@ -159,6 +159,37 @@ export class ReviewRepository extends AbstractRepository<ReviewDAO> {
     }
   }
 
+  async findAllReviewsByProvinceCodesPagination(
+    province_codes: string[],
+    page: number,
+    pageSize: number,
+    sortBy: string,
+  ): Promise<Pagination<Review> | undefined> {
+    try {
+      const result = await this.findPagination(
+        {
+          'tagging.province_code': {
+            $in: province_codes,
+          },
+          isDeleted: false,
+        },
+        page,
+        pageSize,
+        sortBy,
+      );
+      return {
+        result: result.results.map((review) => {
+          return ReviewMapper.toEntity(review);
+        }),
+        page: result.page,
+        totalPage: result.totalPages,
+      };
+    } catch (err) {
+      Logger.error(err, err.stack);
+      return undefined;
+    }
+  }
+
   async findAllReviewsNonPagination(
     params: {
       userId?: Types.ObjectId;
