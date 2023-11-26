@@ -83,7 +83,7 @@ export class CreateReviewUseCase implements UseCase<CreateReviewDTOWithUserId, P
         title: request.title,
         description: request.description,
         tagging: {
-          province_code: "00",
+          province_code: destination.value._value.administrative?.province.code ?? "00",
           highlighted: false,
         },
         rating: request.rating,
