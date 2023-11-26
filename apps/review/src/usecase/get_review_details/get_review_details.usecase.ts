@@ -67,7 +67,7 @@ export class GetReviewDetailsUseCase
       const commentCountOrError = await this.commentService.getCommentAmountByReviewId(reviewIdOrError);
 
       // Lấy thông tin user của Review
-      const userOrError : UserProfileResponseDTO = await firstValueFrom(this.authClient.send('get_user_profile', { userId: userId})); 
+      const userOrError : UserProfileResponseDTO = await firstValueFrom(this.authClient.send('get_user_profile', { userId: reviewOrError.userId.getValue().toString()})); 
       // console.log(userOrError);
 
       // Lấy thông tin destination của Review      
