@@ -281,6 +281,7 @@ export class TripController {
     @Query()
     query: GetOptimizedTripDayRecommendationDTO,
   ) {
+    console.log('Get matrix API');
     const result = await this.getOptimizedTripDayRecommendationUseCase.execute({
       userId: req.user.sub,
       request: query,
