@@ -8,6 +8,7 @@ import {
   SingleDestinationResponseDTO,
 } from '../../dtos/destination.response.dto';
 import { GetMultipleDestinationDetailsRequestDTO } from '../../dtos/destinaiton.request.dto';
+import { DestinationService } from '../../destination.service';
 
 /* eslint-disable prettier/prettier */
 type Response = Either<
@@ -20,6 +21,7 @@ export class GetMultipleDestinationDetailsUseCase
   implements UseCase<GetMultipleDestinationDetailsRequestDTO, Promise<Response>>
 {
   constructor(
+    private readonly destinationService: DestinationService,
     private readonly googleMapsService: GoogleMapsService,
   ) {}
 
@@ -46,7 +48,7 @@ export class GetMultipleDestinationDetailsUseCase
         // hình như foreach không dùng được với async, cần điều tra lại
         await Promise.all(placeIdsStandardized.map( async (place_id) => {
           // Gọi service của google, trả về query Result. Tạm thời chưa có type nào
-          const subqueryResult = await this.googleMapsService.getPlaceByID({placeId: place_id, language : language});
+          const subqueryResult = await this.destinationService.getDestinationByID(place_id, language);
           
           if (subqueryResult === undefined) {
             Logger.error(`Place ${place_id} not found`, 'GetMultipleDestinationDetailsUseCase');
@@ -56,20 +58,20 @@ export class GetMultipleDestinationDetailsUseCase
               name: subqueryResult.name,
               description: "Địa điểm văn hoá nổi bật của thành phố",
               location: {
-                  lat: subqueryResult.geometry.location.lat,
-                  lng: subqueryResult.geometry.location.lng,
+                  lat: subqueryResult.mapsFullDetails.geometry.location.lat,
+                  lng: subqueryResult.mapsFullDetails.geometry.location.lng,
               },
-              mapsFullDetails: subqueryResult,
+              mapsFullDetails: subqueryResult.mapsFullDetails,
               reviews: [],
-              isRegistered: false,
-              isCached: false,
+              isRegistered: subqueryResult.isRegistered,
+              isCached: subqueryResult.isCached,
             };
             queryResult.push(singleResponse);
           }
 
           // đã handle trường hợp lỗi, nếu lỗi sẽ thay thế bằng error response và cả bên trip cũng vậy
         }));
-        
+
         result = {
           destinations: queryResult,
           distanceMatrixList: distanceMapResult,
