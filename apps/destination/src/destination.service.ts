@@ -42,7 +42,6 @@ export class DestinationService {
       place_id,
       language,
     );
-    console.log('Get destination by Id');
     const queryResult = cacheResult
       ? cacheResult
       : await this.googleMapsService.getPlaceByID({
