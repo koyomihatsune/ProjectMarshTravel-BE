@@ -4,17 +4,13 @@ import { Either, Result, left, right } from '@app/common/core/result';
 import { UseCase } from '@app/common/core/usecase';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SingleTripDayResponseDTO } from 'apps/trip/src/dtos/trip.response.dto';
+import { OptimizedResponseDTO } from 'apps/trip/src/dtos/trip.response.dto';
 import { TripService } from 'apps/trip/src/trip.service';
 import { firstValueFrom } from 'rxjs';
 import { UniqueEntityID } from '@app/common/core/domain/unique_entity_id';
 import { GetOptimizedTripDayRecommendationDTO } from './get_optimized_trip_day_recommendation.dto';
 import { TripId } from 'apps/trip/src/entity/trip_id';
 import * as TripErrors from '../../errors/trip.errors';
-import {
-  MultipleDestinationResponseDTO,
-  SingleDestinationResponseDTO,
-} from 'apps/destination/src/dtos/destination.response.dto';
 import { TripDayId } from 'apps/trip/trip_day/entity/trip_day_id';
 import { UserProfileResponseDTO } from '../../../../../auth/user/usecase/get_profile/get_profile.dto';
 import { GetMultiplePlaceDistanceResponseDTO } from 'apps/destination/gmaps/types/gmaps.places.types';
@@ -23,12 +19,13 @@ import { TripDestination } from 'apps/trip/trip_destination/entity/trip_destinat
 /* eslint-disable prettier/prettier */
 type Response = Either<
   AppErrors.InvalidPayloadError,
-  Result<SingleTripDayResponseDTO>
+  Result<OptimizedResponseDTO | GetMultiplePlaceDistanceResponseDTO>
 >;
 
 type GetOptimizedTripDayRecommendationWithUserIDDTO = {
     userId: string,
     request: GetOptimizedTripDayRecommendationDTO,
+    type: string,
 } 
 
 @Injectable()
@@ -164,7 +161,7 @@ export class GetOptimizedTripDayRecommendationUseCase
 
   execute = async (dto: GetOptimizedTripDayRecommendationWithUserIDDTO): Promise<Response> => {
     try {
-      const { userId, request } = dto;
+      const { userId, request, type } = dto;
 
       const userOrError = await firstValueFrom<UserProfileResponseDTO>(this.authClient.send('get_user_profile', { userId: userId})); 
 
@@ -178,21 +175,11 @@ export class GetOptimizedTripDayRecommendationUseCase
 
       // Kiểm tra trip day tồn tại hay không
       const tripDay = trip.days.find((day) => day.tripDayId.equals(tripDayIdOrError));
-
       if (tripDay === undefined) return left(new AppErrors.EntityNotFoundError('TripDay'));
 
       // if (request.fixedDestinationList.length !== tripDay.destinations.length) {
       //   return left(new TripErrors.FixedPlaceSequenceInvalidError())
       // }
-
-
-      const result: SingleTripDayResponseDTO = {
-        id: tripDay.tripDayId.getValue().toString(),
-        position: tripDay.position,
-        startOffsetFromMidnight: tripDay.startOffsetFromMidnight,
-        dayLength: tripDay.destinations.length,
-        destinations: [],
-      };
 
       // Lấy list place_id để query bên Destinations service
       const placeIds = tripDay.destinations.map((destination) => {
@@ -200,69 +187,21 @@ export class GetOptimizedTripDayRecommendationUseCase
       });
 
       // Query lấy details bên Destinations service
-      const destinationQueryResult : MultipleDestinationResponseDTO = await firstValueFrom(this.destinationClient.send('get_multiple_destinations', { place_ids: placeIds, language: request.language ?? 'vi'}));
-
-      // console.log(destinationQueryResult.distanceMatrixList);
+      const destinationQueryResult : {distanceMatrixList?: GetMultiplePlaceDistanceResponseDTO} = await firstValueFrom(this.destinationClient.send('get_multiple_destinations', { place_ids: placeIds, language: request.language ?? 'vi', getMatrixOnly: true}));
 
       // // dùng thuật toán để tìm sắp xếp địa điểm tối ưu
-      const arrangedPlaceIDs = this.getOptimizedTripDestinationArrangement(tripDay.destinations, tripDay.destinations.map(() => false), destinationQueryResult.distanceMatrixList); 
+      if (type === 'matrix') {
 
-      tripDay.destinations = this.sortTripDestinationsByArrangement(tripDay.destinations, arrangedPlaceIDs);
-
-      // console.log(arrangedPlaceIDs);
-
-      // const arrangedPosition = arrangedPlaceIDs.map(place_id => tripDay.destinations.find(destination => destination.place_id === place_id).position)
-
-      // console.log(arrangedPosition);
-
-      // push lần lượt vào từng destination của day bằng cách pick placeid tương ứng
-
-      Logger.log("Optimized trip: ", tripDay.destinations.map(destination => destination.position));
-      
-      tripDay.destinations.forEach((destination, index) => {
-        const destinationDetails = destinationQueryResult.destinations.find((destinationDetails : SingleDestinationResponseDTO) => destinationDetails.place_id === destination.place_id);
-
-        const distanceFromLastDestination = index > 0 ? 
-            destinationQueryResult.distanceMatrixList?.find(place => place.origin_place_id === tripDay.destinations[index-1].place_id && place.destination_place_id === destination.place_id) : undefined;
-
-        if (destinationDetails === undefined) {
-          Logger.log(`Place ${destination.place_id} not found in query result. Left out of array`, 'GetTripDetailsUseCase');
-          result.destinations.push({
-            id: destination.tripDestinationId.getValue().toString(),
-            place_id: destination.place_id,
-            name: "",
-            position: destination.position,
-            type: destination.type,
-            isRegistered: false,
-            // sửa lại sau khi đã làm cache ở Destination service
-            isError: true,
-            errorDetails: `Place ${destination.place_id} not found in query result. Google Maps can't find this place.`
-          })
-        } else {
-          Logger.log("Found destination details: " + destinationDetails.name,'GetTripDetailsUseCase');
-          result.destinations.push({
-            id: destination.tripDestinationId.getValue().toString(),
-            place_id: destination.place_id,
-            name: destinationDetails.name,
-            position: destination.position,
-            type: destination.type,
-            location: destinationDetails.location,
-            mapsFullDetails: destinationDetails.mapsFullDetails,
-            distanceFromLastDestination: distanceFromLastDestination?.distance ?? undefined,
-            timeFromLastDestination: distanceFromLastDestination?.duration ?? undefined,
-            image_urls: [],
-            isRegistered: false,
-            // sửa lại sau khi đã làm cache ở Destination service
-            isError: false,
-          })
+        return destinationQueryResult.distanceMatrixList ? right(Result.ok<GetMultiplePlaceDistanceResponseDTO>(destinationQueryResult.distanceMatrixList)) : left(new AppErrors.UnexpectedError('Distance matrix not found'));
+        
+      } else if (type === 'optimize') {
+        const arrangedPlaceIDs = this.getOptimizedTripDestinationArrangement(tripDay.destinations, tripDay.destinations.map(() => false), destinationQueryResult.distanceMatrixList); 
+        tripDay.destinations = this.sortTripDestinationsByArrangement(tripDay.destinations, arrangedPlaceIDs);
+        const optimizedResult: OptimizedResponseDTO = {
+          positions: tripDay.destinations.map((destination) => destination.position)
         }
+        return right(Result.ok<OptimizedResponseDTO>(optimizedResult));
       }
-      );
-
-      // // sort lại theo position
-      // result.destinations.sort((a, b) => a.position - b.position);
-
-      return right(Result.ok<SingleTripDayResponseDTO>(result));
     } catch (err) {
       // eslint-disable-next-line no-console
       Logger.log(err);

@@ -24,7 +24,7 @@ export class SingleDestinationResponseDTO {
 }
 
 export class MultipleDestinationResponseDTO {
-  destinations: SingleDestinationResponseDTO[];
+  destinations?: SingleDestinationResponseDTO[];
   distanceMatrixList?: GetMultiplePlaceDistanceResponseDTO;
   nextPageToken?: string;
 }

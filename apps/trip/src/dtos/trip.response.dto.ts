@@ -35,6 +35,10 @@ export class SingleTripDayResponseDTO {
   destinations: SingleTripDestinationResponseDTO[];
 }
 
+export class OptimizedResponseDTO {
+  positions: number[];
+}
+
 export class SingleTripDestinationResponseDTO {
   id: string;
   position: number;

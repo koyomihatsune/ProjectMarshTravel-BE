@@ -15,6 +15,9 @@ export class GetMultipleDestinationDetailsRequestDTO {
 
   @IsIn(Object.values(LanguageEnumValue))
   language: string;
+
+  @IsOptional()
+  getMatrixOnly?: boolean;
 }
 
 export class SearchDestinationsRequestDTO {
