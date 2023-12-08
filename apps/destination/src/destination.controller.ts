@@ -22,6 +22,7 @@ export class DestinationController {
   @Get('search/text')
   @ResponseMessage(RESULT_RESPONSE_MESSAGE.CommonSuccess)
   async searchDestinations(@Query() query: SearchDestinationsRequestDTO) {
+    console.log("test");
     const result = await this.searchDestinationsUseCase.execute(query);
     if (result.isRight()) {
       const dto = result.value.getValue();
