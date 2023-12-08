@@ -45,7 +45,7 @@ export class GetSuggestionsBasedOnCurrentLocationUseCase
       }
 
       const bestPlacesQueryResult = await this.googleMapsService.getMultiplePlacesFromText({
-        input: `best attractions to visit nearby`,
+        input: `best attractions to visit near ${foundProvince.full_name}`,
         lat: lat,
         lon: lon,
         language: language === 'vi' ? 'vi' : 'en',
@@ -84,7 +84,7 @@ export class GetSuggestionsBasedOnCurrentLocationUseCase
             if (foundTag === undefined) return;
 
             const queryResult = await this.googleMapsService.getMultiplePlacesFromText({
-              input: `${foundTag.query} nearby`,
+              input: `${foundTag.query} near ${foundProvince.full_name}`,
               lat: lat,
               lon: lon,
               language: language === 'vi' ? 'vi' : 'en',
