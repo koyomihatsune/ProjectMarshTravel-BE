@@ -256,6 +256,7 @@ export class TripController {
     @Query()
     query: GetOptimizedTripDayRecommendationDTO,
   ) {
+    console.log(query);
     const result = await this.getOptimizedTripDayRecommendationUseCase.execute({
       userId: req.user.sub,
       request: query,
@@ -269,6 +270,7 @@ export class TripController {
       case AppErrors.EntityNotFoundError:
         throw new NotFoundException(error);
       default:
+        console.log(error);
         throw new BadRequestException(error);
     }
   }

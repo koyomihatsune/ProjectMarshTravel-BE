@@ -265,7 +265,7 @@ export class GetOptimizedTripDayRecommendationUseCase
       return right(Result.ok<SingleTripDayResponseDTO>(result));
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log(err);
+      Logger.log(err);
       return left(new AppErrors.UnexpectedError(err.toString()));
     }
   };
