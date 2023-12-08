@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   NotFoundException,
   Post,
   Put,
@@ -256,10 +257,10 @@ export class TripController {
     @Query()
     query: GetOptimizedTripDayRecommendationDTO,
   ) {
-    console.log(query);
     const result = await this.getOptimizedTripDayRecommendationUseCase.execute({
       userId: req.user.sub,
       request: query,
+      type: 'optimize',
     });
     if (result.isRight()) {
       const dto = result.value.getValue();
@@ -270,7 +271,31 @@ export class TripController {
       case AppErrors.EntityNotFoundError:
         throw new NotFoundException(error);
       default:
-        console.log(error);
+        throw new BadRequestException(error);
+    }
+  }
+
+  @Get('day/matrix')
+  async getMatrixWithId(
+    @Req() req: Request & { user: JWTPayload },
+    @Query()
+    query: GetOptimizedTripDayRecommendationDTO,
+  ) {
+    const result = await this.getOptimizedTripDayRecommendationUseCase.execute({
+      userId: req.user.sub,
+      request: query,
+      type: 'matrix',
+    });
+    if (result.isRight()) {
+      const dto = result.value.getValue();
+      return dto;
+    }
+    const error = result.value;
+    switch (error.constructor) {
+      case AppErrors.EntityNotFoundError:
+        throw new NotFoundException(error);
+      default:
+        Logger.log(error);
         throw new BadRequestException(error);
     }
   }
